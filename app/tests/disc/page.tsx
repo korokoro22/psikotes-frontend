@@ -6,6 +6,7 @@ import { ArrowLeft, Brain, Info, Clock, ListChecks } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import Modal from '@/app/components/Modal';
+import TestHeader from '@/app/components/TestHeader';
 
 interface WordGroup {
   id: number;
@@ -151,12 +152,7 @@ export default function DISCInstructionPage() {
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">Tes Kepribadian DISC</h1>
-          </div>
-        </div>
+        <TestHeader />
       </header>
 
       {/* Main Content */}

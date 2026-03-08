@@ -17,3 +17,5 @@ export const registerPeserta = (data: {
 export const getDetailPeserta = (id:number) => api.get(`/api/admin/peserta/detail/${id}`)
 
 export const getFormPeserta = () => api.get('/api/admin/peserta/form')
+
+export const getHasilPeserta = () => api.get('/api/admin/hasiltes')

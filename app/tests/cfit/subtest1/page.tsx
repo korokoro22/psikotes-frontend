@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import Image from 'next/image';
 import { getContohCfit1Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
   id: number;
@@ -128,19 +129,7 @@ export default function CFITSubtest1() {
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">CFIT - Subtes 1</h1>
-          </div>
-          {/* <button
-            onClick={() => router.push('/tests/cfit')}
-            className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
-          >
-            <ArrowLeft size={18} />
-            <span>Kembali</span>
-          </button> */}
-        </div>
+        <TestHeader />
       </header>
 
       {/* Main Content */}
@@ -184,19 +173,19 @@ export default function CFITSubtest1() {
                 Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk gambar selanjutnya:
               </p>
               {/* (perubahan) penambahan contoh soal @rezky */}
-              <div className="flex justify-center items-center bg-white rounded-lg p-8 border">
-                <div className='w-full flex flex-col gap-3 text-gray-400'>
+              <div className="flex justify-center items-center bg-white rounded-lg p-4 sm:p-8 border">
+                <div className='w-full flex flex-col gap-3 text-gray-500'>
                   <div>
                     <p>Jawab soal berikut dengan teliti dan cepat.</p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-1 mb-6 text-gray-400 italic w-full">
+                  <div className="flex justify-center mb-6 text-gray-400 italic">
                       <div
-                        className=" bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200 p-2"
+                        className=" bg-slate-100 rounded-xl text-slate-400 border border-slate-200 p-2"
                       >
-                      <img 
-                        src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
-                        alt=""
-                        className='w-full h-full rounded-lg' />
+                        <img 
+                          src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
+                          alt=""
+                          className='w-full h-full rounded-lg' />
                       </div>
                   
                   </div>
@@ -204,34 +193,7 @@ export default function CFITSubtest1() {
                       Pilih gambar yang paling tepat untuk melengkapi pola:
                     </div>
 
-                    {/* <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 w-full">
-                        {[1, 2, 3, 4, 5, 6].map(option => (
-                        <button
-                          key={option}
-                          onClick={() => handleAnswer(option)}
-                            className={`aspect-square text-lg font-semibold rounded-xl flex items-center  justify-center transition-all border-2 ${
-
-
-                              isChecked === true && option === questions[currentQuestion].correctAnswer
-                              ? 'bg-green-600  text-white border-green-600 scale-105 shadow'
-                              : isChecked === true && !(option === questions[currentQuestion].correctAnswer) && answers[currentQuestion] === option
-                              ? 'bg-red-600 text-white border-red-600 scale-105 shadow'
-                              : answers[currentQuestion] === option
-                              ? 'bg-blue-600 text-white border-blue-600 scale-105 shadow'
-                              : isChecked === false || answers[currentQuestion] === option
-                              ? ' hover:border-blue-400 hover:scale-[1.02] border-slate-200 bg-slate-50'
-                              : !(isChecked === true && option === questions[currentQuestion].correctAnswer)
-                              ? 'border-slate-200 bg-slate-50'
-                              : ''
-                            }`}
-                              
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div> */}
-
-                    <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 w-full">
+                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 w-full">
                       {question[currentQuestion]?.options?.map((option) => (
                         <button
                           key={option.label}
@@ -264,14 +226,14 @@ export default function CFITSubtest1() {
                       ))}
                     </div>
 
-                    <div className=''>
-                      <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={` px-8 py-3 rounded-lg font-semibold  ${
+                    <div className='flex justify-center sm:justify-start'>
+                      <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={`px-3 py-2 sm:px-5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 shadow hover:scale-[1.02] active:scale-95 transition${
                           isChecked === true
-                          ? 'bg-blue-400 text-gray-200'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          ? ' text-gray-200'
+                          : ' text-white'
                         }`} >Cek Jawaban</button>
                     </div>
-                    <div>
+                    <div className='text-center sm:text-left text-sm'>
                       <p>{resultText}</p>
                     </div>  
 
@@ -283,7 +245,7 @@ export default function CFITSubtest1() {
                             resetState()
                           }}
                         disabled={currentQuestion === 0}
-                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                        className={`px-4 sm:px-5 py-2 rounded-lg border text-xs sm:text-sm font-medium transition hover:scale-[1.02] active:scale-95 transition ${
                           currentQuestion === 0
                             ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
                             : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
@@ -300,9 +262,9 @@ export default function CFITSubtest1() {
                         }
 
                         // onClick={()=>setIsModalOpen(true)}
-                        className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                        className="px-4 sm:px-5 py-2 rounded-lg bg-gradient-to-r text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
                       >
-                        {currentQuestion === questions.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
+                        {currentQuestion === questions.length - 1 ? 'Selesai' : 'Berikutnya →'}
                       </button>
                       
                   </div>
@@ -315,7 +277,7 @@ export default function CFITSubtest1() {
           {/* Section: Tombol Aksi */}
           <div className="text-center space-x-4">
               <button 
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow hover:scale-[1.02] active:scale-95 transition"
                 onClick={handleModal}
                 >
                 Mulai Subtes 1

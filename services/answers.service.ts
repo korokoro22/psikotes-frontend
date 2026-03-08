@@ -17,11 +17,19 @@ export const storeAnswersDisc = (
     }
 ) => api.post(`/api/user/answers/disc/${sessionId}`, data)
 
-export const postStatusTest = (
+export const storeAnswersKraepelin = (
+    sessionId: number,
+    data: string
+) => api.post(`/api/user/answers/kraepelin/${sessionId}`, data)
+
+export const updateStatusTest = (
     sessionId: number
 ) =>api.put(`/api/user/peserta/status/${sessionId}`)
 
 export const triggerN8n = (
     pesertaId: number,
     tests: string
-) => api.post(`/api/n8n/cfit/${pesertaId}`)
+) => api.post(`/api/n8n/trigger/${pesertaId}`, 
+    { tests },  // ✅ wrap dalam object
+    { headers: { 'Content-Type': 'application/json' } 
+})

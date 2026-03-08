@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback, useRef, memo, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { storeAnswersKraepelin, triggerN8n } from "@/services/answers.service";
+import { storeAnswersKraepelin } from "@/services/answers.service";
 import { div } from "framer-motion/client";
-import { updateStatusTest } from "@/services/answers.service";
+import Modal from "@/app/components/Modal";
 
 /* ═══════════════════════════════════════════════════════════
    CONSTANTS & TYPES
@@ -21,10 +21,7 @@ type Status = "idle" | "playing" | "finished";
 interface AuditEntry {
   timestamp: string;
   event: "Mengisi jawaban mundur dalam lajur yang sama" | "Mengisi jawaban maju dalam lajur yang sama" | "Mengisi jawaban di lajur yang berbeda" | "Mengisi ulang kotak yang sudah dijawab" | "Mengisi jawaban setelah waktu habis" | "Terlambat pindah lajur" | "Melangkahi kotak jawaban";
-  fromCol: number;   // lajur seharusnya (legitimateCol) saat pelanggaran terjadi
-  toCol: number;     // lajur yang diisi user
-  fromPair: number;  // pair seharusnya (expectedPair) saat pelanggaran terjadi
-  toPair: number;    // pair yang diisi user
+  // remainingTimeMs: number;
 }
 
 // State per kolom
@@ -53,48 +50,48 @@ const KRAEPELIN_DATA: number[][] = [
   [5,3,8,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2],
   [2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9],
   [9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5],
-  [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
-  [3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1],
-  [7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4],
-  [1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7],
-  [8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3],
-  [4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6],
-  [5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8],
-  [2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4],
-  [7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1],
-  [9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5],
-  [4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9],
-  [1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3],
-  [6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7],
-  [3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2],
-  [8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6],
-  [2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4],
-  [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
-  [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
-  [1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7],
-  [4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3],
-  [9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5],
-  [6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9],
-  [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
-  [8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4],
-  [2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8],
-  [5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1],
-  [1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6],
-  [4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7],
-  [7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3],
-  [9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2],
-  [6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4],
-  [3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9],
-  [8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5],
-  [1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8],
-  [5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6],
-  [2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1],
-  [7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3],
-  [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
-  [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
-  [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
-  [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
-  [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2]
+  // [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
+  // [3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1],
+  // [7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4],
+  // [1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7],
+  // [8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3],
+  // [4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6],
+  // [5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8],
+  // [2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4],
+  // [7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1],
+  // [9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5],
+  // [4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9],
+  // [1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3],
+  // [6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7],
+  // [3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2],
+  // [8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6],
+  // [2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4],
+  // [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
+  // [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
+  // [1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7],
+  // [4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3],
+  // [9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5],
+  // [6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9],
+  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
+  // [8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4],
+  // [2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8],
+  // [5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1],
+  // [1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6],
+  // [4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7],
+  // [7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3],
+  // [9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2],
+  // [6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4],
+  // [3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9],
+  // [8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5],
+  // [1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8],
+  // [5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6],
+  // [2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1],
+  // [7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3],
+  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
+  // [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
+  // [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
+  // [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
+  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2]
 ];
 
 const ROWS = KRAEPELIN_DATA[0].length;
@@ -292,6 +289,7 @@ export default function KraeplinTest() {
   const [colStates, setColStates] = useState<ColState[]>(initColStates);
   const [status, setStatus] = useState<Status>("idle");
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false)
   
   // Kotak jawaban yang sedang difokus
   const [focusedInput, setFocusedInput] = useState<{col: number, pair: number} | null>(null);
@@ -359,65 +357,39 @@ export default function KraeplinTest() {
     return results;
   }, [answers]);
 
+  const handleModal = () => {
+    setIsModalOpen(true)
+  }
+
+  const handleRestart = async () => {
+    setGrid(genGrid());
+    setAnswers(Array.from({ length: COLS }, () => Array(PAIRS).fill(null)));
+    setInputValues(Array.from({ length: COLS }, () => Array(PAIRS).fill(null)));
+    setColStates(initColStates());
+    setActiveCol(0);
+    setSystemActiveCol(0);
+    setAuditLog([]);
+    setFocusedInput({ col: 0, pair: 0 });
+    setLegitimateCol(0);
+    setExpectedPair(0);
+    setGraceTimeLeftMs(null);
+    gracePenalizedRef.current = false;
+    setStatus("idle");
+    setTimeout(() => {
+      inputRefs.current[`0-0`]?.focus();
+    }, 100);
+    setIsModalOpen(false)
+  } 
+
   /* ═══ SUBMIT RESULTS TO BACKEND ═══
    * Mengemas hasil tes (jawaban per lajur + auditLog pelanggaran) lalu
    * mengirimnya ke backend menggunakan sessionId dari sessionStorage.
    */
-  const handleSubmit = useCallback(async () => {
-    
-      const columnResults = calculateColumnResults();
-      
-      const payload = {
-        testType: "kraepelin",
-        columnResults,
-        auditLog,
-        completedAt: new Date().toISOString(),
-      };
-      const payloadConverted = JSON.stringify(payload)
+  const handleSubmit = async () => {
+    router.push("/tests/kraepelin/test");  
+  }
 
-      const testSession = sessionStorage.getItem('testSession')
-      
-      if(!testSession) {
-        return (console.log('gagal'))
-      }
-
-      const testSessionParsed = JSON.parse(testSession)
-      
-      const tests:string = testSessionParsed.tests[testSessionParsed.currentIndex]
-      console.log('ini test:', typeof(tests))
-      const sessionId = testSessionParsed.sessionId
-      // const res = await storeAnswersKraepelin(sessionId, payloadConverted)
-
-      const statusTest = await updateStatusTest(sessionId)
-
-      const pesertaId:number = testSessionParsed.pesertaId
-      console.log('ini parsed: ', typeof(pesertaId))
-      // if (tests === undefined) 
-      //   return (console.log('test kosong'))
-      // const trigger = await triggerN8n(pesertaId, tests)
-      const indexIncrement = testSessionParsed.currentIndex + 1
-      testSessionParsed.currentIndex = indexIncrement
-      const updatedTestString = JSON.stringify(testSessionParsed)
-      sessionStorage.setItem('testSession', updatedTestString) 
-      const newTests:string = testSessionParsed.tests[testSessionParsed.currentIndex]   
-      if (!(newTests === undefined)) {
-        router.push(`/tests/${tests.toLowerCase()}`)  
-      } else { 
-        sessionStorage.removeItem('testSession')
-        router.push('/result')
-        }  
-      
-  }, [calculateColumnResults, auditLog, router]);
-
-  // useEffect(()=> {
-  //         const testSession = sessionStorage.getItem('testSession')
-  //         if(!testSession)
-  //             return console.log('gagal')
   
-  //         const testSessionParsed = JSON.parse(testSession)
-  //         const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-  //         console.log('ini tests:', tests.toLowerCase())
-  //     })
 
   /* ═══ TIMER PER LAJUR ═══
    * Countdown 100ms sekali untuk lajur yang sedang aktif (systemActiveCol).
@@ -513,19 +485,16 @@ export default function KraeplinTest() {
     setAuditLog(prev => [...prev, {
       timestamp: new Date().toISOString(),
       event: "Terlambat pindah lajur",
-      fromCol: systemActiveCol,
-      toCol: systemActiveCol,
-      fromPair: -1,
-      toPair: -1,
     }]);
   }, [graceTimeLeftMs, status, systemActiveCol]);
 
   // Trigger submit otomatis saat status berubah menjadi "finished"
+  
   useEffect(() => {
     if (status === "finished") {
-      handleSubmit();
+      handleModal();
     }
-  }, [status, handleSubmit]);
+  }, [status, handleModal]);
 
   /* ═══ HANDLE INPUT ═══
    * Dipanggil setiap kali user mengetikkan digit (via numpad atau keyboard).
@@ -565,10 +534,6 @@ export default function KraeplinTest() {
       setAuditLog(prev => [...prev, {
         timestamp: new Date().toISOString(),
         event: eventType,
-        fromCol: legitimateCol,
-        toCol: col,
-        fromPair: expectedPair,
-        toPair: pairIdx,
       }]);
     }
 
@@ -645,7 +610,6 @@ export default function KraeplinTest() {
         handleInput(Number(e.key), focusedInput.col, focusedInput.pair);
       }
     };
-    
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -663,69 +627,32 @@ export default function KraeplinTest() {
    *
    * Selalu auto-fokus ke kotak kosong pertama di lajur tujuan.
    */
-
-  useEffect(()=> {
-    console.log('ini answers: ', answers)
-  }, [answers])
-
-  useEffect(()=> {
-    console.log('ini auditLog: ', auditLog)
-  }, [auditLog])
   const handleMoveColumn = useCallback((direction: "prev" | "next") => {
-    const isTimedOut = colStates[systemActiveCol]?.timedOut;
+    const targetCol = direction === "next" ? systemActiveCol + 1 : activeCol - 1;
+    if (targetCol < 0 || targetCol >= COLS) return;
 
-    if (direction === "next") {
-      // Jika user sedang di lajur lebih kecil dari system, kembalikan ke systemActiveCol dulu
-      if (activeCol < systemActiveCol) {
-        const firstEmpty = answers[systemActiveCol].findIndex(a => a === null);
-        const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-        setActiveCol(systemActiveCol);
-        setFocusedInput({ col: systemActiveCol, pair: targetPair });
-        setTimeout(() => {
-          inputRefs.current[`${systemActiveCol}-${targetPair}`]?.focus();
-        }, 50);
-        return;
-      }
+    setActiveCol(targetCol);
+    setSystemActiveCol(targetCol);
 
-      const targetCol = systemActiveCol + 1;
-      if (targetCol >= COLS) return;
-
-      if (isTimedOut) {
-        // Pindah sah: waktu habis, advance systemActiveCol
-        setActiveCol(targetCol);
-        setSystemActiveCol(targetCol);
-        setLegitimateCol(targetCol);
-        setGraceTimeLeftMs(null);
-        gracePenalizedRef.current = false;
-        const firstEmpty = answers[targetCol].findIndex(a => a === null);
-        const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-        setExpectedPair(targetPair);
-        setFocusedInput({ col: targetCol, pair: targetPair });
-        setTimeout(() => {
-          inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-        }, 50);
-      } else {
-        // Pindah pelanggaran: waktu belum habis, hanya activeCol berubah
-        setActiveCol(targetCol);
-        const firstEmpty = answers[targetCol].findIndex(a => a === null);
-        const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-        setFocusedInput({ col: targetCol, pair: targetPair });
-        setTimeout(() => {
-          inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-        }, 50);
-      }
-    } else {
-      // Prev: hanya activeCol mundur, systemActiveCol tidak berubah
-      const targetCol = activeCol - 1;
-      if (targetCol < 0) return;
-      setActiveCol(targetCol);
-      const firstEmpty = answers[targetCol].findIndex(a => a === null);
-      const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-      setFocusedInput({ col: targetCol, pair: targetPair });
-      setTimeout(() => {
-        inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-      }, 50);
+    if (direction === "next" && colStates[systemActiveCol]?.timedOut) {
+      setLegitimateCol(targetCol);
+      setGraceTimeLeftMs(null);          // reset grace — user sudah pindah tepat waktu
+      gracePenalizedRef.current = false;
     }
+
+    // Fokus ke kotak kosong pertama di lajur tujuan
+    const firstEmptyPair = answers[targetCol].findIndex(a => a === null);
+    const targetPair = firstEmptyPair !== -1 ? firstEmptyPair : 0;
+
+    // expectedPair ikut kotak kosong pertama agar tidak langsung dianggap skip
+    if (direction === "next" && colStates[systemActiveCol]?.timedOut) {
+      setExpectedPair(targetPair);
+    }
+
+    setFocusedInput({ col: targetCol, pair: targetPair });
+    setTimeout(() => {
+      inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
+    }, 50);
   }, [systemActiveCol, activeCol, colStates, answers]);
 
   /* ═══ START TEST ═══
@@ -771,35 +698,36 @@ export default function KraeplinTest() {
         <h1 className="text-xs font-semibold tracking-widest text-stone-400 uppercase">
           Tes Psikotes
         </h1>
-        <div className="flex items-center gap-x-3">
-        {status === "playing" && (
-          <div className="text-sm text-stone-500">
-            {/* REVISI 2: Tampilkan systemActiveCol sebagai lajur sistem */}
-            {/* {" · "} */}
-            Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
-          </div>
-        )}
 
-        {activeCol === systemActiveCol && (colStates[systemActiveCol].timedOut || timeLeftMs <= 5000) && (
-          <div className={`rounded-lg p-2 text-center text-xs font-semibold ${
-            colStates[systemActiveCol].timedOut && graceTimeLeftMs === 0
-              ? "bg-red-200 border border-red-400 text-red-800"
-              : colStates[systemActiveCol].timedOut
-              ? "bg-red-100 border border-red-300 text-red-700 animate-pulse"
-              : "bg-yellow-100 border border-yellow-300 text-yellow-700 animate-pulse"
+        <div className="flex items-center gap-x-3">
+          {status === "playing" && (
+            <div className="text-sm text-stone-500">
+              {/* REVISI 2: Tampilkan systemActiveCol sebagai lajur sistem */}
+              {/* {" · "} */}
+              Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
+            </div>
+          )}
+
+          {(colStates[systemActiveCol].timedOut || timeLeftMs <= 5000) && (
+            <div className={`rounded-lg p-2 text-center text-xs font-semibold ${
+              colStates[systemActiveCol].timedOut && graceTimeLeftMs === 0
+                ? "bg-red-200 border border-red-400 text-red-800"
+                : colStates[systemActiveCol].timedOut
+                ? "bg-red-100 border border-red-300 text-red-700 animate-pulse"
+                : "bg-yellow-100 border border-yellow-300 text-yellow-700 animate-pulse"
             }`}>
-            {colStates[systemActiveCol].timedOut && graceTimeLeftMs === 0
-              ? "🚨 Terlambat pindah lajur! Pindah lajur sekarang!"
-              : colStates[systemActiveCol].timedOut && graceTimeLeftMs !== null
-              ? `⏰ Diharapkan pindah ke lajur berikutnya! ${Math.ceil(graceTimeLeftMs / 1000)}d tersisa`
-              : "⚠ Waktu hampir selesai, Bersiap pindah ke lajur berikutnya!"}
-          </div>
-        )}
+              {colStates[systemActiveCol].timedOut && graceTimeLeftMs === 0
+                ? "🚨 Terlambat pindah lajur! Pindah lajur sekarang!"
+                : colStates[systemActiveCol].timedOut && graceTimeLeftMs !== null
+                ? `⏰ Diharapkan pindah ke lajur berikutnya! ${Math.ceil(graceTimeLeftMs / 1000)}d tersisa`
+                : "⚠ Waktu hampir selesai, Bersiap pindah ke lajur berikutnya!"}
+            </div>
+          )}
         </div>
         
 
         {/* Pesan pindah lajur saat 5 detik terakhir, timeout, atau grace period */}
-              
+        
 
         {status === 'playing' && (
           <div className="text-xs text-stone-500">
@@ -904,6 +832,11 @@ export default function KraeplinTest() {
                           {bottomNum}
                         </div>
                       </div>
+                      <div className="flex flex-col items-center gap-0.5 text-stone-400 text-xs font-semibold">
+                        <span className="text-sm">+</span>
+                        <span className="text-stone-300 text-sm">──</span>
+                        <span className="text-sm text-stone-400">{topNum}+{bottomNum}={topNum+bottomNum} → <span className="text-blue-600 font-bold">{correctAnswer}</span></span>
+                      </div>
                     </div>
                   );
                 })()}
@@ -963,6 +896,26 @@ export default function KraeplinTest() {
           )}
         </div>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
+        <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
+        <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
+        <div className='flex gap-x-3 justify-evenly mt-4'>
+          <button 
+            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+            onClick={handleRestart}
+          >
+            Kembali
+          </button>
+          <button 
+            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+            onClick={handleSubmit}
+          >
+            Mulai Tes
+          </button>
+        </div>
+      </Modal>
+
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { getContohCfit4Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
   id: number;
@@ -121,12 +122,7 @@ export default function CFITSubtest4() {
         <div className='font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col'>
             {/* header */}
             <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-                <div className="container mx-auto px-6 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <Brain className="text-blue-600" size={28} />
-                        <h1 className="text-xl font-bold text-gray-800">CFIT - Subtes 4</h1>
-                    </div>
-                </div>
+                <TestHeader />
             </header>
 
             {/* Main Content */}
@@ -170,7 +166,7 @@ export default function CFITSubtest4() {
                         Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk mengisi kotak terakhir:
                     </p>
                     {/* (perubahan) penambahan contoh soal @rezky */}
-                    <div className="flex justify-center items-center bg-white rounded-lg p-8 border">
+                    <div className="flex justify-center items-center bg-white rounded-lg p-5 sm:p-8 border">
                         <div className='w-full flex flex-col gap-3 text-gray-400 italic'>
                         <div>
                             <p>Jawab soal berikut dengan teliti dan cepat.</p>
@@ -218,12 +214,13 @@ export default function CFITSubtest4() {
                             ))}
                             </div>
 
-                            <div className=''>
-                            <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={` px-8 py-3 rounded-lg font-semibold  ${
-                                isChecked === true
-                                ? 'bg-blue-400 text-gray-200'
-                                : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                }`} >Cek Jawaban</button>
+                            <div className='flex justify-center sm:justify-start'>
+                                <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg font-semibold  ${
+                                    isChecked === true
+                                    ? 'bg-blue-400 text-gray-200'
+                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                    }`} >Cek Jawaban
+                                </button>
                             </div>
                             <div>
                             <p>{resultText}</p>
@@ -237,7 +234,7 @@ export default function CFITSubtest4() {
                                         resetState()
                                     }}
                                     disabled={currentQuestion === 0}
-                                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                                    className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
                                     currentQuestion === 0
                                         ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
                                         : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
@@ -252,9 +249,9 @@ export default function CFITSubtest4() {
                                         ? handleModal
                                         : handleNext
                                     }
-                                    className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                                    className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
                                 >
-                                    {currentQuestion === question.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
+                                    {currentQuestion === question.length - 1 ? 'Selesai' : 'Berikutnya →'}
                                 </button>
                             </div>
                         </div>

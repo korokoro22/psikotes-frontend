@@ -19,7 +19,7 @@ export default function TestForm() {
     email: '',
     jenisKelamin: '',
     unit: '',
-    usia: 0,
+    usia: '',
     pendidikanTerakhir: '',
     jurusan: '',
     posisi: '',
@@ -41,7 +41,18 @@ export default function TestForm() {
     e.preventDefault()
     try {
       setIsSubmitting(true)
-      const res = await registerPeserta(formData)
+      const form = {
+        nama: formData.nama,
+        email: formData.email,
+        jenisKelamin: formData.jenisKelamin,
+        unit: formData.unit,
+        usia: parseInt(formData.usia),
+        pendidikanTerakhir: formData.pendidikanTerakhir,
+        jurusan: formData.jurusan,
+        posisi: formData.posisi,
+        tokenPeserta: formData.tokenPeserta
+      }
+      const res = await registerPeserta(form)
 
       sessionStorage.setItem('testSession', 
         JSON.stringify({
@@ -162,7 +173,7 @@ export default function TestForm() {
                 Usia
               </label>
               <input
-                type="number"
+                type="text"
                 name="usia"
                 id="usia"
                 required

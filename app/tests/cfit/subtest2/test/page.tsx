@@ -155,22 +155,27 @@ export default function CFITsubtest2Test() {
     const progressPercent = ((currentQuestion + 1) / question.length) * 100;
 
     return (
-        <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-            <main className="container mx-auto px-4 py-8">
-                <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-6 md:p-10">
+        <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center">
+            <main className="container mx-auto px-2 py-4">
+                <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-2 md:p-4">
                     {/* Header */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-800">CFIT — Subtes 2</h1>
+                            <h1 className="text-2xl font-bold text-slate-800">SUBTES 2</h1>
                             <p className="text-sm text-slate-500">Temukan dua buah gambar yang memiliki pola yang sama pada rangkaian gambar berikut.</p>
                         </div>
-                        <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-5 py-2 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
-                            ⏱ {formatTime(timeLeft)}
+                        <div className='flex gap-x-3'>
+                            <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                                ⏱ {formatTime(timeLeft)}
+                            </div>
+                            <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                                <span>Soal: {currentQuestion + 1} / {question.length}</span>
+                            </div>
                         </div>
                     </div>
 
                     {/* Progress */}
-                    <div className="mb-8">
+                    {/* <div className="mb-8">
                         <div className="flex justify-between text-sm mb-2 text-slate-600">
                             <span>Soal {currentQuestion + 1} / {question.length}</span>
                             <span>{Math.round(progressPercent)}%</span>
@@ -181,15 +186,10 @@ export default function CFITsubtest2Test() {
                                 style={{ width: `${progressPercent}%` }}
                             />
                         </div>
-                    </div>
-
-                    
+                    </div> */}
 
                     {/* Soal */}
                     <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
-
-                        
-
                         <div className="text-center text-slate-700 mb-6">
                             Pilih gambar yang paling tepat untuk melengkapi pola:
                         </div>
@@ -209,6 +209,9 @@ export default function CFITsubtest2Test() {
                                             : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'
                                         }`}
                                 >
+                                    <div className='pl-3 pt-2 h-full'>
+                                        {option.label}
+                                    </div>
                                     <img 
                                         src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`} 
                                         alt={`Option ${option.label}`}
@@ -222,7 +225,7 @@ export default function CFITsubtest2Test() {
                             className={`  
                                 ${
                                 answered <= 1 && answered >=1
-                                ? 'mt-4 bg-red-100 border border-red-300 rounded-xl text-red-500 py-1 px-2 text-lg not-italic'
+                                ? 'mt-4 bg-red-100 border border-red-300 rounded-xl text-red-500 py-1 px-2 text-base not-italic'
                                 : ''
                                 }
                                 `}>
@@ -255,11 +258,6 @@ export default function CFITsubtest2Test() {
                         </button>
                     </div>
                 </div>
-
-                {/* Footer */}
-                <div className="mt-8 text-center text-xs text-slate-400">
-                    Waktu berjalan otomatis. Tes akan selesai saat waktu habis.
-                </div>
             </main>
 
             <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
@@ -276,7 +274,7 @@ export default function CFITsubtest2Test() {
                         className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
                         onClick={handleTestComplete}
                     >
-                        Mulai Tes
+                        Subtes berikutnya
                     </button>
                 </div>
             </Modal>

@@ -6,6 +6,7 @@ import { ArrowLeft, Brain, Info, Clock, ListChecks } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Modal from '@/app/components/Modal';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
   id: number,
@@ -37,14 +38,11 @@ function IconMath() {
 type Answer = 0 | 1
 
 const KraepelinInstructionPage: React.FC = () => {
-
   const TOTAL_QUESTIONS = 10;
-
   const TOTAL_EXAMPLES = 5
 
   const [showResult, setShowResult] = useState(false)
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [numbers, setNumbers] = useState<[number, number]>([0, 0]);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -69,6 +67,16 @@ const KraepelinInstructionPage: React.FC = () => {
     console.log('Currentindex: ', currentIndex)
   })
 
+   useEffect(()=> {
+        const testSession = sessionStorage.getItem('testSession')
+        if(!testSession)
+            return console.log('gagal')
+        
+        const testSessionParsed = JSON.parse(testSession)
+        const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
+        console.log('ini tests:', testSessionParsed.currentIndex)
+    })
+
   const handleInput = (value: string) => {
   if (!/^\d$/.test(value) || showResult) return
 
@@ -85,7 +93,7 @@ const KraepelinInstructionPage: React.FC = () => {
 
   const router = useRouter();
   const handleTestComplete = () => {
-    router.push('/tests/kraepelin/test');
+    router.push('/tests/kraepelin/example');
   };
 
   const handleNext = () => {
@@ -106,12 +114,7 @@ const KraepelinInstructionPage: React.FC = () => {
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">Tes Kraepelin</h1>
-          </div>
-        </div>
+        <TestHeader />
       </header>
 
       {/* Main Content */}
@@ -128,7 +131,7 @@ const KraepelinInstructionPage: React.FC = () => {
               {/* Breadcrumb */}
               <div className="mb-4">
                 <nav className="text-xs text-slate-500 mb-2" aria-label="Breadcrumb">
-                  <ol className="inline-flex items-center space-x-2">
+                  {/* <ol className="inline-flex items-center space-x-2">
                     <li>
                       <Link href="/tests" className="hover:underline">
                         Tes
@@ -138,16 +141,16 @@ const KraepelinInstructionPage: React.FC = () => {
                       <span className="text-slate-400">/</span>
                     </li>
                     <li className="font-medium text-slate-700">Kraepelin</li>
-                  </ol>
+                  </ol> */}
                 </nav>
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
-                  Tes Kraepelin
+                  Tes Psikotes
                 </h2>
-                <p className="mt-2 text-sm text-slate-600">
+                {/* <p className="mt-2 text-sm text-slate-600">
                   Tes ini digunakan untuk mengukur kecepatan, ketelitian, dan ketahanan
                   konsentrasi dengan melakukan penjumlahan angka secara berurutan dalam
                   batas waktu tertentu.
-                </p>
+                </p> */}
               </div>
 
               {/* Info box */}
@@ -177,9 +180,9 @@ const KraepelinInstructionPage: React.FC = () => {
                     <IconMath />
                   </div>
                   <div className="text-sm">
-                    <div className="text-slate-800 font-medium">Tujuan</div>
+                    <div className="text-slate-800 font-medium">Perhatian</div>
                     <div className="text-slate-600">
-                      Mengukur konsentrasi dan ketahanan kerja
+                      Pastikan jaringan anda dalam keadaan yang bagus.
                     </div>
                   </div>
                 </div>
@@ -189,7 +192,7 @@ const KraepelinInstructionPage: React.FC = () => {
               <section className="mt-10 mb-10">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                   <ListChecks className="text-blue-600" size={22} />
-                  Petunjuk Tes Kraepelin
+                  Petunjuk Tes
                 </h2>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
@@ -224,6 +227,51 @@ const KraepelinInstructionPage: React.FC = () => {
 
               {/* Section: Contoh Soal */}
               <section className="mb-10">
+
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Petunjuk Teknis Soal</h2>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                  <ul className='text-slate-800 text-sm flex flex-col gap-y-2'>
+                    <li className="flex gap-3 items-start">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Soal terbagi ke dalam beberapa lajur, dan setiap lajur dikerjakan dalam waktu <span className='font-bold'>30 detik</span>.
+                    </li>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Pengerjaan dimulai dari bagian bawah lajur.
+                    </li>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Peserta cukup langsung mengisi jawaban pada kotak yang tersedia tanpa melakukan aktivitas tambahan, seperti memindahkan soal atau berpindah lajur secara mandiri.
+                    </li>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Pengisian jawaban dapat dilakukan menggunakan keyboard maupun numpad yang tersedia di samping soal.
+                    </li>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Jawaban diisi berdasarkan hasil penjumlahan dua angka yang berdekatan dengan ketentuan sebagai berikut:
+                    </li>
+                    <div className='ml-7 flex flex-col gap-y-2'>
+                      <li className="flex gap-3 items-start ">
+                        <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 "></span>
+                        Jika hasil penjumlahan berupa satu digit (misalnya 3 + 4 = 7), maka yang diinput adalah angka tersebut, yaitu 7.
+                      </li>
+                      <li className="flex gap-3 items-start ">
+                        <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 "></span>
+                        Jika hasil penjumlahan berupa dua digit (misalnya 7 + 5 = 12), maka yang diinput adalah digit satuan atau angka terakhir, yaitu 2.
+                      </li>
+                    </div>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Peserta <span className='text-red-600 font-bold'>dilarang</span> berpindah kotak jawaban.
+                    </li>
+                    <li className="flex gap-3 items-start ">
+                      <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
+                      Peserta <span className='text-red-600 font-bold'>dilarang</span> berpindah lajur.
+                    </li>
+                  </ul>
+                </div>
+                {/*  
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
                 <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
                   <p className="text-sm text-gray-600 mb-4">
@@ -240,7 +288,7 @@ const KraepelinInstructionPage: React.FC = () => {
                     </div>
                     <div className='flex justify-center items-center gap-x-4  '>
                       <div className='flex flex-col justify-center items-center gap-x-4  '>
-                        {/* AREA SOAL (ATAS) */}
+                        
                         <div className="flex justify-center items-center mb-10">
                           
                             <div className="flex flex-col gap-y-6 text-5xl font-bold text-center">
@@ -273,7 +321,7 @@ const KraepelinInstructionPage: React.FC = () => {
                         )}
 
 
-                        {/* AREA NUMPAD (BAWAH) */}
+                        
                         
                           <div className="grid grid-cols-3 gap-4 max-w-xs mx-auto">
                             {[1,2,3,4,5,6,7,8,9,0].map((num) => (
@@ -296,6 +344,7 @@ const KraepelinInstructionPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                */}
               </section>
 
               {/* Tombol aksi */}
@@ -310,7 +359,7 @@ const KraepelinInstructionPage: React.FC = () => {
                   onClick={handleModal}
                   className="px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:shadow-lg transition-all"
                 >
-                  Mulai Tes
+                  Mulai Latihan
                 </motion.button>
               </div>
             </div>
@@ -337,7 +386,7 @@ const KraepelinInstructionPage: React.FC = () => {
             className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
             onClick={handleTestComplete}
           >
-            Mulai Tes
+            Mulai Latihan
           </button>
         </div>
       </Modal>

@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import { ArrowLeft, Brain, Clock, ListChecks } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import TestHeader from '@/app/components/TestHeader';
 
 function IconSeries() {
   return (
@@ -34,12 +36,23 @@ export default function CFITTest() {
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
+        <TestHeader />
+        
+        {/*  
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">CFIT (Culture Fair Intelligent Test)</h1>
+          <div className="flex items-center gap-4">
+            
+            <Image
+              src='/assets/logoKurniawan2.webp'
+              width={50}
+              height={50}
+              alt=''
+            >
+            </Image>
+            <h1 className="text-xl font-bold text-gray-800">Kurniawan Group</h1>
           </div>
         </div>
+        */}
       </header>
 
       <main className="container mx-auto px-4 py-10">
@@ -54,19 +67,10 @@ export default function CFITTest() {
             <div className="p-6 md:p-8">
               {/* Breadcrumb / Title */}
               <div className="mb-4">
-                <nav className="text-xs text-slate-500 mb-2" aria-label="Breadcrumb">
-                  <ol className="inline-flex items-center space-x-2">
-                    <li><Link href="/tests/cfit" className="hover:underline">Tes</Link></li>
-                    <li><span className="text-slate-400">/</span></li>
-                    <li className="font-medium text-slate-700">CFIT</li>
-                  </ol>
-                </nav>
-
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Tes Culture Fair Intelligence Test (CFIT)</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Tes Psikotes</h2>
                 <p className="mt-2 text-sm text-slate-600">Subtes yang dirancang untuk mengukur kemampuan penalaran non-verbal dan pola berpikir.</p>
               </div>
               
-
               {/* Info box */}
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">

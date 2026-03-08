@@ -3,7 +3,8 @@
 import { div, tr } from "framer-motion/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getHasilPeserta } from "@/services/peserta.service";
 
 const peserta = [
     {
@@ -16,9 +17,31 @@ const peserta = [
     }
 ]
 
+interface peserta {
+    name: string
+    date: string
+}
+
 export default function AdminManajemenTes() {
 
     const [isClicked, setIsClicked] = useState<boolean>(false)
+    const [hasilPeserta, setHasilPeserta] = useState<peserta[]>([])
+
+    useEffect(()=> {
+        const hasilPeserta = async () => {
+            try {
+                const hasil = await getHasilPeserta()
+                setHasilPeserta(hasil.data.data)
+            } catch(error) {
+                console.log(error)
+            }
+        }
+        hasilPeserta()
+    }, [])
+
+    useEffect(()=>{
+        console.log('ini hasil:', hasilPeserta)
+    }, [hasilPeserta])
 
     return (
         <div className="">

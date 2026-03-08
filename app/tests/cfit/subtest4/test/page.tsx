@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { storeAnswersCfit, triggerN8n } from '@/services/answers.service';
 import { getSoalCfit4Service } from '@/services/questions.service';
+import { updateStatusTest } from "@/services/answers.service"
 
 interface Question {
     id: number;
@@ -98,6 +99,9 @@ export default function CFITSubtest4Test() {
             const sessionId = testSessionParsed.sessionId
             console.log('ini test4:', tests)
             const res = await storeAnswersCfit(sessionId, answers)
+
+            const statusTest = await updateStatusTest(sessionId)
+
             const pesertaId = testSessionParsed.pesertaId
             const trigger = await triggerN8n(pesertaId, tests)
             
@@ -110,6 +114,7 @@ export default function CFITSubtest4Test() {
                 
                 router.push(`/tests/${tests.toLowerCase()}`)  
             } else {
+                
                 router.push('/result')
             }         
     };
@@ -148,16 +153,21 @@ export default function CFITSubtest4Test() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-800">CFIT — Subtes 4</h1>
+                        <h1 className="text-2xl font-bold text-slate-800">SUBTES 4</h1>
                         <p className="text-sm text-slate-500">Temukan pola urutan pada rangkaian gambar berikut.</p>
                     </div>
-                    <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-5 py-2 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
-                    ⏱ {formatTime(timeLeft)}
+                    <div className='flex gap-x-3'>
+                        <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                            ⏱ {formatTime(timeLeft)}
+                        </div>
+                        <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                            <span>Soal: {currentQuestion + 1} / {question.length}</span>
+                        </div>
                     </div>
                 </div>
 
                 {/* Progress */}
-                <div className="mb-8">
+                {/* <div className="mb-8">
                     <div className="flex justify-between text-sm mb-2 text-slate-600">
                     <span>Soal {currentQuestion + 1} / {question.length}</span>
                     <span>{Math.round(progressPercent)}%</span>
@@ -168,13 +178,13 @@ export default function CFITSubtest4Test() {
                         style={{ width: `${progressPercent}%` }}
                     />
                     </div>
-                </div>
+                </div> */}
 
                 {/* Soal */}
                 <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
-                    <div className="w-1/3 grid grid-cols-1 md:grid-cols-1 gap-3 mb-6 m-auto">
+                    <div className="flex justify-center items-center gap-3 mb-6 m-auto">
                         <div
-                        className="aspect-square bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
+                        className="aspect-square w-2/12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
                         >
                             <img 
                                 src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
@@ -188,7 +198,7 @@ export default function CFITSubtest4Test() {
                     </div>
 
                     {/* Pilihan Jawaban */}
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                    <div className="m-auto grid w-10/12 grid-cols-2 sm:grid-cols-5 gap-x-8">
                         {question[currentQuestion]?.options?.map((option) => {
                             return(
                             <button
@@ -200,6 +210,9 @@ export default function CFITSubtest4Test() {
                                 : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'
                             }`}
                             >
+                                <div className='pl-3 pt-2 h-full'>
+                                    {option.label}
+                                </div>
                                 <img 
                                     src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`} 
                                     alt={`Option ${option.label}`}
@@ -239,29 +252,29 @@ export default function CFITSubtest4Test() {
                 </div>
 
                 {/* Footer */}
-                <div className="mt-8 text-center text-xs text-slate-400">
+                {/* <div className="mt-8 text-center text-xs text-slate-400">
                 Waktu berjalan otomatis. Tes akan selesai saat waktu habis.
-                </div>
+                </div> */}
             </main>
 
             <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-        <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-        <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-        <div className='flex gap-x-3 justify-evenly mt-4'>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-            onClick={()=> setIsModalOpen(false)}
-          >
-            Kembali
-          </button>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-            onClick={handleTestComplete}
-          >
-            Mulai Tes
-          </button>
-        </div>
-      </Modal>
+                <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
+                <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
+                <div className='flex gap-x-3 justify-evenly mt-4'>
+                <button 
+                    className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                    onClick={()=> setIsModalOpen(false)}
+                >
+                    Kembali
+                </button>
+                <button 
+                    className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                    onClick={handleTestComplete}
+                >
+                    Selesai
+                </button>
+                </div>
+            </Modal>
 
         </div>
     )

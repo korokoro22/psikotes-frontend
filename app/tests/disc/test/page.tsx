@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, ArrowLeft } from 'lucide-react';
 import Modal from '@/app/components/Modal';
 import { storeAnswersDisc } from '@/services/answers.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface WordGroup {
   id: number;
@@ -40,19 +41,23 @@ export default function DISCTestPage() {
 
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState(0);
+//   const [answers, setAnswers] = useState<{
+//     most: { groupId: number; type: string }[];
+//     least: { groupId: number; type: string }[];
+//   }>({
+//     least: Array.from({length: wordGroups.length}, (_, index) => ({
+//       groupId: index, type: ''
+//     })),
+//     most: Array.from({length: wordGroups.length}, (_, index) => ({
+//       groupId: index, type: ''
+//     }))
+// });
   const [answers, setAnswers] = useState<{
-    most: { groupId: number; type: string }[];
+    most: { groupId: number;  type: string }[];
     least: { groupId: number; type: string }[];
-  }>({
-    least: Array.from({length: wordGroups.length}, (_, index) => ({
-      groupId: index, type: ''
-    })),
-    most: Array.from({length: wordGroups.length}, (_, index) => ({
-      groupId: index, type: ''
-    }))
-});
+  }>({ most: [], least: [] });
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(7); // 5 menit
+  const [timeLeft, setTimeLeft] = useState(1200); // 5 menit
 
   useEffect(() => {
     console.log('current group:', answers);
@@ -163,12 +168,7 @@ export default function DISCTestPage() {
     <div className="font-sans min-h-screen bg-gray-50">
       {/* ✅ Sticky Header Navbar */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">DISC Personality Test</h1>
-          </div>
-        </div>
+        <TestHeader />
       </header>
 
       <main className="container mx-auto px-6 py-10">
@@ -216,7 +216,7 @@ export default function DISCTestPage() {
                   const isLeast = answers.least[currentGroup]?.type === word.type;
                   const mostTaken = !!answers.most[currentGroup];
                   const leastTaken = !!answers.least[currentGroup];
-                  console.log(isMost)
+                  // console.log(isMost)
 
                   return (
                     <div

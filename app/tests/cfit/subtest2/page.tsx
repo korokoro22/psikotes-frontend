@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { getContohCfit2Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
   id: number;
@@ -161,12 +162,7 @@ const handleAnswer = (option: string) => {
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Brain className="text-blue-600" size={28} />
-            <h1 className="text-xl font-bold text-gray-800">CFIT - Subtes 2</h1>
-          </div>
-        </div>
+        <TestHeader />
       </header>
 
       {/* Main Content */}
@@ -209,7 +205,7 @@ const handleAnswer = (option: string) => {
               <p className="text-sm text-gray-600 mb-4">
                 Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk mengisi kotak terakhir:
               </p>
-              <div className="flex justify-center items-center bg-white rounded-lg p-8 border">
+              <div className="flex justify-center items-center bg-white rounded-lg p-5 sm:p-8 border">
                 
                   <div className='w-full flex flex-col gap-3 text-gray-400 italic'>
                     <div className="text-center text-slate-700 mb-6">
@@ -253,14 +249,14 @@ const handleAnswer = (option: string) => {
                       className={`  
                         ${
                           answered <= 1 && answered >=1
-                          ? 'mt-4 bg-red-100 border border-red-300 rounded-xl text-red-500 py-1 px-2 text-lg not-italic'
+                          ? 'mt-4 bg-red-100 border border-red-300 rounded-xl text-sm sm:text-lg text-red-500 py-1 px-2 not-italic'
                           : ''
                         }
                         `}>
                       {answered <= 1 && answered >=1 ? 'Pastikan untuk memilih dua opsi.' : ''}
                     </div>
-                    <div className=''>
-                      <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={` px-8 py-3 rounded-lg font-semibold  ${
+                    <div className='flex justify-center sm:justify-start'>
+                      <button onClick={() => checkAnswer(currentQuestion)} disabled = {isChecked === true} className={` px-3 py-2 sm:px-5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-semibold  ${
                           isChecked === true
                           ? 'bg-blue-400 text-gray-200'
                           : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -278,7 +274,7 @@ const handleAnswer = (option: string) => {
                   resetState()
                 }}
               disabled={currentQuestion === 0}
-              className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+              className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
                 currentQuestion === 0
                   ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
                   : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
@@ -293,9 +289,9 @@ const handleAnswer = (option: string) => {
                   ? handleModal
                   : handleNext
               }
-              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
             >
-              {currentQuestion === question.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
+              {currentQuestion === question.length - 1 ? 'Selesai' : 'Berikutnya →'}
             </button>
           </div>
                   </div>

@@ -130,37 +130,29 @@ export default function CFITSubtest1Test() {
   }
 
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-6 md:p-10">
+    <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center">
+      <main className="container mx-auto px-2 py-4">
+        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-2 md:p-4">
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-3">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">CFIT — Subtes 1</h1>
+              <h1 className="text-2xl font-bold text-slate-800 text-center sm:text-left">SUBTES 1</h1>
               <p className="text-sm text-slate-500">Temukan pola urutan pada rangkaian gambar berikut.</p>
             </div>
-            <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-5 py-2 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
-              ⏱ {formatTime(timeLeft)}
+            <div className='flex gap-x-3'>
+              <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                ⏱ {formatTime(timeLeft)}
+              </div>
+              <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
+                <span>Soal: {currentQuestion + 1} / {question.length}</span>
+              </div>
             </div>
-          </div>
-
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex justify-between text-sm mb-2 text-slate-600">
-              <span>Soal {currentQuestion + 1} / {question.length}</span>
-              <span>{Math.round(progressPercent)}%</span>
-            </div>
-            <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
+            
           </div>
 
           {/* Soal */}
-          <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-3 mb-6">
+          <div className="border rounded-2xl bg-white shadow-sm p-3 mb-4">
+            <div className="flex justify-center md:grid-cols-1 gap-3 mb-6">
                 <div
                   className=" bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
                 >
@@ -169,7 +161,6 @@ export default function CFITSubtest1Test() {
                         alt=""
                         className='w-full h-full rounded-lg' />
                 </div>
-
             </div>
 
             <div className="text-center text-slate-700 mb-6">
@@ -189,6 +180,9 @@ export default function CFITSubtest1Test() {
                         : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'
                     }`}
                   >
+                    <div className='pl-3 pt-2 h-full'>
+                      {option.label}
+                    </div>
                     <img 
                       src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`} 
                       alt={`Option ${option.label}`}
@@ -226,11 +220,6 @@ export default function CFITSubtest1Test() {
             </button>
           </div>
         </div>
-
-        {/* Footer */}
-        <div className="mt-8 text-center text-xs text-slate-400">
-          Waktu berjalan otomatis. Tes akan selesai saat waktu habis.
-        </div>
       </main>
       <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
         <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
@@ -246,10 +235,11 @@ export default function CFITSubtest1Test() {
             className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
             onClick={handleTestComplete}
           >
-            Mulai Tes
+            Subtes berikutnya
           </button>
         </div>
       </Modal>
     </div>
   );
+  
 }
