@@ -1,6 +1,6 @@
-import type { NextConfig } from "next";
+// import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   /* config options here */
   images: {
     domains: [
@@ -11,6 +11,6 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   }, 
-}satisfies NextConfig;
+};
 
 export default nextConfig;
