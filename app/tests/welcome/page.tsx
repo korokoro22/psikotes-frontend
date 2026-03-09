@@ -10,7 +10,7 @@ import { updateStatusTest } from "@/services/answers.service"
 
 
 
-export default function frontPage()  {
+export default function FrontPage()  {
     const router = useRouter()
     const [data, setData] = useState()
     const [isModalOpen, setIsModalOpen] = useState(false)
