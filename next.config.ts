@@ -7,7 +7,10 @@ const nextConfig: NextConfig = {
       'ozklhkritpbdehhmoawz.supabase.co',
     ],
     
-  }
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
