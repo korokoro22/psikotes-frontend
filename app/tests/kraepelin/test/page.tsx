@@ -386,15 +386,17 @@ export default function KraeplinTest() {
       const tests:string = testSessionParsed.tests[testSessionParsed.currentIndex]
       console.log('ini test:', typeof(tests))
       const sessionId = testSessionParsed.sessionId
-      // const res = await storeAnswersKraepelin(sessionId, payloadConverted)
+      const res = await storeAnswersKraepelin(sessionId, payloadConverted)
 
       const statusTest = await updateStatusTest(sessionId)
 
       const pesertaId:number = testSessionParsed.pesertaId
       console.log('ini parsed: ', typeof(pesertaId))
+
       // if (tests === undefined) 
       //   return (console.log('test kosong'))
-      // const trigger = await triggerN8n(pesertaId, tests)
+      
+      const trigger = await triggerN8n(pesertaId, tests)
       const indexIncrement = testSessionParsed.currentIndex + 1
       testSessionParsed.currentIndex = indexIncrement
       const updatedTestString = JSON.stringify(testSessionParsed)
