@@ -7,14 +7,14 @@ import { triggerN8n } from '@/services/answers.service'
 
 export default function ResultPage() {
   const router = useRouter()
-  const [userData, setUserData] = useState<any>(null)
+  // const [userData, setUserData] = useState<any>(null)
 
-  useEffect(() => {
-    const storedUserData = localStorage.getItem('userData')
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData))
-    }
-  }, [])
+  // useEffect(() => {
+  //   const storedUserData = localStorage.getItem('userData')
+  //   if (storedUserData) {
+  //     setUserData(JSON.parse(storedUserData))
+  //   }
+  // }, [])
 
   const handleAnswer = async () => {
     const testSession = sessionStorage.getItem('testSession')
@@ -28,13 +28,13 @@ export default function ResultPage() {
     router.push('/')
   }
 
-  if (!userData) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100">
-        <p className="text-gray-600 text-lg font-medium">Memuat data...</p>
-      </div>
-    )
-  }
+  // if (!userData) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100">
+  //       <p className="text-gray-600 text-lg font-medium">Memuat data...</p>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-slate-100">
@@ -52,7 +52,7 @@ export default function ResultPage() {
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="bg-white rounded-2xl shadow-lg p-10 text-center max-w-md w-full">
           <h2 className="text-2xl font-semibold text-slate-800 mb-3">
-            Terima Kasih, {userData.nama.split(' ')[0]}!
+            Terima Kasih!
           </h2>
           <p className="text-slate-600 text-sm mb-6 leading-relaxed">
             Terima kasih telah menyelesaikan tes psikologi sebagai bagian dari proses rekrutmen.  
