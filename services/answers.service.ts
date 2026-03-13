@@ -12,8 +12,8 @@ export const storeAnswersCfit = (
 export const storeAnswersDisc = (
     sessionId: number,
     data: {
-        most: { groupId: number; type: string}[]
-        least: {groupId: number; type: string}[]
+        most: { groupId: number; questionIndex:number}[]
+        least: { groupId: number; questionIndex:number}[]
     }
 ) => api.post(`/api/user/answers/disc/${sessionId}`, data)
 

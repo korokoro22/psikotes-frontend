@@ -16,26 +16,32 @@ interface WordGroup {
   }[];
 }
 
-// interface DiscQuestion {
-//   id: number
-//   questionIndex: number
-//   questions: {
-//     sentences: string
-//     optionIndex: number
-//   }[]
-// }
+interface DiscQuestion {
+  id: number
+  questionIndex: number
+  questions: {
+    sentences: string
+    optionIndex: number
+  }[]
+}
 
-// interface DiscAnswers {
-//   questionIndex: number
-//   p1: number
-//   p2: number
-//   p3: number
-//   p4: number
-//   k1: number
-//   k2: number
-//   k3: number
-//   k4: number
-// }
+interface DiscAnswers {
+  
+  most: {
+    questionIndex: number
+    p1: number
+    p2: number
+    p3: number
+    p4: number
+  }[]
+  least: {
+    questionIndex: number
+    k1: number
+    k2: number
+    k3: number
+    k4: number
+  }[]
+}
 
 function IconPersonality() {
   return (
@@ -60,76 +66,69 @@ export default function DISCInstructionPage() {
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState(0);
   const [answers, setAnswers] = useState<{
-    most: { groupId: number;  type: string }[];
-    least: { groupId: number; type: string }[];
+    most: { groupId: number; questionIndex:number}[];
+    least: { groupId: number; questionIndex:number}[];
   }>({ most: [], least: [] });
 
   // const [answers, setAnswers] = useState<DiscAnswers>({
-  //   questionIndex: 0,
-  //   p1: 0,
-  //   p2: 0,
-  //   p3: 0,
-  //   p4: 0,
-  //   k1: 0,
-  //   k2: 0,
-  //   k3: 0,
-  //   k4: 0,
+  //   most: [],
+  //   least: []
   // })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // const discQuestion:DiscQuestion[] = [
+  const discQuestion:DiscQuestion[] = [
+    {
+      id: 0,
+      questionIndex: 1,
+      questions: [
+        { sentences: 'Mudah bergaul', optionIndex: 1 },
+        { sentences: 'Suka menyendiri', optionIndex: 2 },
+        { sentences: 'Kurang nyaman di kerumunan', optionIndex: 3 },
+        { sentences: 'Nyaman di keramaian asalkan dengan teman', optionIndex: 4 }
+      ],
+    },
+    {
+      id: 1,
+      questionIndex: 2,
+      questions: [
+        { sentences: 'Rendah hati, Sederhana', optionIndex: 1 },
+        { sentences: 'Ingin Kemajuan', optionIndex: 2 },
+        { sentences: 'Terbuka memperlihatkan perasaan', optionIndex: 3 },
+        { sentences: 'Puas dengan segalanya', optionIndex: 4 }
+      ],
+    }
+  ]
+  
+  // const wordGroups: WordGroup[] = [
   //   {
-  //     id: 0,
-  //     questionIndex: 1,
-  //     questions: [
-  //       { sentences: 'Mudah bergaul', optionIndex: 1 },
-  //       { sentences: 'Suka menyendiri', optionIndex: 2 },
-  //       { sentences: 'Kurang nyaman di kerumunan', optionIndex: 3 },
-  //       { sentences: 'Nyaman di keramaian asalkan dengan teman', optionIndex: 4 }
+  //     id: 1,
+  //     words: [
+  //       { text: 'Tegas', type: 'D' },
+  //       { text: 'Menyenangkan', type: 'I' },
+  //       { text: 'Setia', type: 'S' },
+  //       { text: 'Teliti', type: 'C' },
   //     ],
   //   },
   //   {
-  //     id: 1,
-  //     questionIndex: 2,
-  //     questions: [
-  //       { sentences: 'Rendah hati, Sederhana', optionIndex: 1 },
-  //       { sentences: 'Ingin Kemajuan', optionIndex: 2 },
-  //       { sentences: 'Terbuka memperlihatkan perasaan', optionIndex: 3 },
-  //       { sentences: 'Puas dengan segalanya', optionIndex: 4 }
+  //     id: 2,
+  //     words: [
+  //       { text: 'Ambisius', type: 'D' },
+  //       { text: 'Optimis', type: 'I' },
+  //       { text: 'Sabar', type: 'S' },
+  //       { text: 'Perfeksionis', type: 'C' },
   //     ],
-  //   }
-  // ]
-  
-  const wordGroups: WordGroup[] = [
-    {
-      id: 1,
-      words: [
-        { text: 'Tegas', type: 'D' },
-        { text: 'Menyenangkan', type: 'I' },
-        { text: 'Setia', type: 'S' },
-        { text: 'Teliti', type: 'C' },
-      ],
-    },
-    {
-      id: 2,
-      words: [
-        { text: 'Ambisius', type: 'D' },
-        { text: 'Optimis', type: 'I' },
-        { text: 'Sabar', type: 'S' },
-        { text: 'Perfeksionis', type: 'C' },
-      ],
-    },
-    {
-      id: 3,
-      words: [
-        { text: 'Tegas', type: 'D' },
-        { text: 'Menyenangkan', type: 'I' },
-        { text: 'Setia', type: 'S' },
-        { text: 'Teliti', type: 'C' },
-      ],
-    },
-  ];
+  //   },
+  //   {
+  //     id: 3,
+  //     words: [
+  //       { text: 'Tegas', type: 'D' },
+  //       { text: 'Menyenangkan', type: 'I' },
+  //       { text: 'Setia', type: 'S' },
+  //       { text: 'Teliti', type: 'C' },
+  //     ],
+  //   },
+  // ];
 
   useEffect(() => {
           console.log('current group:', currentGroup);
@@ -143,7 +142,62 @@ export default function DISCInstructionPage() {
     router.push('/tests/disc/test');
   };
 
-  const handleSelection = (type: 'most' | 'least', wordType: string) => {
+  // const handleSelection = (type: 'most' | 'least', optionIndex: number) => {
+  //   setAnswers(prev => {
+  //     const updated = {}
+  //   })
+  // }
+
+  // const handleSelection = (type: 'most' | 'least', wordType: string) => {
+  //   setAnswers(prev => {
+  //     const updated = {
+  //       most: [...prev.most],
+  //       least: [...prev.least],
+  //     };
+
+  //     const currentMost = updated.most[currentGroup];
+  //     const currentLeast = updated.least[currentGroup];
+
+  //     // TOGGLE OFF (klik ulang)
+  //     if (
+  //       (type === 'most' && currentMost?.type === wordType) ||
+  //       (type === 'least' && currentLeast?.type === wordType)
+  //     ) {
+  //       if (type === 'most') delete updated.most[currentGroup];
+  //       else delete updated.least[currentGroup];
+  //       return updated;
+  //     }
+
+  //     // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
+  //     if (
+  //       (type === 'most' && currentLeast?.type === wordType) ||
+  //       (type === 'least' && currentMost?.type === wordType)
+  //     ) {
+  //       return prev;
+  //     }
+
+  //     // HANYA SATU MOST & SATU LEAST
+  //     if (type === 'most' && currentMost) return prev;
+  //     if (type === 'least' && currentLeast) return prev;
+
+  //     // SIMPAN PILIHAN
+  //     if (type === 'most') {
+  //       updated.most[currentGroup] = {
+  //         groupId: currentGroup,
+  //         type: wordType,
+  //       };
+  //     } else {
+  //       updated.least[currentGroup] = {
+  //         groupId: currentGroup,
+  //         type: wordType,
+  //       };
+  //     }
+
+  //     return updated;
+  //   });
+  // };
+
+  const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
     setAnswers(prev => {
       const updated = {
         most: [...prev.most],
@@ -155,8 +209,8 @@ export default function DISCInstructionPage() {
 
       // TOGGLE OFF (klik ulang)
       if (
-        (type === 'most' && currentMost?.type === wordType) ||
-        (type === 'least' && currentLeast?.type === wordType)
+        (type === 'most' && currentMost?.questionIndex === questionIndex) ||
+        (type === 'least' && currentLeast?.questionIndex === questionIndex)
       ) {
         if (type === 'most') delete updated.most[currentGroup];
         else delete updated.least[currentGroup];
@@ -165,8 +219,8 @@ export default function DISCInstructionPage() {
 
       // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
       if (
-        (type === 'most' && currentLeast?.type === wordType) ||
-        (type === 'least' && currentMost?.type === wordType)
+        (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
+        (type === 'least' && currentMost?.questionIndex === questionIndex)
       ) {
         return prev;
       }
@@ -179,32 +233,18 @@ export default function DISCInstructionPage() {
       if (type === 'most') {
         updated.most[currentGroup] = {
           groupId: currentGroup,
-          type: wordType,
+          questionIndex: questionIndex,
         };
       } else {
         updated.least[currentGroup] = {
           groupId: currentGroup,
-          type: wordType,
+          questionIndex: questionIndex,
         };
       }
 
       return updated;
     });
   };
-
-  // const resetState = () => {
-  //     setAnswers({
-  //       questionIndex: 0,
-  //       p1: 0,
-  //       p2: 0,
-  //       p3: 0,
-  //       p4: 0,
-  //       k1: 0,
-  //       k2: 0,
-  //       k3: 0,
-  //       k4: 0,
-  //     })
-  //   }
 
   const resetState = () => {
       setAnswers({most: [], least: []})
@@ -341,45 +381,10 @@ export default function DISCInstructionPage() {
                         >
                           <div className="grid grid-cols-1 gap-4">
 
-                            {/* {discQuestion[currentGroup].questions.map((question, index) => {
+                            {discQuestion[currentGroup].questions.map((question, index) => {
 
-                              // const isMost = 
-
-                              return (
-                                <div
-                                  key={index}
-                                  className='flex items-center justify-between p-4 border rounded-lg transition-all'
-                                >
-                                  <span className="text-lg font-medium text-gray-800">{question.sentences}</span>
-                                  <div className="flex gap-3">
-                                    <button
-                                      // disabled={(!isMost && mostTaken) || isLeast}
-                                      // onClick={() => handleSelection('most', word.type)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold 
-                                        
-                                          `}
-                                    >
-                                      PALING (P)
-                                    </button>
-
-                                    <button
-                                      // disabled={(!isLeast && leastTaken) || isMost}
-                                      // onClick={() => handleSelection('least', word.type)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold 
-                                        
-                                          `}
-                                    >
-                                      PALING TIDAK (K)
-                                    </button>
-                                  </div>
-                                </div>
-                              )
-                            } )} */}
-
-                            {wordGroups[currentGroup].words.map((word, index) => {
-
-                              const isMost = answers.most[currentGroup]?.type === word.type;
-                              const isLeast = answers.least[currentGroup]?.type === word.type;
+                              const isMost = answers.most[currentGroup]?.questionIndex === question.optionIndex;
+                              const isLeast = answers.least[currentGroup]?.questionIndex === question.optionIndex;
                               const mostTaken = !!answers.most[currentGroup];
                               const leastTaken = !!answers.least[currentGroup];
 
@@ -394,11 +399,11 @@ export default function DISCInstructionPage() {
                                       : 'border-gray-200 hover:bg-gray-50'
                                   }`}
                                 >
-                                  <span className="text-lg font-medium text-gray-800">{word.text}</span>
+                                  <span className="text-lg font-medium text-gray-800">{question.sentences}</span>
                                   <div className="flex gap-3">
                                     <button
                                       disabled={(!isMost && mostTaken) || isLeast}
-                                      onClick={() => handleSelection('most', word.type)}
+                                      onClick={() => handleSelection('most', question.optionIndex)}
                                       className={`px-4 py-2 rounded-md text-sm font-semibold ${
                                         isMost
                                           ? 'bg-green-600 text-white'
@@ -412,7 +417,7 @@ export default function DISCInstructionPage() {
 
                                     <button
                                       disabled={(!isLeast && leastTaken) || isMost}
-                                      onClick={() => handleSelection('least', word.type)}
+                                      onClick={() => handleSelection('least', question.optionIndex)}
                                       className={`px-4 py-2 rounded-md text-sm font-semibold ${
                                         isLeast
                                           ? 'bg-red-600 text-white'
@@ -423,11 +428,6 @@ export default function DISCInstructionPage() {
                                     >
                                       PALING TIDAK (K)
                                     </button>
-
-
-
-
-
                                   </div>
                                 </div>
                               );
@@ -455,13 +455,19 @@ export default function DISCInstructionPage() {
 
                                 <button
                                     onClick={
-                                    currentGroup === wordGroups.length - 1
+                                    currentGroup === discQuestion.length - 1
                                         ? handleModal
                                         : handleNext
                                     }
-                                    className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                                    className={`px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+                                      !(answers.most[currentGroup] && answers.least[currentGroup])
+                                        ? 'cursor-not-allowed bg-gray-400'
+                                        : 'from-blue-600 to-indigo-600'
+                                      }`}
                                 >
-                                    {currentGroup === wordGroups.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
+                                    {currentGroup !== discQuestion.length - 1 
+                                      ? 'Soal Berikutnya →' 
+                                      : 'Selesai Tes'}
                                 </button>
                             </div>
                     </div>

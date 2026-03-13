@@ -17,14 +17,14 @@ export default function ResultPage() {
   // }, [])
 
   const handleAnswer = async () => {
-    const testSession = sessionStorage.getItem('testSession')
-    if(!testSession) {
-      return (console.log('gagal'))
-    }
-    const testSessionParsed = JSON.parse(testSession)
+    // const testSession = sessionStorage.getItem('testSession')
+    // if(!testSession) {
+    //   return (console.log('gagal'))
+    // }
+    // const testSessionParsed = JSON.parse(testSession)
     // const pesertaId = testSessionParsed.pesertaId
     // const trigger = await triggerN8n(pesertaId)
-    sessionStorage.clear()
+    // sessionStorage.clear()
     router.push('/')
   }
 

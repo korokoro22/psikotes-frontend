@@ -192,7 +192,6 @@ export default function CFITSubtest1() {
                     <div className="text-center text-slate-700 mb-6">
                       Pilih gambar yang paling tepat untuk melengkapi pola:
                     </div>
-
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 w-full">
                       {question[currentQuestion]?.options?.map((option) => (
                         <button
@@ -215,13 +214,19 @@ export default function CFITSubtest1() {
                               : ''
                           }`}
                         >
-                          {/* Tampilkan gambar dari imagePath */}
-                          <img 
+                          <div className='pl-3 pt-2 h-full text-slate-700'>
+                            {option.label}
+                          </div>
+                          
+                            <img 
                             src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`} 
                             // src={option.imagePath} 
                             alt={`Option ${option.label}`}
-                            className="w-full h-full object-contain p-2 rounded-xl"
+                            className="w-4/5 h-4/5 object-contain p-2 rounded-xl"
                           />
+                          
+                          {/* Tampilkan gambar dari imagePath */}
+                          
                         </button>
                       ))}
                     </div>
