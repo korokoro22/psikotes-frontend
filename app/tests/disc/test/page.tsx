@@ -149,12 +149,13 @@ export default function DISCTestPage() {
       // SIMPAN PILIHAN
       if (type === 'most') {
         updated.most[currentGroup] = {
-          groupId: currentGroup,
+          groupId: currentGroup+1,
           questionIndex: questionIndex,
+
         };
       } else {
         updated.least[currentGroup] = {
-          groupId: currentGroup,
+          groupId: currentGroup+1,
           questionIndex: questionIndex,
         };
       }
