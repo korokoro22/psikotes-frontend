@@ -127,8 +127,8 @@ export default function PapiTestPage() {
 
     const statusTest = await updateStatusTest(sessionId)
 
-    // const pesertaId = testSessionParsed.pesertaId
-    // const trigger = await triggerN8n(pesertaId, tests)
+    const pesertaId = testSessionParsed.pesertaId
+    const trigger = await triggerN8n(pesertaId, tests)
 
     const indexIncrement = await testSessionParsed.currentIndex + 1
     testSessionParsed.currentIndex = indexIncrement
