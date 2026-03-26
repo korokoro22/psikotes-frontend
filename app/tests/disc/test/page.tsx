@@ -256,7 +256,7 @@ export default function DISCTestPage() {
                               return (
                                 <div
                                   key={index}
-                                  className={`flex items-center justify-between p-4 border rounded-lg transition-all ${
+                                  className={`flex items-center justify-between p-4 border rounded-lg transition-all text-xs md:text-base ${
                                     isMost
                                       ? 'border-green-500 bg-green-50'
                                       : isLeast
@@ -264,12 +264,12 @@ export default function DISCTestPage() {
                                       : 'border-gray-200 hover:bg-gray-50'
                                   }`}
                                 >
-                                  <span className="text-lg font-medium text-gray-800">{opt.sentences}</span>
+                                  <span className=" font-medium text-gray-800">{opt.sentences}</span>
                                   <div className="flex gap-3">
                                     <button
                                       disabled={(!isMost && mostTaken) || isLeast}
                                       onClick={() => handleSelection('most', opt.optionIndex)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                                      className={`px-4 py-2 rounded-md font-semibold ${
                                         isMost
                                           ? 'bg-green-600 text-white'
                                           : (!isMost && mostTaken) || isLeast
@@ -286,7 +286,7 @@ export default function DISCTestPage() {
                                     <button
                                       disabled={(!isLeast && leastTaken) || isMost}
                                       onClick={() => handleSelection('least', opt.optionIndex)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                                      className={`px-4 py-2 rounded-md font-semibold ${
                                         isLeast
                                           ? 'bg-red-600 text-white'
                                           : (!isLeast && leastTaken) || isMost
@@ -320,7 +320,7 @@ export default function DISCTestPage() {
             <button
             disabled={!(answers.most[currentGroup] && answers.least[currentGroup])}
               onClick={
-                currentGroup === 1 - 1
+                currentGroup === question.length - 1
                   ? handleModal
                   : () => setCurrentGroup(prev => prev + 1)
                 }

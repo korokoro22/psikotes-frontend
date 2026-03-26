@@ -171,9 +171,9 @@ export default function CFITSubtest4() {
                         <div>
                             <p>Jawab soal berikut dengan teliti dan cepat.</p>
                         </div>
-                        <div className="w-1/3 grid grid-cols-1 md:grid-cols-1 gap-4 mb-6 text-gray-400 italic m-auto">
+                        <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-4 mb-6 text-gray-400 italic m-auto">
                             <div
-                                className="aspect-square bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
+                                className="w-30 md:w-50 aspect-square bg-slate-100 rounded-xl mx-auto flex items-center justify-center text-slate-400 border border-slate-200"
                             >
                                 <img 
                                     src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 

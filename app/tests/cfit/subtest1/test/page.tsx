@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { storeAnswersCfit } from '@/services/answers.service';
 import { getSoalCfit1Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
   id: number;
@@ -130,7 +131,12 @@ export default function CFITSubtest1Test() {
   }
 
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center">
+    <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+      <header
+        className='bg-white shadow-sm py-4 sticky top-0 z-10'
+      >
+        <TestHeader />
+      </header>
       <main className="container mx-auto px-2 py-4">
         <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-2 md:p-4">
           {/* Header */}
@@ -154,7 +160,7 @@ export default function CFITSubtest1Test() {
           <div className="border rounded-2xl bg-white shadow-sm p-3 mb-4">
             <div className="flex justify-center md:grid-cols-1 gap-3 mb-6">
                 <div
-                  className=" bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
+                  className=" bg-slate-100 w-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
                 >
                   <img 
                         src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
@@ -174,7 +180,7 @@ export default function CFITSubtest1Test() {
                 <button
                     key={option.label}
                     onClick={() => handleAnswer(option.label)}
-                    className={`aspect-square text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 ${
+                    className={`aspect-square w-30 text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 ${
                       answers[currentQuestion]?.answers?.includes(option.label)
                         ? 'bg-blue-600 text-white border-blue-600 scale-105 shadow'
                         : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'

@@ -282,11 +282,11 @@ export default function DISCInstructionPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8"
+          className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-4 md:p-8"
         >
           {/* Card utama */}
           <section>
-            <div className="p-6 md:p-8">
+            <div className="">
               {/* Breadcrumb */}
               <div className="mb-4">
                 <nav className="text-xs text-slate-500 mb-2" aria-label="Breadcrumb">
@@ -374,11 +374,11 @@ export default function DISCInstructionPage() {
               {/* Section: Contoh Soal */}
               <section className="mb-10">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
-                <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
+                <div className="border border-gray-200 rounded-xl p-4 md:p-6 bg-gray-50">
                   <p className="text-sm text-gray-600 mb-4">
                     Berikut contoh tampilan soal. Pilih satu kata yang paling dan paling tidak menggambarkan diri Anda.
                   </p>
-                  <div className="flex justify-center items-center flex-col bg-white rounded-lg p-8 border text-gray-400 italic">
+                  <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
                     <div className='w-full'>
                       <AnimatePresence mode="wait">
                         <motion.div
@@ -400,7 +400,7 @@ export default function DISCInstructionPage() {
                               return (
                                 <div
                                   key={index}
-                                  className={`flex items-center justify-between p-4 border rounded-lg transition-all ${
+                                  className={`flex items-center text-sm md:text-base  justify-between p-4 border rounded-lg transition-all ${
                                     isMost
                                       ? 'border-green-500 bg-green-50'
                                       : isLeast
@@ -408,12 +408,12 @@ export default function DISCInstructionPage() {
                                       : 'border-gray-200 hover:bg-gray-50'
                                   }`}
                                 >
-                                  <span className="text-lg font-medium text-gray-800">{question.sentences}</span>
+                                  <span className="font-medium text-gray-800">{question.sentences}</span>
                                   <div className="flex gap-3">
                                     <button
                                       disabled={(!isMost && mostTaken) || isLeast}
                                       onClick={() => handleSelection('most', question.optionIndex)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                                      className={`px-3 md:px-4 py-1 md:py-2 rounded-md font-semibold ${
                                         isMost
                                           ? 'bg-green-600 text-white'
                                           : (!isMost && mostTaken) || isLeast
@@ -427,7 +427,7 @@ export default function DISCInstructionPage() {
                                     <button
                                       disabled={(!isLeast && leastTaken) || isMost}
                                       onClick={() => handleSelection('least', question.optionIndex)}
-                                      className={`px-4 py-2 rounded-md text-sm font-semibold ${
+                                      className={`px-2 md:px-4 py-1 md:py-2 rounded-md  font-semibold ${
                                         isLeast
                                           ? 'bg-red-600 text-white'
                                           : (!isLeast && leastTaken) || isMost
@@ -468,7 +468,7 @@ export default function DISCInstructionPage() {
                                         ? handleModal
                                         : handleNext
                                     }
-                                    className={`px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+                                    className={`px-4 sm:px-5 py-2  rounded-lg bg-gradient-to-r text-xs sm:text-sm from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
                                       !(answers.most[currentGroup] && answers.least[currentGroup])
                                         ? 'cursor-not-allowed bg-gray-400'
                                         : 'from-blue-600 to-indigo-600'

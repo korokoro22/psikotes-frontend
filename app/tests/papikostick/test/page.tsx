@@ -158,7 +158,7 @@ export default function PapiTestPage() {
             <main className="container mx-auto px-6 py-10">
                 <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-8">
                 {/* Header Info */}
-                <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                     <div className="text-center md:text-left">
                     <h2 className="text-2xl font-bold text-gray-800">Instruksi</h2>
                     <p className="text-gray-500 text-sm">
@@ -171,7 +171,7 @@ export default function PapiTestPage() {
                 </div>
 
                 {/* Progress */}
-                <div className="mb-8">
+                <div className="mb-6">
                     <div className="text-sm text-gray-600 mb-2 text-center">
                     Kelompok {currentGroup + 1} dari {questions.length}
                     </div>
@@ -184,8 +184,8 @@ export default function PapiTestPage() {
                 </div>
 
                 {/* Soal */}
-                <section className="mb-10">
-                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-8 text-gray-400 italic">
+                <section className="">
+                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 text-gray-400 italic">
                         <div className='w-full'>
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -211,7 +211,7 @@ export default function PapiTestPage() {
                                         <button
                                         // disabled={(!isMost && mostTaken) || isLeast}
                                         onClick={() => handleSelection(opt.optionType)}
-                                        className={`p4 rounded-md text-lg font-medium border border-gray-300 text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
+                                        className={`p4 rounded-md text-base md:text-base font-medium border border-gray-300 text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
                                             selected
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-50 hover:bg-gray-300'
@@ -227,7 +227,7 @@ export default function PapiTestPage() {
                             </motion.div>
                         </AnimatePresence>
 
-                        <div className="flex justify-between items-center mt-7">
+                        <div className="flex justify-between items-center mt-7 text-xs md:text-lg font-medium">
                                     <button
                                         onClick={() => 
                                         {
@@ -235,7 +235,7 @@ export default function PapiTestPage() {
                                             // resetState()
                                         }}
                                         disabled={currentGroup === 0}
-                                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                                        className={`px-4 py-2 rounded-lg border transition ${
                                         currentGroup === 0
                                             ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
                                             : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
@@ -251,7 +251,7 @@ export default function PapiTestPage() {
                                             ? handleModal
                                             : handleNext
                                         }
-                                        className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition
+                                        className={`px-4 py-2 rounded-lg bg-gradient-to-r  text-white shadow hover:scale-[1.02] active:scale-95 transition
                                             ${
                                             !(answers[currentGroup])
                                                 ? 'cursor-not-allowed bg-gray-400'

@@ -101,6 +101,14 @@ export default function PapiInstructionPage() {
                 {sentences: 'Saya ingin menjadi pemimpin', optionType: 2}
             ]
         },
+        {
+            id: 2,
+            questionIndex: 3,
+            option: [
+                {sentences: 'Saya ingin bebas', optionType: 1},
+                {sentences: 'Saya suka hal yang baru', optionType: 2}
+            ]
+        },
     ]
     
     const papi: PapiQuestion[]  = [
@@ -204,11 +212,11 @@ export default function PapiInstructionPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8"
+            className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-5 md:p-8"
             >
             {/* Card utama */}
             <section>
-                <div className="p-6 md:p-8">
+                <div className="">
                 {/* Breadcrumb */}
                 <div className="mb-4">
                     {/* <nav className="text-xs text-slate-500 mb-2" aria-label="Breadcrumb">
@@ -269,7 +277,7 @@ export default function PapiInstructionPage() {
                     Petunjuk Tes
                     </h2>
 
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-sm md:text-base">
                     <p className="text-gray-700 mb-4">
                         Pada tes ini, Anda akan diberikan sejumlah pernyataan yang menggambarkan sikap atau perilaku kerja. Setiap kelompok berisi dua pernyataan.
                     </p>
@@ -293,7 +301,7 @@ export default function PapiInstructionPage() {
                     <p className="text-sm text-gray-600 mb-4">
                         Berikut contoh tampilan soal. Pilih satu kalimat yang paling menggambarkan diri Anda.
                     </p>
-                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-8 border text-gray-400 italic">
+                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
                         <div className='w-full'>
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -310,15 +318,15 @@ export default function PapiInstructionPage() {
 
                                 return (
                                     <div
-                                    className="flex gap-3 "
+                                    className="flex gap-3 text-left"
                                     key={index}
                                     >
                                         <button
                                         // disabled={(!isMost && mostTaken) || isLeast}
                                         onClick={() => handleSelection(opt.optionType)}
-                                        className={`p4 rounded-md text-lg font-medium border  text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
+                                        className={` rounded-md text-sm md:text-lg font-medium border text-gray-700 flex px-2 py-4 transition-all  w-full  ${
                                             selected
-                                                ? 'bg-green-100 border-green-500'
+                                                ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-50 hover:bg-gray-300 border-gray-300'
                                             }`}
                                         >
@@ -332,7 +340,7 @@ export default function PapiInstructionPage() {
                             </motion.div>
                         </AnimatePresence>
 
-                        <div className="flex justify-between items-center mt-7">
+                        <div className="flex justify-between items-center mt-7 text-xs md:text-lg font-medium">
                                     <button
                                         onClick={() => 
                                         {
@@ -340,7 +348,7 @@ export default function PapiInstructionPage() {
                                             // resetState()
                                         }}
                                         disabled={currentGroup === 0}
-                                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                                        className={`px-4 py-2 rounded-lg border transition ${
                                         currentGroup === 0
                                             ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
                                             : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
@@ -355,7 +363,7 @@ export default function PapiInstructionPage() {
                                             ? handleModal
                                             : handleNext
                                         }
-                                        className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
                                     >
                                         {currentGroup === papi.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
                                     </button>

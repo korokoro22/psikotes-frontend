@@ -67,8 +67,7 @@ export default function CFITTest() {
             <div className="p-6 md:p-8">
               {/* Breadcrumb / Title */}
               <div className="mb-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800">Tes Psikotes</h2>
-                <p className="mt-2 text-sm text-slate-600">Subtes yang dirancang untuk mengukur kemampuan penalaran non-verbal dan pola berpikir.</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 text-center md:text-left">TES PSIKOTES</h2>
               </div>
               
               {/* Info box */}

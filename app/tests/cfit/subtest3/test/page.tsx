@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { storeAnswersCfit } from '@/services/answers.service';
 import { getSoalCfit3Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
     id: number;
@@ -124,11 +125,16 @@ export default function CFITSubtest3Test() {
 
     return (
         <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+          <header
+            className='bg-white shadow-sm py-4 sticky top-0 z-10'
+          >
+            <TestHeader />
+          </header>
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-2 md:p-4">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-            <div>
+            <div className='text-center md:text-left'>
               <h1 className="text-2xl font-bold text-slate-800">SUBTES 3</h1>
               <p className="text-sm text-slate-500">Temukan pola urutan pada rangkaian gambar berikut.</p>
             </div>
@@ -151,7 +157,8 @@ export default function CFITSubtest3Test() {
                 <img 
                   src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
                   alt=""
-                  className='w-full h-full rounded-lg' />
+                  className='w-50 rounded-lg' />
+                  
               </div>
            
             </div>
@@ -167,13 +174,13 @@ export default function CFITSubtest3Test() {
                   <button
                   key={option.label}
                   onClick={() => handleAnswer(option.label)}
-                  className={`aspect-square text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 ${
+                  className={`w-35 aspect-square text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 p-3 ${
                     answers[currentQuestion]?.answers?.includes(option.label)
                       ? 'bg-blue-600 text-white border-blue-600 scale-105 shadow'
                       : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'
                   }`}
                 >
-                  <div className='pl-3 pt-2 h-full'>
+                  <div className=' h-full'>
                     {option.label}
                   </div>
                   <img 

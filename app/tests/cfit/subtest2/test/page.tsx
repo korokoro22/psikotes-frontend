@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Modal from '@/app/components/Modal';
 import { storeAnswersCfit } from '@/services/answers.service';
 import { getSoalCfit2Service } from '@/services/questions.service';
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
     id: number;
@@ -155,12 +156,15 @@ export default function CFITsubtest2Test() {
     const progressPercent = ((currentQuestion + 1) / question.length) * 100;
 
     return (
-        <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex items-center">
+        <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+            <header className='bg-white shadow-sm py-4 sticky top-0 z-10'>
+                <TestHeader />
+            </header>
             <main className="container mx-auto px-2 py-4">
                 <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-2 md:p-4">
                     {/* Header */}
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-                        <div>
+                        <div className='text-center md:text-left'>
                             <h1 className="text-2xl font-bold text-slate-800">SUBTES 2</h1>
                             <p className="text-sm text-slate-500">Temukan dua buah gambar yang memiliki pola yang sama pada rangkaian gambar berikut.</p>
                         </div>
@@ -191,7 +195,7 @@ export default function CFITsubtest2Test() {
                     {/* Soal */}
                     <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
                         <div className="text-center text-slate-700 mb-6">
-                            Pilih gambar yang paling tepat untuk melengkapi pola:
+                            Pilih dua gambar dengan pola yang sama:
                         </div>
 
                         {/* Pilihan Jawaban */}
@@ -203,13 +207,13 @@ export default function CFITsubtest2Test() {
                                     <button
                                     key={option.label}
                                     onClick={() => handleAnswer(option.label)}
-                                    className={`aspect-square text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 ${
+                                    className={`aspect-square w-35 md:w-full text-lg font-semibold rounded-xl flex items-center justify-center transition-all border-2 p-3 ${
                                         selected
                                             ? 'bg-blue-600 text-white border-blue-600 scale-105 shadow'
                                             : 'border-slate-200 bg-slate-50 hover:border-blue-400 hover:scale-[1.02]'
                                         }`}
                                 >
-                                    <div className='pl-3 pt-2 h-full'>
+                                    <div className='pt-2 h-full'>
                                         {option.label}
                                     </div>
                                     <img 

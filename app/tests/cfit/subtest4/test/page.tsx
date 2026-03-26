@@ -5,6 +5,7 @@ import Modal from '@/app/components/Modal';
 import { storeAnswersCfit, triggerN8n } from '@/services/answers.service';
 import { getSoalCfit4Service } from '@/services/questions.service';
 import { updateStatusTest } from "@/services/answers.service"
+import TestHeader from '@/app/components/TestHeader';
 
 interface Question {
     id: number;
@@ -148,6 +149,11 @@ export default function CFITSubtest4Test() {
 
     return(
         <div className='font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100'>
+            <header
+                className='bg-white shadow-sm py-4 sticky top-0 z-10'
+            >
+                <TestHeader />
+            </header>
             <main className="container mx-auto px-4 py-8">
                 <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-6 md:p-10">
                 {/* Header */}
