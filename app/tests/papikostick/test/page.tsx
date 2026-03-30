@@ -120,29 +120,29 @@ export default function PapiTestPage() {
         if(!testSession)
             return alert('gagal')
 
-    const testSessionParsed = JSON.parse(testSession)
-    const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-    const sessionId = testSessionParsed.sessionId
-    console.log('ini test4:', tests)
-    const res = await storeAnswersPapikostik(sessionId, answers)
+        const testSessionParsed = JSON.parse(testSession)
+        const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
+        const sessionId = testSessionParsed.sessionId
+        console.log('ini test4:', tests)
+        const res = await storeAnswersPapikostik(sessionId, answers)
 
-    const statusTest = await updateStatusTest(sessionId)
+        const statusTest = await updateStatusTest(sessionId)
 
-    const pesertaId = testSessionParsed.pesertaId
-    const trigger = await triggerN8n(pesertaId, tests)
+        const pesertaId = testSessionParsed.pesertaId
+        const trigger = await triggerN8n(pesertaId, tests)
 
-    const indexIncrement = await testSessionParsed.currentIndex + 1
-    testSessionParsed.currentIndex = indexIncrement
-    const updatedTestString = JSON.stringify(testSessionParsed)
-    sessionStorage.setItem('testSession', updatedTestString)
-    const newTests:string = await testSessionParsed.tests[testSessionParsed.currentIndex] 
-    
-    if (!(newTests === undefined)) {
-        router.push(`/tests/${tests.toLowerCase()}`)  
-    } else { 
-        sessionStorage.removeItem('testSession')
-        router.push('/result')
-    } 
+        const indexIncrement = await testSessionParsed.currentIndex + 1
+        testSessionParsed.currentIndex = indexIncrement
+        const updatedTestString = JSON.stringify(testSessionParsed)
+        sessionStorage.setItem('testSession', updatedTestString)
+        const newTests:string = await testSessionParsed.tests[testSessionParsed.currentIndex] 
+        
+        if (!(newTests === undefined)) {
+            router.push(`/tests/${tests.toLowerCase()}`)  
+        } else { 
+            sessionStorage.removeItem('testSession')
+            router.push('/result')
+        } 
     };
 
     const handleModal = () => {

@@ -29,9 +29,19 @@ export const storeAnswersPapikostik = (
     }[]
  )=>api.post(`/api/user/answers/papikostik/${sessionId}`, data)
 
+
+export const storeAnswersMsdt = (
+    sessionId: number,
+    data: {
+        groupId: number; type: number
+    }[]
+)=>api.post(`/api/user/answers/msdt/${sessionId}`, data)
+
+
 export const updateStatusTest = (
     sessionId: number
 ) =>api.put(`/api/user/peserta/status/${sessionId}`)
+
 
 export const triggerN8n = (
     pesertaId: number,

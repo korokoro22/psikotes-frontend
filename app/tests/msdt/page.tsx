@@ -42,22 +42,22 @@ export default function MsdtInstructionPage() {
         {
             id: 1,
             sentences: [
-                {text: 'Saya suka menjadi pendengar', type: 'R'},
-                {text: 'Saya mengerjakan semua pekerjaan sekaligus', type: 'F'}
+                {text: 'Saya datang kek kantor lebih awal bila sedang banyak pekerjaan', type: 'R'},
+                {text: 'Saya bersedia bekerja lembur bila tugas saya belum selesai', type: 'F'}
             ]
         },
         {
             id: 2,
             sentences: [
-                {text: 'Saya orangnya teliti', type: 'I'},
-                {text: 'Saya ingin menjadi pemimpin', type: 'A'}
+                {text: 'Saya akan menolak dengan sopan jika atasan meminta saya melakukan sesuatu yang bertentangan dengan prosedur baku perusahaan', type: 'I'},
+                {text: 'Saya bersedia sedikit menyimpang dari prosedur asalkan hal tersebut membantu atasan mencapai target dengan cepat', type: 'A'}
             ]
         },
         {
             id: 3,
             sentences: [
-                {text: 'Saya ingin bebas', type: 'I'},
-                {text: 'Saya suka hal yang baru', type: 'G'}
+                {text: 'Saya lebih suka menyelesaikan tugas-tugas sulit sendirian untuk membuktikan kemampuan saya kepada atasan', type: 'I'},
+                {text: 'Saya merasa lebih nyaman berkolaborasi dengan rekan kerja lain meskipun hasil akhirnya diakui sebagai kesuksesan bersama', type: 'G'}
             ]
         }
     ]
@@ -219,7 +219,7 @@ export default function MsdtInstructionPage() {
                                         <button
                                         // disabled={(!isMost && mostTaken) || isLeast}
                                         onClick={() => handleSelection(sentence.type)}
-                                        className={`p4 rounded-md text-lg font-medium border  text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
+                                        className={`p4 rounded-md text-lg font-medium border text-left text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
                                             selected
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-50 hover:bg-gray-300 border-gray-300'

@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Modal from "@/app/components/Modal"
 import TestHeader from "@/app/components/TestHeader"
+import { getMsdtQuestionsService } from "@/services/questions.service"
+import { storeAnswersMsdt, updateStatusTest, triggerN8n } from "@/services/answers.service"
+
 
 interface MsdtQuestion {
     id: number,
@@ -18,14 +21,24 @@ interface MsdtQuestion {
     }[]
 }
 
+interface MsdtQuestions {
+    id: number
+    questionIndex: number
+    option: {
+        sentences: string
+        optionType: 1 | 2
+    }[]
+}
+
 export default function MsdtTestPage() {
     const router = useRouter()
     const [currentGroup, setCurrentGroup] = useState(0)
     const [answers, setAnswers] = useState<
-        { groupId: number; type: string }[]
+        { groupId: number; type: number }[]
         >([]);
     const [timeLeft, setTimeLeft] = useState(300); // 5 menit
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [questions, setQuestions] = useState<MsdtQuestions[]>([])
 
 
     const msdt: MsdtQuestion[]  = [
@@ -65,18 +78,30 @@ export default function MsdtTestPage() {
             console.log('isi new answers: ', answers)
         }, [answers])
 
+    useEffect(() => {
+            const getPapikostickQuestions = async () => {
+                try {
+                    const getQuestion = await getMsdtQuestionsService()
+                    setQuestions(getQuestion.data.data)
+                } catch (error) {
+                    console.log('gagal')
+                }
+            }
+            getPapikostickQuestions()
+        }, [])
+
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m}:${s.toString().padStart(2, '0')}`;
     };
 
-    const handleSelection = (newType: string) => {
+    const handleSelection = (newType: 1 | 2) => {
         setAnswers(prev => {
             const updated = [...prev];
 
             updated[currentGroup] = {
-            groupId: currentGroup,
+            groupId: currentGroup+1,
             type: newType,
             };
 
@@ -95,25 +120,35 @@ export default function MsdtTestPage() {
     const handleNext = () => {
         setCurrentGroup(prev => prev + 1)
     }
-    const handleTestComplete = () => {
+    const handleTestComplete = async() => {
         const testSession = sessionStorage.getItem('testSession')
+        
         if(!testSession)
             return alert('gagal')
-
+        
         const testSessionParsed = JSON.parse(testSession)
         const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-        if(tests) {
-            router.push(`/tests/${tests.toLowerCase()}`)
-            const indexIncrement = testSessionParsed.currentIndex + 1
-            testSessionParsed.currentIndex = indexIncrement
+        const sessionId = testSessionParsed.sessionId
+        console.log('ini test4:', tests)
+        const res = await storeAnswersMsdt(sessionId, answers)
 
-            const updatedTestString = JSON.stringify(testSessionParsed)
-            sessionStorage.setItem('testSession', updatedTestString)        
-        } else {
-            sessionStorage.clear()
+        const statusTest = await updateStatusTest(sessionId)
+        
+        const pesertaId = testSessionParsed.pesertaId
+        const trigger = await triggerN8n(pesertaId, tests)
+        
+        const indexIncrement = await testSessionParsed.currentIndex + 1
+        testSessionParsed.currentIndex = indexIncrement
+        const updatedTestString = JSON.stringify(testSessionParsed)
+        sessionStorage.setItem('testSession', updatedTestString)
+        const newTests:string = await testSessionParsed.tests[testSessionParsed.currentIndex] 
+            
+        if (!(newTests === undefined)) {
+            router.push(`/tests/${tests.toLowerCase()}`)  
+        } else { 
+            sessionStorage.removeItem('testSession')
             router.push('/result')
         }
-        // router.push('/tests/mbti');
     };
 
     return(
@@ -140,19 +175,19 @@ export default function MsdtTestPage() {
                 {/* Progress */}
                 <div className="mb-8">
                     <div className="text-sm text-gray-600 mb-2 text-center">
-                    Kelompok {currentGroup + 1} dari {msdt.length}
+                    Kelompok {currentGroup + 1} dari {questions.length}
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                         className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${((currentGroup + 1) / msdt.length) * 100}%` }}
+                        style={{ width: `${((currentGroup + 1) / questions.length) * 100}%` }}
                     />
                     </div>
                 </div>
 
                 {/* Soal */}
                 <section className="mb-10">
-                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-8 text-gray-400 italic">
+                    <div className="flex justify-center items-center flex-col bg-white rounded-lg text-gray-400 italic">
                         <div className='w-full'>
                         <AnimatePresence mode="wait">
                             <motion.div
@@ -166,9 +201,9 @@ export default function MsdtTestPage() {
 
                                 </div>
                             <div className="grid grid-cols-1 gap-4 w-full">
-                                {msdt[currentGroup].sentences.map((sentence, index) => {
+                                {questions[currentGroup]?.option.map((opt, index) => {
 
-                                const selected = answers[currentGroup]?.type === sentence.type;
+                                const selected = answers[currentGroup]?.type === opt.optionType;
 
                                 return (
                                     <div
@@ -177,14 +212,14 @@ export default function MsdtTestPage() {
                                     >
                                         <button
                                         // disabled={(!isMost && mostTaken) || isLeast}
-                                        onClick={() => handleSelection(sentence.type)}
-                                        className={`p4 rounded-md text-lg font-medium border border-gray-300 text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
+                                        onClick={() => handleSelection(opt.optionType)}
+                                        className={`p4 text-left rounded-md text-lg font-medium border border-gray-300 text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
                                             selected
                                                 ? 'bg-blue-600 text-white'
                                                 : 'bg-gray-50 hover:bg-gray-300'
                                             }`}
                                         >
-                                        {sentence.text}
+                                        {opt.sentences}
                                         </button>
 
                                     </div>
@@ -212,14 +247,21 @@ export default function MsdtTestPage() {
                                     </button>
 
                                     <button
+                                        disabled= {!(answers[currentGroup])}
                                         onClick={
-                                        currentGroup === msdt.length - 1
+                                        currentGroup === questions.length - 1
                                             ? handleModal
                                             : handleNext
                                         }
-                                        className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                                        className={`px-4 py-2 rounded-lg bg-gradient-to-r  text-white shadow hover:scale-[1.02] active:scale-95 transition
+                                            ${
+                                            !(answers[currentGroup])
+                                                ? 'cursor-not-allowed bg-gray-400'
+                                                : 'from-blue-600 to-indigo-600'
+                                            }
+                                            `}
                                     >
-                                        {currentGroup === msdt.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
+                                        {currentGroup === questions.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
                                     </button>
                                 </div>
                         </div> 
