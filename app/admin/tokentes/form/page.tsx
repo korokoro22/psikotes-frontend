@@ -98,35 +98,52 @@ export default function AdminForm() {
         <div>
             <p className="mb-12 text-3xl font-bold border-b pb-5 border-gray-200">Buat Token</p>
             <form action="" onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2 text-lg">
-                    <p className="">Jenis tes: </p>
-                    <div className="">
-                        <div className="space-x-3">
-                            <input type="checkbox" id="cfit" value="CFIT" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">CFIT</label>
-                        </div>
-                        <div className="space-x-3">
-                            <input type="checkbox" id="disc" value="DISC" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">DISC</label>
-                        </div>
-                        <div className="space-x-3">
-                            <input type="checkbox" id="kraepelin" value="KRAEPELIN" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">Kraepelin</label>
-                        </div>
-                        <div className="space-x-3">
-                            <input type="checkbox" id="mbti" value="MBTI" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">MBTI</label>
-                        </div>
-                        <div className="space-x-3">
-                            <input type="checkbox" id="msdt" value="MSDT" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">MSDT</label>
-                        </div>
-                        <div className="space-x-3">
-                            <input type="checkbox" id="papi" value="PAPIKOSTICK" name="tes" onChange={handleChange}/>
-                            <label htmlFor="tes">PapiKostick</label>
+                <div className="flex flex-col gap-y-3">
+                    <div className="space-y-2 text-lg">
+                        <p className="">Jenis tes: </p>
+                        <div className="">
+                            <div className="space-x-3">
+                                <input type="checkbox" id="cfit" value="CFIT" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">CFIT</label>
+                            </div>
+                            <div className="space-x-3">
+                                <input type="checkbox" id="disc" value="DISC" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">DISC</label>
+                            </div>
+                            <div className="space-x-3">
+                                <input type="checkbox" id="kraepelin" value="KRAEPELIN" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">Kraepelin</label>
+                            </div>
+                            <div className="space-x-3">
+                                <input type="checkbox" id="mbti" value="MBTI" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">MBTI</label>
+                            </div>
+                            <div className="space-x-3">
+                                <input type="checkbox" id="msdt" value="MSDT" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">MSDT</label>
+                            </div>
+                            <div className="space-x-3">
+                                <input type="checkbox" id="papi" value="PAPIKOSTICK" name="tes" onChange={handleChange}/>
+                                <label htmlFor="tes">PapiKostick</label>
+                            </div>
                         </div>
                     </div>
+                    <div className=" border border-slate-200 rounded-2xl self-start flex text-base text-slate-600">
+                        {formData.tests.map((test, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className="p-2 flex flex-row"
+                                >
+                                    <p className="mr-1">({index + 1})</p>
+                                    <p>{test}</p>
+                                </div>
+                            )
+                        })}
+
+                    </div>
                 </div>
+                
 
                 <div className="space-x-2 text-lg">
                     <label htmlFor="kuota">Kuota: </label>
