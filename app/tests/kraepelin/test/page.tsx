@@ -388,25 +388,22 @@ export default function KraeplinTest() {
       const sessionId = testSessionParsed.sessionId
       const res = await storeAnswersKraepelin(sessionId, payloadConverted)
 
-      const statusTest = await updateStatusTest(sessionId)
+      const statusTest = await updateStatusTest(sessionId);
 
-      const pesertaId:number = testSessionParsed.pesertaId
-      console.log('ini parsed: ', typeof(pesertaId))
+        const pesertaId = testSessionParsed.pesertaId;
+        const trigger = await triggerN8n(pesertaId, tests);
 
-      // if (tests === undefined) 
-      //   return (console.log('test kosong'))
-      
-      const trigger = await triggerN8n(pesertaId, tests)
-      const indexIncrement = testSessionParsed.currentIndex + 1
-      testSessionParsed.currentIndex = indexIncrement
-      const updatedTestString = JSON.stringify(testSessionParsed)
-      sessionStorage.setItem('testSession', updatedTestString) 
-      const newTests:string = testSessionParsed.tests[testSessionParsed.currentIndex]   
-      if (!(newTests === undefined)) {
-        router.push(`/tests/${tests.toLowerCase()}`)  
-      } else { 
-        sessionStorage.removeItem('testSession')
-        router.push('/result')
+        const nextIndex = testSessionParsed.currentIndex + 1;
+        const newTests = testSessionParsed.tests[nextIndex]; 
+
+        testSessionParsed.currentIndex = nextIndex;
+        sessionStorage.setItem('testSession', JSON.stringify(testSessionParsed));
+
+        if (newTests !== undefined) {
+            router.push(`/tests/${newTests.toLowerCase()}`); 
+        } else {
+            sessionStorage.removeItem('testSession');
+            router.push('/result');
         }  
       
   }, [calculateColumnResults, auditLog, router]);

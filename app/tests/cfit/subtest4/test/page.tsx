@@ -89,35 +89,66 @@ export default function CFITSubtest4Test() {
         })
     };
 
-    const handleTestComplete = async () => {
-            const testSession = sessionStorage.getItem('testSession')
+    // const handleTestComplete = async () => {
+    //         const testSession = sessionStorage.getItem('testSession')
                       
-            if(!testSession) {
-                return (console.log('gagal'))
-            }            
-            const testSessionParsed = JSON.parse(testSession)
-            const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-            const sessionId = testSessionParsed.sessionId
-            console.log('ini test4:', tests)
-            const res = await storeAnswersCfit(sessionId, answers)
+    //         if(!testSession) {
+    //             return (console.log('gagal'))
+    //         }            
+    //         const testSessionParsed = JSON.parse(testSession)
+    //         const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
+    //         const sessionId = testSessionParsed.sessionId
+    //         console.log('ini test4:', tests)
+    //         const res = await storeAnswersCfit(sessionId, answers)
 
-            const statusTest = await updateStatusTest(sessionId)
+    //         const statusTest = await updateStatusTest(sessionId)
 
-            const pesertaId = testSessionParsed.pesertaId
-            const trigger = await triggerN8n(pesertaId, tests)
+    //         const pesertaId = testSessionParsed.pesertaId
+    //         const trigger = await triggerN8n(pesertaId, tests)
 
-            const indexIncrement = await testSessionParsed.currentIndex + 1
-            testSessionParsed.currentIndex = indexIncrement
-            const updatedTestString = JSON.stringify(testSessionParsed)
-            sessionStorage.setItem('testSession', updatedTestString)
-            const newTests:string = await testSessionParsed.tests[testSessionParsed.currentIndex] 
+    //         const indexIncrement = testSessionParsed.currentIndex + 1
+    //         testSessionParsed.currentIndex = indexIncrement
+    //         const updatedTestString = JSON.stringify(testSessionParsed)
+    //         sessionStorage.setItem('testSession', updatedTestString)
+    //         const newTests:string = testSessionParsed.tests[testSessionParsed.currentIndex] 
             
-            if (!(newTests === undefined)) {
-                router.push(`/tests/${tests.toLowerCase()}`)  
-            } else { 
-                sessionStorage.removeItem('testSession')
-                router.push('/result')
-            }           
+    //         if (!(newTests === undefined)) {
+    //             router.push(`/tests/${tests.toLowerCase()}`)  
+    //         } else { 
+    //             sessionStorage.removeItem('testSession')
+    //             router.push('/result')
+    //         }           
+    // };
+
+    const handleTestComplete = async () => {
+        const testSession = sessionStorage.getItem('testSession');
+
+        if (!testSession) {
+            return console.log('gagal');
+        }
+
+        const testSessionParsed = JSON.parse(testSession);
+        const tests = testSessionParsed.tests[testSessionParsed.currentIndex];
+        const sessionId = testSessionParsed.sessionId;
+
+        const res = await storeAnswersCfit(sessionId, answers);
+        const statusTest = await updateStatusTest(sessionId);
+
+        const pesertaId = testSessionParsed.pesertaId;
+        const trigger = await triggerN8n(pesertaId, tests);
+
+        const nextIndex = testSessionParsed.currentIndex + 1;
+        const newTests = testSessionParsed.tests[nextIndex]; 
+
+        testSessionParsed.currentIndex = nextIndex;
+        sessionStorage.setItem('testSession', JSON.stringify(testSessionParsed));
+
+        if (newTests !== undefined) {
+            router.push(`/tests/${newTests.toLowerCase()}`); 
+        } else {
+            sessionStorage.removeItem('testSession');
+            router.push('/result');
+        }
     };
 
     const formatTime = (seconds: number) => {
