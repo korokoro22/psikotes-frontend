@@ -121,7 +121,7 @@ export default function CFITTest() {
                   </li>
                   <li className="flex gap-3 items-start">
                     <span className="flex-none mt-1 w-2.5 h-2.5 bg-slate-400 rounded-full"></span>
-                    Baca dengan teliti, gunakan full-screen bila perlu.
+                    Baca dan kerjakan soal dengan teliti.
                   </li>
                 </ul>
               </div>

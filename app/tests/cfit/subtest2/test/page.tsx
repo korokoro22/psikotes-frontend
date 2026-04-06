@@ -166,7 +166,7 @@ export default function CFITsubtest2Test() {
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                         <div className='text-center md:text-left'>
                             <h1 className="text-2xl font-bold text-slate-800">SUBTES 2</h1>
-                            <p className="text-sm text-slate-500">Temukan dua buah gambar yang memiliki pola yang sama pada rangkaian gambar berikut.</p>
+                            <p className="text-sm text-slate-500">Jawab soal berikut dengan teliti dan cepat.</p>
                         </div>
                         <div className='flex gap-x-3'>
                             <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
@@ -195,7 +195,7 @@ export default function CFITsubtest2Test() {
                     {/* Soal */}
                     <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
                         <div className="text-center text-slate-700 mb-6">
-                            Pilih dua gambar dengan pola yang sama:
+                            Pilih dua gambar yang paling tepat yang memiliki kesamaan hubungan:
                         </div>
 
                         {/* Pilihan Jawaban */}

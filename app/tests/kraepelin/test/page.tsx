@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef, memo, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { storeAnswersKraepelin, triggerN8n } from "@/services/answers.service";
-import { div } from "framer-motion/client";
 import { updateStatusTest } from "@/services/answers.service";
 
 /* ═══════════════════════════════════════════════════════════

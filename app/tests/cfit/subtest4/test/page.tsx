@@ -191,7 +191,7 @@ export default function CFITSubtest4Test() {
                 <div className="flex flex-col md:flex-row justify-between items-center mb-8">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-800 text-center md:text-left">SUBTES 4</h1>
-                        <p className="text-sm text-slate-500 text-center md:text-left">Temukan pola urutan pada rangkaian gambar berikut.</p>
+                        <p className="text-sm text-slate-500 text-center md:text-left">Jawab soal berikut dengan teliti dan cepat.</p>
                     </div>
                     <div className='flex gap-x-3'>
                         <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
@@ -218,7 +218,8 @@ export default function CFITSubtest4Test() {
                 </div> */}
 
                 {/* Soal */}
-                <div className="border rounded-2xl bg-white shadow-sm p-6 mb-8">
+                <div className="flex flex-col gap-y-3 border rounded-2xl bg-white shadow-sm p-6 mb-8">
+                    <p className='text-center text-gray-600 italic'>Amati posisi titik di antara bangunan berikut dan cari gambar dengan letak titik yang serupa dengan soal:</p>
                     <div className="flex justify-center items-center gap-3 mb-3 m-auto">
                         <div
                         className="aspect-square bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
@@ -230,7 +231,7 @@ export default function CFITSubtest4Test() {
                         </div>
                     </div>
 
-                    <div className="text-center text-slate-700 mb-6">
+                    <div className="text-center text-slate-700 mb-2">
                     Pilih gambar yang paling tepat untuk melengkapi pola:
                     </div>
 

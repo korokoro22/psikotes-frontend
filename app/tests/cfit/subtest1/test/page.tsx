@@ -157,8 +157,9 @@ export default function CFITSubtest1Test() {
           </div>
 
           {/* Soal */}
-          <div className="border rounded-2xl bg-white shadow-sm p-3 mb-4">
-            <div className="flex justify-center md:grid-cols-1 gap-3 mb-6">
+          <div className="border rounded-2xl bg-white shadow-sm p-3 mb-4 flex flex-col gap-y-4">
+            <p className='text-center text-gray-600 italic '>Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk gambar selanjutnya.</p>
+            <div className="flex justify-center md:grid-cols-1 gap-3 mb-2">
                 <div
                   className=" bg-slate-100 w-100 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200"
                 >
@@ -169,7 +170,7 @@ export default function CFITSubtest1Test() {
                 </div>
             </div>
 
-            <div className="text-center text-slate-700 mb-6">
+            <div className="text-center text-slate-700 mb-2">
               Pilih gambar yang paling tepat untuk melengkapi pola:
             </div>
 

@@ -37,10 +37,12 @@ export default function MbtiTestPage() {
         { groupId: number; type: 1 | 2 }[]
         >([]);
     const [timeLeft, setTimeLeft] = useState(300); // 5 menit
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(true)
     const [questions, setQuestions] = useState<MbtiQuestions[]>([])
     const [isOvertime, setIsOvertime] = useState(false);
     const [overtime, setOvertime] = useState(0);
+    const [isLoading, setIsLoading] = useState(false)
+
 
     useEffect(() => {
         if (!isOvertime && timeLeft <= 0) {
@@ -95,35 +97,47 @@ export default function MbtiTestPage() {
     const handleNext = () => {
         setCurrentGroup(prev => prev + 1)
     }
+
+    useEffect(()=> {
+        console.log("ini setLoading", isLoading)
+    }, [isLoading])
+
     const handleTestComplete = async () => {
-        const testSession = sessionStorage.getItem('testSession')
-                
-        if(!testSession)
-            return alert('gagal')
-                
-        const testSessionParsed = JSON.parse(testSession)
-        const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-        const sessionId = testSessionParsed.sessionId
-        console.log('ini test4:', tests)
-        const res = await storeAnswersMbti(sessionId, answers)
-        
-        const statusTest = await updateStatusTest(sessionId);
+        try {
+            const setLoading = setIsLoading(true)
 
-        const pesertaId = testSessionParsed.pesertaId;
-        const trigger = await triggerN8n(pesertaId, tests);
+            const testSession = sessionStorage.getItem('testSession')
+                    
+            if(!testSession)
+                return console.log('gagal')
+                    
+            const testSessionParsed = JSON.parse(testSession)
+            const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
+            const sessionId = testSessionParsed.sessionId
+            console.log('ini test4:', tests)
+            const res = await storeAnswersMbti(sessionId, answers)
+            
+            const statusTest = await updateStatusTest(sessionId);
 
-        const nextIndex = testSessionParsed.currentIndex + 1;
-        const newTests = testSessionParsed.tests[nextIndex]; 
+            const pesertaId = testSessionParsed.pesertaId;
+            const trigger = await triggerN8n(pesertaId, tests);
 
-        testSessionParsed.currentIndex = nextIndex;
-        sessionStorage.setItem('testSession', JSON.stringify(testSessionParsed));
+            const nextIndex = testSessionParsed.currentIndex + 1;
+            const newTests = testSessionParsed.tests[nextIndex]; 
 
-        if (newTests !== undefined) {
-            router.push(`/tests/${newTests.toLowerCase()}`); 
-        } else {
-            sessionStorage.removeItem('testSession');
-            router.push('/result');
+            testSessionParsed.currentIndex = nextIndex;
+            sessionStorage.setItem('testSession', JSON.stringify(testSessionParsed));
+
+            if (newTests !== undefined) {
+                router.push(`/tests/${newTests.toLowerCase()}`); 
+            } else {
+                sessionStorage.removeItem('testSession');
+                router.push('/result');
+            }
+        } catch (error) {
+            setIsLoading (false)
         }
+        
     };
 
     const handleModal = () => {
@@ -268,12 +282,24 @@ export default function MbtiTestPage() {
                     >
                         Kembali
                     </button>
-                    <button 
-                        className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-                        onClick={handleTestComplete}
-                    >
-                        Selesai
-                    </button>
+                    {isLoading ? (
+                        <button 
+                            className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                            onClick={handleTestComplete}
+                            disabled={isLoading}
+                        >
+                            Mohon Tunggu...
+                        </button>
+                    ):(
+                        <button 
+                            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                            onClick={handleTestComplete}
+                            disabled={isLoading}
+                        >
+                            Selesai
+                        </button>
+                    )}
+                    
                 </div>
             </Modal>
 

@@ -142,18 +142,19 @@ export default function CFITSubtest4() {
 
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
                     <p className="text-gray-700 mb-4">
-                        Pada subtes ini, Anda akan dihadapkan dengan rangkaian gambar yang membentuk suatu pola.
-                        Tugas Anda adalah:
+                        Pada subtes ini, Anda akan mengamati posisi sebuah titik di antara susunan bangunan. Baca dengan saksama petunjuk di bawah ini:
                     </p>
                     <ul className="list-disc list-inside space-y-2 text-gray-700">
-                        <li>Mengamati rangkaian gambar yang disajikan</li>
-                        <li>Menemukan pola atau hubungan antara gambar-gambar tersebut</li>
-                        <li>Memilih gambar yang tepat untuk melengkapi rangkaian tersebut</li>
+                        <li>Setiap soal menyajikan susunan beberapa bangunan beserta sebuah titik.</li>
+                        <li>Perhatikan dengan saksama posisi titik tersebut berada di area bangunan mana saja.</li>
+                        <li>Pilih gambar dari opsi jawaban yang memiliki posisi titik yang sama persis dengan soal.</li>
+                        <li>Klik gambar untuk memilih jawaban.</li>
+                        <li>Jika ingin mengubah, cukup klik pada gambar pilihan yang lain.</li>
                         <li>
                         <Clock className="inline-block text-blue-500 mr-1" size={16} />
                         Waktu pengerjaan: <span className="font-semibold">3 menit</span>
                         </li>
-                        <li>Jumlah soal: <span className="font-semibold">13 butir</span></li>
+                        <li>Jumlah soal: <span className="font-semibold">10 butir</span></li>
                     </ul>
                     </div>
                 </section>
@@ -163,13 +164,13 @@ export default function CFITSubtest4() {
                     <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
                     <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
                     <p className="text-sm text-gray-600 mb-4">
-                        Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk mengisi kotak terakhir:
+                        Jawab soal berikut dengan teliti dan cepat.
                     </p>
                     {/* (perubahan) penambahan contoh soal @rezky */}
                     <div className="flex justify-center items-center bg-white rounded-lg p-5 sm:p-8 border">
                         <div className='w-full flex flex-col gap-3 text-gray-400 italic'>
                         <div>
-                            <p>Jawab soal berikut dengan teliti dan cepat.</p>
+                            <p className='text-center'>Amati posisi titik di antara bangunan berikut dan cari gambar dengan letak titik yang serupa dengan soal:</p>
                         </div>
                         <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-4 mb-6 text-gray-400 italic m-auto">
                             <div
