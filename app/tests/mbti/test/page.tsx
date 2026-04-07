@@ -37,7 +37,7 @@ export default function MbtiTestPage() {
         { groupId: number; type: 1 | 2 }[]
         >([]);
     const [timeLeft, setTimeLeft] = useState(300); // 5 menit
-    const [isModalOpen, setIsModalOpen] = useState(true)
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [questions, setQuestions] = useState<MbtiQuestions[]>([])
     const [isOvertime, setIsOvertime] = useState(false);
     const [overtime, setOvertime] = useState(0);
@@ -82,16 +82,25 @@ export default function MbtiTestPage() {
     };
 
     const handleSelection = (newType: 1 | 2) => {
-        setAnswers(prev => {
-            const updated = [...prev];
-
-            updated[currentGroup] = {
+        const updated = [...answers]
+        updated[currentGroup] = {
             groupId: currentGroup,
-            type: newType,
-            };
+            type: newType
+        }
 
-            return updated; 
-        })
+        setAnswers(updated)
+        localStorage.setItem('tempAnswers', JSON.stringify(updated));
+
+        // setAnswers(prev => {
+        //     const updated = [...prev];
+
+        //     updated[currentGroup] = {
+        //     groupId: currentGroup,
+        //     type: newType,
+        //     };
+
+        //     return updated; 
+        // })
     }
 
     const handleNext = () => {
@@ -139,6 +148,14 @@ export default function MbtiTestPage() {
         }
         
     };
+
+    useEffect(()=> {
+    const temp = localStorage.getItem('tempAnswers')
+    if(temp !== null) {
+      const answer = JSON.parse(temp)
+      setAnswers(answer)
+    }
+  }, [])
 
     const handleModal = () => {
         setIsModalOpen(true)

@@ -105,16 +105,24 @@ export default function MsdtTestPage() {
     };
 
     const handleSelection = (newType: 1 | 2) => {
-        setAnswers(prev => {
-            const updated = [...prev];
+        const updated = [...answers]
+        updated[currentGroup] = {
+            groupId: currentGroup + 1,
+            type: newType
+        }
+        setAnswers(updated)
+        localStorage.setItem('tempAnswers', JSON.stringify(updated))
 
-            updated[currentGroup] = {
-            groupId: currentGroup+1,
-            type: newType,
-            };
+        // setAnswers(prev => {
+        //     const updated = [...prev];
 
-            return updated; 
-        })
+        //     updated[currentGroup] = {
+        //     groupId: currentGroup+1,
+        //     type: newType,
+        //     };
+
+        //     return updated; 
+        // })
     }
 
     // const handleStart = () => {
@@ -159,6 +167,14 @@ export default function MsdtTestPage() {
             router.push('/result');
         }
     };
+
+    useEffect(()=> {
+        const temp = localStorage.getItem('tempAnswers')
+        if (temp !== null) {
+            const answer = JSON.parse(temp)
+            setAnswers(answer)
+        }
+    }, [])
 
     return(
         <div className="font-sans min-h-screen bg-gray-50">

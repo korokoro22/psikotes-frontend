@@ -617,6 +617,79 @@ export default function KraeplinTest() {
     }
   }, [status, grid, answers, colStates, legitimateCol, expectedPair]);
 
+
+
+  //-------------------------------------------jika ingin tempAnswers
+  // const handleInput = useCallback((digit: number, col: number, pairIdx: number) => {
+  //   if (status !== "playing") return;
+
+  //   const isOverwrite  = answers[col][pairIdx] !== null;
+  //   const isWrongCol   = col !== legitimateCol;
+  //   const isTimedOut   = colStates[legitimateCol]?.timedOut === true;
+  //   const isSkipped    = !isWrongCol && !isTimedOut && !isOverwrite && pairIdx !== expectedPair;
+
+  //   if (isOverwrite || isWrongCol || isTimedOut || isSkipped) {
+  //     let eventType: AuditEntry["event"];
+  //     if (isOverwrite) eventType = "Mengisi ulang kotak yang sudah dijawab";
+  //     else if (isWrongCol) eventType = "Mengisi jawaban di lajur yang berbeda";
+  //     else if (isTimedOut) eventType = "Mengisi jawaban setelah waktu habis";
+  //     else eventType = "Melangkahi kotak jawaban";
+
+  //     setAuditLog(prev => {
+  //       const nextLog = [...prev, {
+  //           timestamp: new Date().toISOString(),
+  //           event: eventType,
+  //           fromCol: legitimateCol,
+  //           toCol: col,
+  //           fromPair: expectedPair,
+  //           toPair: pairIdx,
+  //       }];
+  //       localStorage.setItem('tempAuditLog', JSON.stringify(nextLog));
+  //       return nextLog;
+  //     });
+  //   }
+
+  //   const topRowIdx    = ROWS - 2 - pairIdx;
+  //   const bottomRowIdx = ROWS - 1 - pairIdx;
+  //   const top    = grid[col][topRowIdx];
+  //   const bottom = grid[col][bottomRowIdx];
+  //   const isCorrect = digit === (top + bottom) % 10;
+
+  //   // 1. Hitung & Update Answers
+  //   const updatedAnswers = answers.map(c => [...c]);
+  //   updatedAnswers[col][pairIdx] = isCorrect ? 1 : 0;
+  //   setAnswers(updatedAnswers);
+  //   localStorage.setItem('tempAnswers', JSON.stringify(updatedAnswers));
+
+  //   // 2. Hitung & Update Input Values
+  //   const updatedInputValues = inputValues.map(c => [...c]);
+  //   updatedInputValues[col][pairIdx] = digit;
+  //   setInputValues(updatedInputValues);
+  //   localStorage.setItem('tempInputValues', JSON.stringify(updatedInputValues));
+
+  //   if (!isWrongCol && !isTimedOut && pairIdx === expectedPair) {
+  //     let nextExpected = expectedPair + 1;
+  //     while (nextExpected < PAIRS && updatedAnswers[col][nextExpected] !== null) {
+  //       nextExpected++;
+  //     }
+  //     const finalExpected = Math.min(nextExpected, PAIRS - 1);
+  //     setExpectedPair(finalExpected);
+  //     localStorage.setItem('tempExpectedPair', JSON.stringify(finalExpected));
+  //   }
+
+  //   let nextFocus = pairIdx + 1;
+  //   while (nextFocus < PAIRS && updatedAnswers[col][nextFocus] !== null) {
+  //     nextFocus++;
+  //   }
+  //   if (nextFocus < PAIRS) {
+  //     setFocusedInput({ col, pair: nextFocus });
+  //     setTimeout(() => {
+  //       inputRefs.current[`${col}-${nextFocus}`]?.focus();
+  //     }, 50);
+  //   }
+  // }, [status, grid, answers, inputValues, colStates, legitimateCol, expectedPair]); 
+// Pastikan menambahkan `inputValues` ke dalam array dependency jika menggunakan Opsi 2
+
   /* ═══ HANDLE CLICK KOTAK JAWABAN ═══
    * Dipanggil saat user mengklik kotak input.
    * Hanya memindahkan fokus — pelanggaran TIDAK dicatat di sini,

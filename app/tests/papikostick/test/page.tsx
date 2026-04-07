@@ -116,16 +116,25 @@ export default function PapiTestPage() {
     };
 
     const handleSelection = (newType: 1 | 2) => {   
-        setAnswers(prev => {
-            const updated = [...prev];
+        const updated = [...answers]
 
-            updated[currentGroup] = {
-            groupId: currentGroup+1,
-            type: newType,
-            };
+        updated[currentGroup] = {
+            groupId: currentGroup + 1,
+            type: newType
+        }
 
-            return updated; 
-        })
+        setAnswers(updated)
+        localStorage.setItem('tempAnswers', JSON.stringify(updated))
+        // setAnswers(prev => {
+        //     const updated = [...prev];
+
+        //     updated[currentGroup] = {
+        //     groupId: currentGroup+1,
+        //     type: newType,
+        //     };
+
+        //     return updated; 
+        // })
     }
 
     const handleNext = () => {
@@ -165,6 +174,14 @@ export default function PapiTestPage() {
     const handleModal = () => {
         setIsModalOpen(true)
     }
+
+    useEffect(()=> {
+        const temp = localStorage.getItem('tempAnswers')
+        if (temp !== null) {
+            const answer = JSON.parse(temp)
+            setAnswers(answer)
+        }
+    }, [])
 
     return(
         <div className="font-sans min-h-screen bg-gray-50">

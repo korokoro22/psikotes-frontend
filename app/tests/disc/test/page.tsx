@@ -122,54 +122,101 @@ export default function DISCTestPage() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
-    setAnswers(prev => {
-      const updated = {
-        most: [...prev.most],
-        least: [...prev.least],
-      };
+  // const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
+  //   setAnswers(prev => {
+  //     const updated = {
+  //       most: [...prev.most],
+  //       least: [...prev.least],
+  //     };
 
+  //     const currentMost = updated.most[currentGroup];
+  //     const currentLeast = updated.least[currentGroup];
+
+  //     // TOGGLE OFF (klik ulang)
+  //     if (
+  //       (type === 'most' && currentMost?.questionIndex === questionIndex) ||
+  //       (type === 'least' && currentLeast?.questionIndex === questionIndex)
+  //     ) {
+  //       if (type === 'most') delete updated.most[currentGroup];
+  //       else delete updated.least[currentGroup];
+  //       return updated;
+  //     }
+
+  //     // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
+  //     if (
+  //       (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
+  //       (type === 'least' && currentMost?.questionIndex === questionIndex)
+  //     ) {
+  //       return prev;
+  //     }
+
+  //     // HANYA SATU MOST & SATU LEAST
+  //     if (type === 'most' && currentMost) return prev;
+  //     if (type === 'least' && currentLeast) return prev;
+
+  //     // SIMPAN PILIHAN
+  //     if (type === 'most') {
+  //       updated.most[currentGroup] = {
+  //         groupId: currentGroup+1,
+  //         questionIndex: questionIndex,
+
+  //       };
+  //     } else {
+  //       updated.least[currentGroup] = {
+  //         groupId: currentGroup+1,
+  //         questionIndex: questionIndex,
+  //       };
+  //     }
+
+  //     return updated;
+  //   });
+  // };
+
+  const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
+      let finalState = answers; // Asumsi state saat ini dibaca dari `answers`
+  
+      const updated = {
+          most: [...answers.most],
+          least: [...answers.least],
+      };
+  
       const currentMost = updated.most[currentGroup];
       const currentLeast = updated.least[currentGroup];
-
-      // TOGGLE OFF (klik ulang)
+  
       if (
-        (type === 'most' && currentMost?.questionIndex === questionIndex) ||
-        (type === 'least' && currentLeast?.questionIndex === questionIndex)
+          (type === 'most' && currentMost?.questionIndex === questionIndex) ||
+          (type === 'least' && currentLeast?.questionIndex === questionIndex)
       ) {
-        if (type === 'most') delete updated.most[currentGroup];
-        else delete updated.least[currentGroup];
-        return updated;
-      }
-
-      // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
-      if (
-        (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
-        (type === 'least' && currentMost?.questionIndex === questionIndex)
+          if (type === 'most') delete updated.most[currentGroup];
+          else delete updated.least[currentGroup];
+          finalState = updated;
+      } 
+      else if (
+          (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
+          (type === 'least' && currentMost?.questionIndex === questionIndex)
       ) {
-        return prev;
+          finalState = answers;
+      } 
+      else if ((type === 'most' && currentMost) || (type === 'least' && currentLeast)) {
+          finalState = answers;
+      } 
+      else {
+          if (type === 'most') {
+              updated.most[currentGroup] = {
+                  groupId: currentGroup,
+                  questionIndex: questionIndex,
+              };
+          } else {
+              updated.least[currentGroup] = {
+                  groupId: currentGroup,
+                  questionIndex: questionIndex,
+              };
+          }
+          finalState = updated;
       }
-
-      // HANYA SATU MOST & SATU LEAST
-      if (type === 'most' && currentMost) return prev;
-      if (type === 'least' && currentLeast) return prev;
-
-      // SIMPAN PILIHAN
-      if (type === 'most') {
-        updated.most[currentGroup] = {
-          groupId: currentGroup+1,
-          questionIndex: questionIndex,
-
-        };
-      } else {
-        updated.least[currentGroup] = {
-          groupId: currentGroup+1,
-          questionIndex: questionIndex,
-        };
-      }
-
-      return updated;
-    });
+  
+      setAnswers(finalState);
+      localStorage.setItem('tempAnswers', JSON.stringify(finalState));
   };
 
   const handleTestComplete = async () => {
@@ -203,6 +250,14 @@ export default function DISCTestPage() {
         }
 
   };
+
+  useEffect(()=> {
+    const temp = localStorage.getItem('tempAnswers')
+    if(temp !== null) {
+      const answer = JSON.parse(temp)
+      setAnswers(answer)
+    }
+  }, [])
 
   const handleModal = () => {
     setIsModalOpen(true)
