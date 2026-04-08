@@ -221,7 +221,7 @@ export default function DISCTestPage() {
 
   const handleTestComplete = async () => {
     const testSession = sessionStorage.getItem('testSession')
-                          
+    localStorage.removeItem('tempAnswers')
     if(!testSession) {
       return (console.log('gagal'))
     }            

@@ -129,6 +129,7 @@ export default function CFITSubtest1Test() {
   const handleTestComplete = async () => {
     try {
       const testSession = sessionStorage.getItem('testSession')
+      localStorage.removeItem('tempAnswers')
       
       if(!testSession) {
         return (console.log('gagal'))
@@ -153,8 +154,6 @@ export default function CFITSubtest1Test() {
   useEffect(() => {
         console.log('answers berubah:', answers);
         }, [answers]);
-
-  
 
   useEffect(()=> {
     console.log('isi data: ', question.length)

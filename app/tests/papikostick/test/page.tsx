@@ -143,6 +143,7 @@ export default function PapiTestPage() {
     
     const handleTestComplete = async () => {
         const testSession = sessionStorage.getItem('testSession')
+        localStorage.removeItem('tempAnswers')
         if(!testSession)
             return alert('gagal')
 

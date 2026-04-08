@@ -116,6 +116,7 @@ export default function MbtiTestPage() {
             const setLoading = setIsLoading(true)
 
             const testSession = sessionStorage.getItem('testSession')
+            localStorage.removeItem('tempAnswers')
                     
             if(!testSession)
                 return console.log('gagal')

@@ -120,7 +120,7 @@ export default function CFITSubtest3Test() {
     const handleTestComplete = async () => {
         try {
               const testSession = sessionStorage.getItem('testSession')
-              
+              localStorage.removeItem('tempAnswers')
               if(!testSession) {
                 return (console.log('gagal'))
               }
