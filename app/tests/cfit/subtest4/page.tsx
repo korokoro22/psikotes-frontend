@@ -186,7 +186,7 @@ export default function CFITSubtest4() {
                         <li>Jika ingin mengubah, cukup klik pada gambar pilihan yang lain.</li>
                         <li>
                         <Clock className="inline-block text-blue-500 mr-1" size={16} />
-                        Waktu pengerjaan: <span className="font-semibold">3 menit</span>
+                        Waktu pengerjaan: <span className="font-semibold">2 menit 30 detik</span>
                         </li>
                         <li>Jumlah soal: <span className="font-semibold">10 butir</span></li>
                     </ul>

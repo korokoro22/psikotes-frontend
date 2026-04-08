@@ -31,7 +31,7 @@ interface Questionz {
 
 export default function CFITSubtest3Test() {
     const router = useRouter();
-    const [timeLeft, setTimeLeft] = useState(180); // satuan detik
+    const [timeLeft, setTimeLeft] = useState(180); // satuan detik (60 detik)
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [question, setQuestion] = useState<Questionz[]>([])
     const [answers, setAnswers] = useState<CfitAnswer[]>(

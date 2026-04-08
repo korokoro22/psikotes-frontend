@@ -42,7 +42,6 @@ export default function PapiTestPage() {
     const [isOvertime, setIsOvertime] = useState(false);
     const [overtime, setOvertime] = useState(0);
 
-
     const papi: PapikostickQuestion[]  = [
         {
             id: 0,
