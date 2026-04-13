@@ -326,7 +326,7 @@ export default function DISCInstructionPage() {
                   </div>
                   <div className="text-sm">
                     <div className="text-slate-800 font-medium">Jumlah Kelompok</div>
-                    <div className="text-slate-600">Sekitar 24 kelompok kata</div>
+                    <div className="text-slate-600">Sekitar 24 pernyataan</div>
                   </div>
                 </div>
 
@@ -359,12 +359,12 @@ export default function DISCInstructionPage() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
                   <p className="text-gray-700 mb-4">
-                    Pada tes ini, Anda akan diberikan sejumlah kelompok kata yang menggambarkan sifat
-                    atau perilaku tertentu. Setiap kelompok berisi empat kata.
+                    Pada tes ini, Anda akan diberikan sejumlah kelompok pernyataan yang menggambarkan sifat
+                    atau perilaku tertentu. Setiap kelompok berisi empat pernyataan.
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-gray-700">
-                    <li>Pilih satu kata yang paling menggambarkan diri Anda (Paling Sesuai).</li>
-                    <li>Pilih satu kata yang paling tidak menggambarkan diri Anda (Paling Tidak Sesuai).</li>
+                    <li>Pilih satu pernyataan yang paling menggambarkan diri Anda (Paling Sesuai).</li>
+                    <li>Pilih satu pernyataan yang paling tidak menggambarkan diri Anda (Kurang Sesuai).</li>
                     {/* <li>
                       Setiap pilihan akan membantu menentukan kecenderungan kepribadian Anda
                       berdasarkan empat dimensi utama: D, I, S, dan C.
@@ -382,7 +382,7 @@ export default function DISCInstructionPage() {
                 <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
                 <div className="border border-gray-200 rounded-xl p-4 md:p-6 bg-gray-50">
                   <p className="text-sm text-gray-600 mb-4">
-                    Berikut contoh tampilan soal. Pilih satu kata yang paling dan paling tidak menggambarkan diri Anda.
+                    Berikut contoh tampilan soal. Pilih satu pernyataan yang paling sesuai dan kurang sesuai dalam menggambarkan diri Anda.
                   </p>
                   <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
                     <div className='w-full'>
@@ -427,7 +427,7 @@ export default function DISCInstructionPage() {
                                           : 'bg-gray-100 hover:bg-green-100 text-green-700'
                                       }`}
                                     >
-                                      PALING (P)
+                                      PALING SESUAI (P)
                                     </button>
 
                                     <button
@@ -441,7 +441,7 @@ export default function DISCInstructionPage() {
                                           : 'bg-gray-100 hover:bg-red-100 text-red-700'
                                       }`}
                                     >
-                                      PALING TIDAK (K)
+                                      KURANG SESUAI (K)
                                     </button>
                                   </div>
                                 </div>

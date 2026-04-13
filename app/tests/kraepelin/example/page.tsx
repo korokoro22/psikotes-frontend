@@ -97,7 +97,7 @@ const KRAEPELIN_DATA: number[][] = [
 const ROWS = KRAEPELIN_DATA[0].length;
 const COLS = KRAEPELIN_DATA.length;
 const PAIRS = ROWS - 1; // 39 pasangan per kolom
-const COL_TIME_MS = 7_000; // detik per kolom
+const COL_TIME_MS = 300_000; // detik per kolom
 
 // Mengembalikan data soal Kraepelin sebagai grid[col][row]
 function genGrid(): number[][] {
@@ -826,7 +826,7 @@ export default function KraeplinTest() {
                 <div className="text-sm text-stone-700 flex flex-col items-center justify-center gap-y-1">
                   <span>Lajur <span className="font-bold text-blue-600">{(focusedInput?.col ?? 0) + 1}</span></span>
                   {/* {focusedInput && (
-                    <span className="text-stone-400 text-xs ml-1">
+                    <span className="text-stone-400 text-xs  ml-1">
                       · Soal {PAIRS - focusedInput.pair}
                     </span>
                   )} */}
@@ -846,7 +846,7 @@ export default function KraeplinTest() {
                   const bottomNum = grid[col][bottomRowIdx];
                   const correctAnswer = (topNum + bottomNum) % 10;
                   return (
-                    <div className="mt-2 flex items-center justify-center gap-2">
+                    <div className="mt-2 flex flex-col items-center justify-center gap-2">
                       <div className="flex flex-col items-center gap-1">
                         <div className="w-9 h-9 flex items-center justify-center text-lg font-bold bg-blue-600 text-white rounded-lg shadow">
                           {topNum}
@@ -856,9 +856,10 @@ export default function KraeplinTest() {
                         </div>
                       </div>
                       <div className="flex flex-col items-center gap-0.5 text-stone-400 text-xs font-semibold">
-                        <span className="text-sm">+</span>
-                        <span className="text-stone-300 text-sm">──</span>
-                        <span className="text-sm text-stone-400">{topNum}+{bottomNum}={topNum+bottomNum} → <span className="text-blue-600 font-bold">{correctAnswer}</span></span>
+                        {/* <span className="text-sm">+</span> */}
+                        {/* <span className="text-stone-300 text-sm">──</span> */}
+                        <span>Jawaban</span>
+                        <span className="text-sm text-stone-400 border border-stone-200 rounded-lg p-2">{topNum}+{bottomNum}={topNum+bottomNum} → <span className="text-blue-600 font-bold">{correctAnswer}</span></span>
                       </div>
                     </div>
                   );

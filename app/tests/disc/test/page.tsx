@@ -285,8 +285,8 @@ export default function DISCTestPage() {
             <div className="text-center md:text-left">
               <h2 className="text-2xl font-bold text-gray-800">Instruksi</h2>
               <p className="text-gray-500 text-sm">
-                Pilih kalimat yang <span className="text-green-600 font-semibold">PALING (P)</span> dan{' '}
-                <span className="text-red-600 font-semibold">PALING TIDAK (K)</span> menggambarkan diri Anda.
+                Pilih pernyataan yang <span className="text-green-600 font-semibold">PALING SESUAI (P)</span> dan{' '}
+                <span className="text-red-600 font-semibold">KURANG SESUAI (K)</span>dalam menggambarkan diri Anda.
               </p>
             </div>
             <div className="">
@@ -305,7 +305,7 @@ export default function DISCTestPage() {
           {/* Progress */}
           <div className="mb-8">
             <div className="text-sm text-gray-600 mb-2 text-center">
-              Kelompok {currentGroup + 1} dari {question.length}
+              Soal {currentGroup + 1} dari {question.length}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
@@ -359,7 +359,7 @@ export default function DISCTestPage() {
                                         //   : 'bg-gray-100 hover:bg-green-100 text-green-700'
                                       }`}
                                     >
-                                      PALING (P)
+                                      PALING SESUAI (P)
                                     </button>
 
                                     <button
@@ -373,7 +373,7 @@ export default function DISCTestPage() {
                                           : 'bg-gray-100 hover:bg-red-100 text-red-700'
                                       }`}
                                     >
-                                      PALING TIDAK (K)
+                                      KURANG SESUAI (K)
                                     </button>
                                   </div>
                                 </div>
