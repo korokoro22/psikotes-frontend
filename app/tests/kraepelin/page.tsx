@@ -161,7 +161,7 @@ const KraepelinInstructionPage: React.FC = () => {
                   </div>
                   <div className="text-sm">
                     <div className="text-slate-800 font-medium">Durasi</div>
-                    <div className="text-slate-600">± 5–10 menit</div>
+                    <div className="text-slate-600">30 menit</div>
                   </div>
                 </div>
 
@@ -207,7 +207,7 @@ const KraepelinInstructionPage: React.FC = () => {
                       Tuliskan <strong className="text-blue-600">digit terakhir</strong> hasil penjumlahan.
                     </li>
                     <li className="marker:text-2xl">
-                      Setiap lajur memiliki batas waktu <strong className="text-blue-600">30 detik</strong>.
+                      Setiap lajur memiliki batas waktu.
                     </li>
                     <li className="marker:text-2xl">
                       Setelah waktu habis, sistem akan berpindah otomatis ke lajur berikutnya.
@@ -226,7 +226,7 @@ const KraepelinInstructionPage: React.FC = () => {
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
                   <ul className='grid grid-cols-1 gap-y-2 gap-x-5 text-sm text-slate-700 list-disc marker:text-slate-400 pl-3'>
                     <li className="marker:text-2xl">
-                      Soal terbagi ke dalam beberapa lajur, dan setiap lajur dikerjakan dalam waktu <span className='font-bold'>30 detik</span>.
+                      Soal terbagi ke dalam beberapa lajur.
                     </li>
                     <li className="marker:text-2xl ">
                       Pengerjaan dimulai dari bagian bawah lajur.
@@ -242,10 +242,13 @@ const KraepelinInstructionPage: React.FC = () => {
                     </li>
                       <ul className='ml-7 list-disc marker:text-slate-400 pl-3'>
                         <li className="marker:text-2xl">
-                          Jika hasil penjumlahan berupa satu digit (misalnya 3 + 4 = 7), maka yang diinput adalah angka tersebut, yaitu 7.
+                          Jika hasil penjumlahan berupa satu digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>3 + 4 = 7</span> ), maka yang diinput adalah angka tersebut, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>7</span>.
                         </li>
                         <li className="marker:text-2xl">
-                          Jika hasil penjumlahan berupa dua digit (misalnya 7 + 5 = 12), maka yang diinput adalah digit satuan atau angka terakhir, yaitu 2.
+                          Jika hasil penjumlahan berupa dua digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>7 + 5 = 12</span> ), maka yang diinput adalah digit satuan atau angka terakhir, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>2</span>.
+                        </li>
+                        <li className="marker:text-2xl">
+                          Jika hasil penjumlahan berupa dua digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>4 + 6 = 10</span> ), maka yang diinput adalah digit satuan atau angka terakhir, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>0</span>.
                         </li>
                       </ul>
                     <li className="marker:text-2xl ">

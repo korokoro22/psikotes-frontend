@@ -97,7 +97,7 @@ const KRAEPELIN_DATA: number[][] = [
 const ROWS = KRAEPELIN_DATA[0].length;
 const COLS = KRAEPELIN_DATA.length;
 const PAIRS = ROWS - 1; // 39 pasangan per kolom
-const COL_TIME_MS = 300_000; // detik per kolom
+const COL_TIME_MS = 30_000; // detik per kolom
 
 // Mengembalikan data soal Kraepelin sebagai grid[col][row]
 function genGrid(): number[][] {

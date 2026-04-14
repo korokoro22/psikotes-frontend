@@ -75,7 +75,7 @@ export default function DISCTestPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const [timeLeft, setTimeLeft] = useState(1200); // 5 menit
+  const [timeLeft, setTimeLeft] = useState(900); 
   const [isOvertime, setIsOvertime] = useState(false);
   const [overtime, setOvertime] = useState(0);
 

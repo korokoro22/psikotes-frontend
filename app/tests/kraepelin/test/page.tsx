@@ -99,7 +99,7 @@ const KRAEPELIN_DATA: number[][] = [
 const ROWS = KRAEPELIN_DATA[0].length;
 const COLS = KRAEPELIN_DATA.length;
 const PAIRS = ROWS - 1; // 39 pasangan per kolom
-const COL_TIME_MS = 7_000; // detik per kolom
+const COL_TIME_MS = 30_000; // detik per kolom
 
 // Mengembalikan data soal Kraepelin sebagai grid[col][row]
 function genGrid(): number[][] {
@@ -174,7 +174,7 @@ const KraepelinColumn = memo(function KraepelinColumn({
         <div className="text-sm font-bold text-stone-600">{cIdx + 1}</div>
         {!isTimedOut && (
           <div className="text-[10px] text-stone-400 font-mono mt-0.5">
-            {Math.ceil(timeLeftMs / 1000)}s
+            {/* {Math.ceil(timeLeftMs / 1000)}s */}
           </div>
         )}
         {isTimedOut && (
@@ -843,13 +843,12 @@ export default function KraeplinTest() {
           Tes Psikotes
         </h1>
         <div className="flex items-center gap-x-3">
-        {status === "playing" && (
+        {/* {status === "playing" && (
           <div className="hidden md:block text-sm text-stone-500">
-            {/* REVISI 2: Tampilkan systemActiveCol sebagai lajur sistem */}
-            {/* {" · "} */}
             Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
           </div>
-        )}
+        )} */}
+        
 
         {activeCol === systemActiveCol && (colStates[systemActiveCol].timedOut || timeLeftMs <= 5000) && (
           <div className={`hidden md:block rounded-lg p-2 text-center text-xs font-semibold ${
@@ -974,9 +973,9 @@ export default function KraeplinTest() {
                       · Soal {PAIRS - focusedInput.pair}
                     </span>
                   )} */}
-                  <div className="text-xs">
+                  {/* <div className="text-xs">
                     Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
-                  </div>
+                  </div> */}
                 </div>
                 
 

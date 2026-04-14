@@ -36,7 +36,7 @@ export default function MsdtTestPage() {
     const [answers, setAnswers] = useState<
         { groupId: number; type: number }[]
         >([]);
-    const [timeLeft, setTimeLeft] = useState(300); // 5 menit
+    const [timeLeft, setTimeLeft] = useState(300);
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [questions, setQuestions] = useState<MsdtQuestions[]>([])
