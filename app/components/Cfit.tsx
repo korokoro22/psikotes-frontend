@@ -1,6 +1,19 @@
 'use client'
 
-export default function Cfit() {
+import { useEffect } from "react"
+
+// type CfitProps = {
+//     data: {
+
+//     }
+// }
+
+export default function Cfit({data}:any) {
+
+    useEffect(()=> {
+        console.log("data", data)
+    }, [data])
+    
     return(
         <div className=" pb-5 border-gray-300">
             <div className="mb-4">
@@ -19,11 +32,11 @@ export default function Cfit() {
                     </thead>
                     <tbody>
                         <tr>
-                            <td className="py-2 px-4">8/13</td>
-                            <td className="py-2 px-4">9/10</td>
-                            <td className="py-2 px-4">12/13</td>
-                            <td className="py-2 px-4">8/10</td>
-                            <td className="py-2 px-4">37/46</td>
+                            <td className="py-2 px-4">{data.subtestScores.subtest1}/13</td>
+                            <td className="py-2 px-4">{data.subtestScores.subtest2}/10</td>
+                            <td className="py-2 px-4">{data.subtestScores.subtest3}/13</td>
+                            <td className="py-2 px-4">{data.subtestScores.subtest4}/10</td>
+                            <td className="py-2 px-4">{data.totalScore}/46</td>
                         </tr>
                     </tbody>
                 </table>

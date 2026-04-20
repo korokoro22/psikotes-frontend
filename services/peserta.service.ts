@@ -20,3 +20,5 @@ export const getDetailPeserta = (id:number) => api.get(`/api/admin/peserta/detai
 export const getFormPeserta = () => api.get('/api/admin/peserta/form')
 
 export const getHasilPeserta = () => api.get('/api/admin/hasiltes')
+
+export const getDetailHasilPeserta = (id: number) => api.get(`api/admin/hasiltes/hasil/${id}`)
