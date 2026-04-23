@@ -251,15 +251,18 @@ export default function MbtiTestPage() {
                     </div>
                     <div className="">
                         {questions.length > 0 ? (
-                            <div>
-                                <div className={`text-xl font-mono px-4 py-2 rounded-lg shadow-sm ${
-                            isOvertime ? 'bg-red-100 text-red-600' : 'bg-gray-100'
-                        }`}>
-                            {isOvertime 
-                                ? `⚠️ +${formatTime(overtime)}` 
-                                : `⏱ ${formatTime(timeLeft)}`
-                            }
-                        </div>
+                            <div className="flex items-center gap-x-4">
+                                <div className={`text-base font-mono px-4 py-2 rounded-lg shadow-sm border text-gray-800 ${
+                                    isOvertime ? 'bg-red-100 text-red-600 border-red-200' : 'bg-gray-100 border-gray-200'
+                                }`}>
+                                    {isOvertime 
+                                        ? `⚠️ +${formatTime(overtime)}` 
+                                        : `⏱ ${formatTime(timeLeft)}`
+                                    }
+                                </div>
+                                <div className=" text-base text-gray-800 font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100 border border-gray-200">
+                                    {questions.length > 0 ? (<span>Soal: {currentGroup + 1} / {questions.length}</span>):(<span>Soal: --/--</span>)}
+                                </div>
                             </div>
                         ):(
                             <div className='text-xl font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100'>

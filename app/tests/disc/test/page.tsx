@@ -394,7 +394,7 @@ export default function DISCTestPage() {
 
           {/* Soal */}
           {question.length > 0 ? (
-          <div>
+          <div className='flex flex-col gap-y-4'>
 
             {/* nomor soal */}
                     <div className='w-full h-full flex bg-gray-200 border border-gray-300 p-2 gap-x-4 rounded-xl items-center'>
@@ -455,18 +455,7 @@ export default function DISCTestPage() {
                         </button>
                     </div>
 
-            {/* Progress */}
-            <div className="mb-8">
-              <div className="text-sm text-gray-600 mb-2 text-center">
-                Soal {currentGroup + 1} dari {question.length}
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${((currentGroup + 1) / question.length) * 100}%` }}
-                />
-              </div>
-            </div>
+            
             <AnimatePresence mode="wait">
             <motion.div
               key={currentGroup}
@@ -536,7 +525,7 @@ export default function DISCTestPage() {
           
           <div className="flex justify-between items-center mt-8">
             <button
-              onClick={() => setCurrentGroup(prev => Math.max(0, prev - 1))}
+              onClick={handleBefore}
               disabled={currentGroup === 0}
               className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
                 currentGroup === 0
@@ -581,7 +570,7 @@ export default function DISCTestPage() {
               isLoading
               ? 'bg-slate-400'
               : 'from-blue-600 to-indigo-600' }`}
-            onClick={handleBefore}
+            onClick={()=>setIsModalOpen(false)}
             disabled={isLoading}
           >
             Kembali

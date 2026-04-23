@@ -277,15 +277,18 @@ export default function PapiTestPage() {
                     </div>
                     <div className="">
                         {questions.length > 0 ? (
-                            <div>
-                                <div className={`text-xl font-mono px-4 py-2 rounded-lg shadow-sm ${
-                            isOvertime ? 'bg-red-100 text-red-600' : 'bg-gray-100'
-                        }`}>
-                            {isOvertime 
-                                ? `⚠️ +${formatTime(overtime)}` 
-                                : `⏱ ${formatTime(timeLeft)}`
-                            }
-                        </div>
+                            <div className="flex items-center gap-x-4">
+                                <div className={`text-base font-mono px-4 py-2 rounded-lg shadow-sm border text-gray-800 ${
+                                    isOvertime ? 'bg-red-100 text-red-600 border-red-200' : 'bg-gray-100 border-gray-200'
+                                }`}>
+                                    {isOvertime 
+                                        ? `⚠️ +${formatTime(overtime)}` 
+                                        : `⏱ ${formatTime(timeLeft)}`
+                                    }
+                                </div>
+                                <div className=" text-base text-gray-800 font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100 border border-gray-200">
+                                    {questions.length > 0 ? (<span>Soal: {currentGroup + 1} / {questions.length}</span>):(<span>Soal: --/--</span>)}
+                                </div>
                             </div>
                         ):(
                             <div className='text-xl font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100'>
@@ -361,19 +364,6 @@ export default function PapiTestPage() {
                         </button>
                     </div>
 
-
-                    {/* Progress */}
-                    <div className="mb-6">
-                        <div className="text-sm text-gray-600 mb-2 text-center">
-                        Kelompok {currentGroup + 1} dari {questions.length}
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${((currentGroup + 1) / questions.length) * 100}%` }}
-                        />
-                        </div>
-                    </div>
                     <section className="">
                     <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 text-gray-400 italic">
                         <div className='w-full'>
