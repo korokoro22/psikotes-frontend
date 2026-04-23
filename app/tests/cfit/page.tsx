@@ -8,6 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAntiCheat } from '@/lib/useAntiCheat';
 import { Metadata } from 'next';
+import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
+import PermissionModal from '@/app/components/PermissionModal';
 
 function IconSeries() {
   return (
@@ -55,7 +57,10 @@ export default function CFITTest() {
     document.title = "Instructions - Psychological Tests";
   }, [])
 
+  const { showModal } = useClipboardPermissionGuard();
+
   return (
+    
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
       {/* Header */}
       <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
@@ -183,7 +188,32 @@ export default function CFITTest() {
             Sistem ini menampilkan format latihan — selama tes sungguhan, waktu akan diatur secara ketat.
           </div>
           </motion.div>
+          <PermissionModal isOpen={showModal} onClose={()=> {}}>
+            <div
+              className='text-gray-700'
+            >
+              <p className='font-bold text-2xl mb-3'>PERHATIAN</p>
+              <p>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
+              <div className='flex justify-center my-4'>
+                <Image 
+                  src="/assets/blockedClipboardEditted.png"
+                  width={250}
+                  height={250}
+                  className='rounded-lg '
+                  alt=''
+                />
+              </div>
+              <div className='text-left ml-8'>
+                <ol className=' list-decimal flex flex-col gap-y-1'>
+                  <li>Ikuti petunjuk sesuai gambar</li>
+                  <li>Reload Kembali halaman (F5)</li>
+                </ol>
+              </div>
+            </div>
+          </PermissionModal>
       </main>
+
+      
     </div>
   );
 }

@@ -8,6 +8,9 @@ import Modal from '@/app/components/Modal';
 import { getContohCfit2Service } from '@/services/questions.service';
 import TestHeader from '@/app/components/TestHeader';
 import { useAntiCheat } from '@/lib/useAntiCheat';
+import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
+import PermissionModal from '@/app/components/PermissionModal';
+import Image from 'next/image';
 
 interface Question {
   id: number;
@@ -171,6 +174,8 @@ const handleAnswer = (option: string) => {
   useEffect(() => {
     document.title = "Instructions - Psychological Tests";
   }, [])
+
+  const { showModal } = useClipboardPermissionGuard();
 
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col select-none">
@@ -364,7 +369,29 @@ const handleAnswer = (option: string) => {
           
         </div>
       </Modal>
-
+      <PermissionModal isOpen={showModal} onClose={()=> {}}>
+            <div
+              className='text-gray-700'
+            >
+              <p className='font-bold text-2xl mb-3'>PERHATIAN</p>
+              <p>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
+              <div className='flex justify-center my-4'>
+                <Image 
+                  src="/assets/blockedClipboardEditted.png"
+                  width={250}
+                  height={250}
+                  className='rounded-lg '
+                  alt=''
+                />
+              </div>
+              <div className='text-left ml-8'>
+                <ol className=' list-decimal flex flex-col gap-y-1'>
+                  <li>Ikuti petunjuk sesuai gambar</li>
+                  <li>Reload Kembali halaman (F5)</li>
+                </ol>
+              </div>
+            </div>
+          </PermissionModal>
     </div>
   );
 }

@@ -6,6 +6,9 @@ import { storeAnswersCfit } from '@/services/answers.service';
 import { getSoalCfit3Service } from '@/services/questions.service';
 import TestHeader from '@/app/components/TestHeader';
 import { useAntiCheat } from '@/lib/useAntiCheat';
+import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
+import PermissionModal from '@/app/components/PermissionModal';
+import Image from 'next/image';
 
 interface Question {
     id: number;
@@ -236,6 +239,8 @@ export default function CFITSubtest3Test() {
         }
     }, [aktif]);
 
+    const { showModal } = useClipboardPermissionGuard();
+
     return (
         <div className="font-sans min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 select-none">
           <header
@@ -441,6 +446,29 @@ export default function CFITSubtest3Test() {
           
         </div>
       </Modal>
+      <PermissionModal isOpen={showModal} onClose={()=> {}}>
+            <div
+              className='text-gray-700'
+            >
+              <p className='font-bold text-2xl mb-3'>PERHATIAN</p>
+              <p>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
+              <div className='flex justify-center my-4'>
+                <Image 
+                  src="/assets/blockedClipboardEditted.png"
+                  width={250}
+                  height={250}
+                  className='rounded-lg '
+                  alt=''
+                />
+              </div>
+              <div className='text-left ml-8'>
+                <ol className=' list-decimal flex flex-col gap-y-1'>
+                  <li>Ikuti petunjuk sesuai gambar</li>
+                  <li>Reload Kembali halaman (F5)</li>
+                </ol>
+              </div>
+            </div>
+          </PermissionModal>
 
     </div>
     )

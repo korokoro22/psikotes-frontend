@@ -9,6 +9,9 @@ import TestHeader from "@/app/components/TestHeader"
 import { getMsdtQuestionsService } from "@/services/questions.service"
 import { storeAnswersMsdt, updateStatusTest, triggerN8n } from "@/services/answers.service"
 import { useAntiCheat } from "@/lib/useAntiCheat"
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard"
+import Image from "next/image"
+import PermissionModal from "@/app/components/PermissionModal"
 
 
 interface MsdtQuestion {
@@ -251,6 +254,8 @@ export default function MsdtTestPage() {
         }
     }, [aktif]);
 
+    const { showModal } = useClipboardPermissionGuard()
+
     return(
         <div className="font-sans min-h-screen bg-gray-50 select-none">
             <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
@@ -478,7 +483,29 @@ export default function MsdtTestPage() {
                 
             </div>
         </Modal>
-
+        <PermissionModal isOpen={showModal} onClose={()=> {}}>
+            <div
+              className='text-gray-700'
+            >
+              <p className='font-bold text-2xl mb-3'>PERHATIAN</p>
+              <p>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
+              <div className='flex justify-center my-4'>
+                <Image 
+                  src="/assets/blockedClipboardEditted.png"
+                  width={250}
+                  height={250}
+                  className='rounded-lg '
+                  alt=''
+                />
+              </div>
+              <div className='text-left ml-8'>
+                <ol className=' list-decimal flex flex-col gap-y-1'>
+                  <li>Ikuti petunjuk sesuai gambar</li>
+                  <li>Reload Kembali halaman (F5)</li>
+                </ol>
+              </div>
+            </div>
+          </PermissionModal>
         </div>
     )
 }
