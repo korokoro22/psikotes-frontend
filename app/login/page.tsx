@@ -12,6 +12,7 @@ export default function AdminLoginForm() {
         password: '',
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
@@ -20,16 +21,19 @@ export default function AdminLoginForm() {
     
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      setIsLoading(true)
 
       try {
         setIsSubmitting(true);
         const res = await login(formData);
+        setIsLoading(false)
         // console.log(res.data);
         router.push('/admin/dashboard')
       } catch (err: any) {
         alert(err.response?.data?.message || 'Login gagal');
       } finally {
         setIsSubmitting(false);
+        setIsLoading(false)
       }
     };
 
@@ -91,12 +95,23 @@ export default function AdminLoginForm() {
 
             {/* Tombol */}
             <div className='flex justify-center'>
-              <button
+              {isLoading ? (
+                <button
+                className={` disabled:pointer-events-nonew-1/2 w-1/2 bg-slate-400  py-2 text-sm font-semibold text-white rounded-md shadow-md transition-all duration-200 bg-gradient-to-r `}
+                disabled={isLoading}
+
+              >
+                Mohon Tunggu...
+              </button>
+              ):(
+                <button
                 className={`w-1/2  py-2 text-sm font-semibold text-white rounded-md shadow-md transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
                 `}
               >
                 Login
               </button>
+              )}
+              
             </div>
             
           </form>

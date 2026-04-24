@@ -48,14 +48,14 @@ export default function CFITSubtest2() {
     {
       id: 1,
       images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
-      correctAnswer: ["B", "C"],
+      correctAnswer: ["B", "D"],
       explanationRight: 'Benar karena opsi yang dipilih benar',
       explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
     },
     {
       id: 2,
       images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
-      correctAnswer: ["D", "E"],
+      correctAnswer: ["C", "E"],
       explanationRight: 'Benar karena opsi yang dipilih benar',
       explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
     },

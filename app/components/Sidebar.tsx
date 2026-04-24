@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import { logout } from "@/services/auth.service"
+import Modal from "./Modal"
+import { useState } from "react"
 
 const menu = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: '/assets/dashboardsvg.svg'},
@@ -20,11 +22,17 @@ interface SidebarProps {
 export default function Sidebar({isOpen, toggle}: SidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleClick = async () => {
         // console.log("hai")
         const res = await logout()
         router.push('/login')
+    }
+
+    const handleModal = () => {
+        setIsModalOpen(true)
     }
 
     return(
@@ -69,7 +77,7 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
                     
                 ))}
                 <button className="text-left px-4 flex gap-x-3 text-lg font-semibold hover:bg-gray-200 mb-4 py-4 rounded-lg"
-                    onClick={handleClick}
+                    onClick={handleModal}
                 >
                     <Image 
                         src="/assets/logoutsvg.svg"
@@ -81,6 +89,38 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
                 </button>
             </ul>
         </div>
-        </>
+        <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
+            <p className='text-gray-800'>Apakah anda ingin keluar dari akun ini?</p>
+            <div className='flex gap-x-3 justify-evenly mt-4'>
+                <button
+                    className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+                    isLoading
+                    ? 'bg-slate-300'
+                    : 'bg-slate-500 hover:bg-slate-700' }`}
+                    onClick={()=> setIsModalOpen(false)}
+                    disabled={isLoading}
+                >
+                    Kembali
+                </button>
+                {isLoading ? (
+                    <button
+                        className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                        aria-label="Mulai CFIT Subtes 1"
+                        onClick={handleClick}
+                        disabled={isLoading}
+                    >
+                        Mohon Tunggu...
+                    </button>
+                ):(
+                    <button 
+                    className='px-5 py-2 rounded-lg bg-gradient-to-r bg-red-500 hover:bg-red-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                    onClick={handleClick}
+                >
+                    Logout
+                </button>
+                )}        
+            </div>
+        </Modal>
+    </>
     )
 }

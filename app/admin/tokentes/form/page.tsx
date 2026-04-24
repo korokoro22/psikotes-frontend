@@ -19,6 +19,7 @@ export default function AdminForm() {
     })
 
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -54,19 +55,19 @@ export default function AdminForm() {
     }))
     }
 
-
-    
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
+        setIsLoading(true)
         try {
             setIsSubmitting(true)
             const res = await postToken(formData)
+            setIsLoading(false)
             router.push('/admin/tokentes')
 
         } catch(err:any){
 
         } finally {
+            setIsLoading(false)
             setIsSubmitting(false)
         }
         // const {tests, kuota} = formData
@@ -157,15 +158,23 @@ export default function AdminForm() {
                 <div className="flex gap-x-5 mt-16">
                     <Link
                         href='/admin/tokentes'
-                        className="px-3 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                        className={`px-3 py-2  rounded-lg hover:bg-gray-400 ${
+                            isLoading 
+                            ? 'bg-gray-500 disabled:pointer-events-none'
+                            : 'bg-gray-300'
+                            }`}
                     >
-                        Kembali
+                        {isLoading? 'Mohon tunggu...':'Kembali'}
                     </Link>
                     <button 
                         type="submit"
-                        className="px-3 py-1 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                        className={`px-3 py-1 text-white ${
+                            isLoading
+                            ? 'bg-gray-500 disabled:pointer-events-none'
+                            : 'bg-blue-600 rounded-lg hover:bg-blue-700'
+                            }`}
                     >
-                        Buat Token
+                        {isLoading? 'Mohon tunggu...':'Buat Token'}
                     </button>
                 </div>
             </form>

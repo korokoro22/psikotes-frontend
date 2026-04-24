@@ -73,7 +73,7 @@ export default function CFITSubtest3() {
     {
       id: 3,
       images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
-      correctAnswer: "E",
+      correctAnswer: "F",
       explanationRight: 'Benar karena opsi yang dipilih benar',
       explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
     }
