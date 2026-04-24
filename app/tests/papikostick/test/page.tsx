@@ -156,6 +156,7 @@ export default function PapiTestPage() {
         try {
             const testSession = sessionStorage.getItem('testSession')
             localStorage.removeItem('tempAnswers')
+            localStorage.removeItem('isPassed')
             if(!testSession)
                 return alert('gagal')
 
@@ -460,14 +461,11 @@ export default function PapiTestPage() {
                 </button>
                 {isLoading? (
                     <button 
-                        className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-                            isLoading
-                            ? 'bg-slate-400'
-                            : 'from-blue-600 to-indigo-600' }`}
-                        onClick={()=> setIsModalOpen(false)}
+                        className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+                        onClick={handleTestComplete}
                         disabled={isLoading}
                     >
-                        Kembali
+                        Mohon Tunggu...
                     </button>
                 ):(
                     <button 

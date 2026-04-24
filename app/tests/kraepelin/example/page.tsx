@@ -309,6 +309,12 @@ export default function KraeplinTest() {
   const gracePenalizedRef = useRef(false); // agar pelanggaran grace hanya dicatat sekali
   
   const [isClient, setIsClient] = useState(false);
+
+  useAntiCheat({ mode: "silent" });
+
+  useEffect(() => {
+    document.title = "Example - Psychological Tests";
+  }, [])
   
   useEffect(() => {
     setIsClient(true);
@@ -690,12 +696,6 @@ export default function KraeplinTest() {
       </div>
     );
   }
-
-  useAntiCheat({ mode: "silent" });
-
-  useEffect(() => {
-    document.title = "Example - Psychological Tests";
-  }, [])
   
   return (
     <div className="w-screen h-screen flex flex-col bg-stone-100 select-none overflow-hidden select-none">
