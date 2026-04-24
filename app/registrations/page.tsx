@@ -140,6 +140,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan nama lengkap"
+                autoComplete='off'
               />
             </div>
 
@@ -157,6 +158,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan email"
+                autoComplete='off'
               />
             </div>
 
@@ -233,6 +235,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: 20"
+                autoComplete='off'
               />
             </div>
 
@@ -252,6 +255,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: SMA / S1"
+                autoComplete='off'
               />
             </div>
 
@@ -269,6 +273,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: Teknik Informatika"
+                autoComplete='off'
               />
             </div>
 
@@ -286,6 +291,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: Fullstack Developer"
+                autoComplete='off'
               />
             </div>
 
@@ -303,6 +309,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: 123"
+                autoComplete='off'
               />
             </div>
 
