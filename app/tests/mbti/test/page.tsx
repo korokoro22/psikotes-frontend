@@ -304,6 +304,7 @@ export default function MbtiTestPage() {
                         {Array.from({ length: questions.length }, (_, i) => i + 1).map((nomor) => (
                             <button
                             key={nomor}
+                            data-nomor={nomor}
                             onClick={() => {
                                 setAktif(nomor)
                                 setCurrentGroup(nomor-1)

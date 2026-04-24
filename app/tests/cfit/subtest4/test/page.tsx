@@ -372,6 +372,7 @@ export default function CFITSubtest4Test() {
                         {Array.from({ length: question.length }, (_, i) => i + 1).map((nomor) => (
                             <button
                             key={nomor}
+                            data-nomor={nomor}
                             onClick={() => {
                                 setAktif(nomor)
                                 setCurrentQuestion(nomor-1)
