@@ -12,6 +12,8 @@ import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface PapiQuestion {
     id: number
@@ -201,7 +203,7 @@ export default function PapiInstructionPage() {
     }, [])
 
     const { showModal } = useClipboardPermissionGuard()
-
+    const { modalProps } = useBackGuard();
     return(
         <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
         {/* Header */}
@@ -459,6 +461,7 @@ export default function PapiInstructionPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
         </div>
     )
 }

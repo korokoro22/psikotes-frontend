@@ -7,6 +7,8 @@ import { getSoalCfit4Service } from '@/services/questions.service';
 import { updateStatusTest } from "@/services/answers.service"
 import TestHeader from '@/app/components/TestHeader';
 import { useAntiCheat } from '@/lib/useAntiCheat';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface Question {
     id: number;
@@ -31,6 +33,7 @@ interface Questionz {
 }
 
 export default function CFITSubtest4Test() {
+    const { modalProps } = useBackGuard();
     const router = useRouter();
     const [timeLeft, setTimeLeft] = useState(150); // 3 menit
     const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -524,7 +527,7 @@ export default function CFITSubtest4Test() {
                 
                 </div>
             </Modal>
-
+            <BackGuardModal {...modalProps} />
         </div>
     )
 }

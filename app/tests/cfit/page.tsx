@@ -11,6 +11,7 @@ import { Metadata } from 'next';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import { useBackGuard } from '@/lib/useBackGuard';
+import BackGuardModal from '@/app/components/BackGuardModal';
 
 function IconSeries() {
   return (
@@ -39,7 +40,7 @@ function IconList() {
 }
 
 export default function CFITTest() {
-  useBackGuard("Data belum tersimpan. Yakin ingin keluar?");
+  const { modalProps } = useBackGuard();
   useEffect(() => {
     // Delay agar Next.js selesai dulu commit ke browser history
     setTimeout(() => {
@@ -231,6 +232,7 @@ export default function CFITTest() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
       </main>
 
       

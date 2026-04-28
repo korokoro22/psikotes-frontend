@@ -12,6 +12,8 @@ import { useAntiCheat } from "@/lib/useAntiCheat"
 import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard"
 import Image from "next/image"
 import PermissionModal from "@/app/components/PermissionModal"
+import BackGuardModal from "@/app/components/BackGuardModal"
+import { useBackGuard } from "@/lib/useBackGuard"
 
 
 interface MsdtQuestion {
@@ -35,6 +37,7 @@ interface MsdtQuestions {
 }
 
 export default function MsdtTestPage() {
+    const { modalProps } = useBackGuard();
     const router = useRouter()
     const [currentGroup, setCurrentGroup] = useState(0)
     const [answers, setAnswers] = useState<
@@ -507,6 +510,7 @@ export default function MsdtTestPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
         </div>
     )
 }

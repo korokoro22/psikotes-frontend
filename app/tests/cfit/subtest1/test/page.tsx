@@ -10,6 +10,8 @@ import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface Question {
   id: number;
@@ -36,6 +38,7 @@ interface Questionz {
 const totalSoal = 50;
 
 export default function CFITSubtest1Test() {
+  const { modalProps } = useBackGuard();
   const router = useRouter();
   const [timeLeft, setTimeLeft] = useState(180); // satuan detik, 3 menit
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -482,7 +485,7 @@ export default function CFITSubtest1Test() {
               </div>
             </div>
           </PermissionModal>
-
+          <BackGuardModal {...modalProps} />
     </div>
   );
   

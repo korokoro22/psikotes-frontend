@@ -12,6 +12,8 @@ import { useAntiCheat } from "@/lib/useAntiCheat"
 import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard"
 import PermissionModal from "@/app/components/PermissionModal"
 import Image from "next/image"
+import BackGuardModal from "@/app/components/BackGuardModal"
+import { useBackGuard } from "@/lib/useBackGuard"
 
 interface MbtiQuestion {
     id: number,
@@ -232,7 +234,7 @@ export default function MbtiTestPage() {
     }, [aktif]);
 
     const { showModal } = useClipboardPermissionGuard()
-
+    const { modalProps } = useBackGuard();
     return(
         <div className="font-sans min-h-screen bg-gray-50 select-none">
             <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
@@ -495,6 +497,7 @@ export default function MbtiTestPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
         </div>
     )
 }

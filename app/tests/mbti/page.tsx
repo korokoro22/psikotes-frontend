@@ -11,6 +11,8 @@ import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface MbtiQuestion {
     id: number,
@@ -122,6 +124,8 @@ export default function MbtiInstructionPage() {
     useEffect(() => {
     document.title = "Instructions - Psychological Tests";
   }, [])
+
+  const { modalProps } = useBackGuard();
 
     return(
         <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
@@ -382,6 +386,7 @@ export default function MbtiInstructionPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
     </div>
     )
 }

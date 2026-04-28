@@ -12,6 +12,8 @@ import TestHeader from '@/app/components/TestHeader';
 import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
+import { useBackGuard } from '@/lib/useBackGuard';
+import BackGuardModal from '@/app/components/BackGuardModal';
 
 interface Question {
   id: number;
@@ -39,6 +41,7 @@ type CfitAnswer = {
 }
 
 export default function CFITSubtest1() {
+    const { modalProps } = useBackGuard();
     const router = useRouter()
     const [resultText, setResultText] = useState<string>('')
     const [question, setQuestion] = useState<Questionz[]>([])
@@ -429,6 +432,7 @@ export default function CFITSubtest1() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
         </motion.div>
       </main>
 

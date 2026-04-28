@@ -6,6 +6,8 @@ import axios from "axios";
 import { storeAnswersKraepelin, triggerN8n } from "@/services/answers.service";
 import { updateStatusTest } from "@/services/answers.service";
 import { useAntiCheat } from "@/lib/useAntiCheat";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { useBackGuard } from "@/lib/useBackGuard";
 
 /* ═══════════════════════════════════════════════════════════
    CONSTANTS & TYPES
@@ -840,6 +842,8 @@ export default function KraeplinTest() {
       </div>
     );
   }
+
+  const { modalProps } = useBackGuard();
   
   return (
     <div className="w-screen h-screen flex flex-col bg-stone-100 select-none overflow-hidden select-none">
@@ -1064,6 +1068,7 @@ export default function KraeplinTest() {
           )}
         </div>
       </div>
+      <BackGuardModal {...modalProps} />
     </div>
   );
 }

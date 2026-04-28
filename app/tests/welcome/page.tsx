@@ -8,6 +8,8 @@ import { useEffect, useState } from "react"
 import Modal from "@/app/components/Modal"
 import { updateStatusTest } from "@/services/answers.service"
 import TestHeader from "@/app/components/TestHeader"
+import { useBackGuard } from "@/lib/useBackGuard"
+import BackGuardModal from "@/app/components/BackGuardModal"
 
 
 
@@ -68,6 +70,8 @@ export default function FrontPage()  {
     useEffect(() => {
     document.title = "Welcome - Psychological Tests";
   }, [])
+
+  const { modalProps } = useBackGuard();
     
     return (
         <div className="select-none">
@@ -171,6 +175,7 @@ export default function FrontPage()  {
                 </main>
                 
             </div>
+            <BackGuardModal {...modalProps} />
         </div>
     )
 }

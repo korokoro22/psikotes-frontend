@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import Modal from '@/app/components/Modal';
 import TestHeader from '@/app/components/TestHeader';
 import { useAntiCheat } from '@/lib/useAntiCheat';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface Question {
   id: number
@@ -51,6 +53,7 @@ const KraepelinInstructionPage: React.FC = () => {
 
   // generate soal baru
   const generateNumbers = () => {
+    
     const a = Math.floor(Math.random() * 9) + 1;
     const b = Math.floor(Math.random() * 9) + 1;
     setNumbers([a, b]);
@@ -115,6 +118,8 @@ const KraepelinInstructionPage: React.FC = () => {
   useEffect(() => {
     document.title = "Instructions - Psychological Tests";
   }, [])
+
+  const { modalProps } = useBackGuard();
 
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
@@ -386,7 +391,7 @@ const KraepelinInstructionPage: React.FC = () => {
           </button>
         </div>
       </Modal>
-
+      <BackGuardModal {...modalProps} />
     </div>
   );
 }

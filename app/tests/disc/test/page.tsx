@@ -14,6 +14,7 @@ import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
 import { useBackGuard } from '@/lib/useBackGuard';
+import BackGuardModal from '@/app/components/BackGuardModal';
 
 interface WordGroup {
   id: number;
@@ -33,7 +34,7 @@ interface DiscQuestion {
 }
 
 export default function DISCTestPage() {
-  useBackGuard("Data belum tersimpan. Yakin ingin keluar?");
+  const { modalProps } = useBackGuard();
 
   const discQuestion:DiscQuestion[] = [
     {
@@ -140,56 +141,6 @@ export default function DISCTestPage() {
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
-
-  // const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
-  //   setAnswers(prev => {
-  //     const updated = {
-  //       most: [...prev.most],
-  //       least: [...prev.least],
-  //     };
-
-  //     const currentMost = updated.most[currentGroup];
-  //     const currentLeast = updated.least[currentGroup];
-
-  //     // TOGGLE OFF (klik ulang)
-  //     if (
-  //       (type === 'most' && currentMost?.questionIndex === questionIndex) ||
-  //       (type === 'least' && currentLeast?.questionIndex === questionIndex)
-  //     ) {
-  //       if (type === 'most') delete updated.most[currentGroup];
-  //       else delete updated.least[currentGroup];
-  //       return updated;
-  //     }
-
-  //     // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
-  //     if (
-  //       (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
-  //       (type === 'least' && currentMost?.questionIndex === questionIndex)
-  //     ) {
-  //       return prev;
-  //     }
-
-  //     // HANYA SATU MOST & SATU LEAST
-  //     if (type === 'most' && currentMost) return prev;
-  //     if (type === 'least' && currentLeast) return prev;
-
-  //     // SIMPAN PILIHAN
-  //     if (type === 'most') {
-  //       updated.most[currentGroup] = {
-  //         groupId: currentGroup+1,
-  //         questionIndex: questionIndex,
-
-  //       };
-  //     } else {
-  //       updated.least[currentGroup] = {
-  //         groupId: currentGroup+1,
-  //         questionIndex: questionIndex,
-  //       };
-  //     }
-
-  //     return updated;
-  //   });
-  // };
 
   const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
       let finalState = answers; // Asumsi state saat ini dibaca dari `answers`
@@ -626,6 +577,7 @@ export default function DISCTestPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
 import { useBackGuard } from '@/lib/useBackGuard';
+import BackGuardModal from '@/app/components/BackGuardModal';
 
 interface WordGroup {
   id: number;
@@ -78,7 +79,7 @@ function IconPersonality() {
 }
 
 export default function DISCInstructionPage() {
-  useBackGuard("Data belum tersimpan. Yakin ingin keluar?");
+  const { modalProps } = useBackGuard();
   
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState(0);
@@ -164,61 +165,6 @@ export default function DISCInstructionPage() {
       const setLoading = setIsLoading(false)
     }
   };
-
-  // const handleSelection = (type: 'most' | 'least', optionIndex: number) => {
-  //   setAnswers(prev => {
-  //     const updated = {}
-  //   })
-  // }
-
-  // const handleSelection = (type: 'most' | 'least', wordType: string) => {
-  //   setAnswers(prev => {
-  //     const updated = {
-  //       most: [...prev.most],
-  //       least: [...prev.least],
-  //     };
-
-  //     const currentMost = updated.most[currentGroup];
-  //     const currentLeast = updated.least[currentGroup];
-
-  //     // TOGGLE OFF (klik ulang)
-  //     if (
-  //       (type === 'most' && currentMost?.type === wordType) ||
-  //       (type === 'least' && currentLeast?.type === wordType)
-  //     ) {
-  //       if (type === 'most') delete updated.most[currentGroup];
-  //       else delete updated.least[currentGroup];
-  //       return updated;
-  //     }
-
-  //     // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
-  //     if (
-  //       (type === 'most' && currentLeast?.type === wordType) ||
-  //       (type === 'least' && currentMost?.type === wordType)
-  //     ) {
-  //       return prev;
-  //     }
-
-  //     // HANYA SATU MOST & SATU LEAST
-  //     if (type === 'most' && currentMost) return prev;
-  //     if (type === 'least' && currentLeast) return prev;
-
-  //     // SIMPAN PILIHAN
-  //     if (type === 'most') {
-  //       updated.most[currentGroup] = {
-  //         groupId: currentGroup,
-  //         type: wordType,
-  //       };
-  //     } else {
-  //       updated.least[currentGroup] = {
-  //         groupId: currentGroup,
-  //         type: wordType,
-  //       };
-  //     }
-
-  //     return updated;
-  //   });
-  // };
 
   const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
     setAnswers(prev => {
@@ -588,6 +534,7 @@ export default function DISCInstructionPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
     </div>
   );
 }

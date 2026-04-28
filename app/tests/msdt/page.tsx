@@ -11,6 +11,8 @@ import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface MsdtQuestion {
     id: number,
@@ -119,7 +121,7 @@ export default function MsdtInstructionPage() {
     useEffect(() => {
     document.title = "Instructions - Psychological Tests";
   }, [])
-
+    const { modalProps } = useBackGuard();
     const { showModal } = useClipboardPermissionGuard()
 
     return(
@@ -370,6 +372,7 @@ export default function MsdtInstructionPage() {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
         </div>
     )
 }

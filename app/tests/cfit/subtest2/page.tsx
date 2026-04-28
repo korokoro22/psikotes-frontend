@@ -11,6 +11,8 @@ import { useAntiCheat } from '@/lib/useAntiCheat';
 import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
 import PermissionModal from '@/app/components/PermissionModal';
 import Image from 'next/image';
+import BackGuardModal from '@/app/components/BackGuardModal';
+import { useBackGuard } from '@/lib/useBackGuard';
 
 interface Question {
   id: number;
@@ -32,6 +34,7 @@ interface Questionz {
 }
 
 export default function CFITSubtest2() {
+  const { modalProps } = useBackGuard();
   const router = useRouter()
   const [resultText, setResultText] = useState<string>('')
   const [answers, setAnswers] = useState<string[][]>([])
@@ -392,6 +395,7 @@ const handleAnswer = (option: string) => {
               </div>
             </div>
           </PermissionModal>
+          <BackGuardModal {...modalProps} />
     </div>
   );
 }

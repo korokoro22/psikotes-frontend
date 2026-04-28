@@ -7,6 +7,8 @@ import { storeAnswersKraepelin } from "@/services/answers.service";
 import { div } from "framer-motion/client";
 import Modal from "@/app/components/Modal";
 import { useAntiCheat } from "@/lib/useAntiCheat";
+import { useBackGuard } from "@/lib/useBackGuard";
+import BackGuardModal from "@/app/components/BackGuardModal";
 
 /* ═══════════════════════════════════════════════════════════
    CONSTANTS & TYPES
@@ -696,6 +698,8 @@ export default function KraeplinTest() {
       </div>
     );
   }
+
+  const { modalProps } = useBackGuard();
   
   return (
     <div className="w-screen h-screen flex flex-col bg-stone-100 select-none overflow-hidden select-none">
@@ -946,7 +950,7 @@ export default function KraeplinTest() {
           </button>
         </div>
       </Modal>
-
+      <BackGuardModal {...modalProps} />
     </div>
   );
 }
