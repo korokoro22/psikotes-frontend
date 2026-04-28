@@ -314,6 +314,7 @@ export default function KraeplinTest() {
   const [isClient, setIsClient] = useState(false);
 
   useAntiCheat({ mode: "silent" });
+   const { modalProps } = useBackGuard();
 
   useEffect(() => {
     document.title = "Test - Psychological Tests";
@@ -843,7 +844,7 @@ export default function KraeplinTest() {
     );
   }
 
-  const { modalProps } = useBackGuard();
+ 
   
   return (
     <div className="w-screen h-screen flex flex-col bg-stone-100 select-none overflow-hidden select-none">
