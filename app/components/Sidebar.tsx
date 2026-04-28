@@ -134,7 +134,7 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
                     Logout
                 </button>
             </ul> */}
-            <ul className="flex flex-col px-6 text-[#8a8a8a] gap-y-2">
+            <ul className="flex flex-col px-3 text-[#8a8a8a] gap-y-2">
                 {menu.map(item => {
                     const Icon = item.icon  // ← huruf kapital penting!
                     return (
@@ -156,7 +156,7 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
             </ul>
             </div>
             
-            <button className="text-left px-10 flex gap-x-3 text-lg font-semibold hover:bg-gray-200 mb-4 py-4 rounded-lg"
+            <button className="text-left px-3 ml-5 flex gap-x-3 text-lg font-semibold hover:bg-gray-400 mb-4 py-3 rounded-lg"
                     onClick={handleModal}
                 >
                     <Image 
@@ -171,7 +171,7 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
             
         </div>
         <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-            <p className='text-gray-800'>Apakah anda ingin keluar dari akun ini?</p>
+            <p className='text-gray-800'>Apakah anda ingin log out?</p>
             <div className='flex gap-x-3 justify-evenly mt-4'>
                 <button
                     className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
