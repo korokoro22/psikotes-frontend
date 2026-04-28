@@ -41,25 +41,7 @@ function IconList() {
 
 export default function CFITTest() {
   const { modalProps } = useBackGuard();
-  useEffect(() => {
-    // Delay agar Next.js selesai dulu commit ke browser history
-    setTimeout(() => {
-      window.history.pushState(null, "", window.location.href);
-      window.history.pushState(null, "", window.location.href);
-      console.log("✅ pushState selesai, history length:", window.history.length);
-    }, 100);
-
-    const handlePopState = () => {
-      console.log("✅ popstate terpicu!");
-      setTimeout(() => {
-        window.history.pushState(null, "", window.location.href);
-        alert("BERHASIL!");
-      }, 0);
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
+  
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
