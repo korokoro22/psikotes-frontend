@@ -3,14 +3,25 @@
 import { useAntiCheat } from "@/lib/useAntiCheat";
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function psychologicaltests() {
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
     
     useEffect(() => {
         navigator.clipboard.readText().catch(() => {});
     }, []);
+
+    const handleNext = () => {
+        try{
+            setIsLoading(true)
+            router.push('/registrations')
+        } catch (error) {
+            setIsLoading(false)
+        }
+        
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 px-4 py-8">
@@ -24,12 +35,15 @@ export default function psychologicaltests() {
                         height={150}
                     />
                     <button 
-                        className="px-20 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-                        onClick={()=> {
-                            router.push('/registrations')
-                        }}
+                        className={`px-20 py-2  text-white rounded-lg  ${
+                            isLoading
+                            ? 'bg-gray-500'
+                            : 'hover:bg-blue-700 bg-blue-500'
+                            }`}
+                        disabled={isLoading}
+                        onClick={handleNext}
                     >
-                        MULAI
+                        {isLoading? 'Mohon tunggu':'Masuk'}
                     </button>
                 </div>
             </div>
