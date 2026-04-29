@@ -264,12 +264,9 @@ const KraepelinInstructionPage: React.FC = () => {
                       </ul>
                     <li className="marker:text-2xl ">
                       
-                      Peserta <span className='text-red-600 font-bold'>dilarang</span> berpindah kotak jawaban.
+                      Segera pindah lajur ketika muncul instruksi untuk pindah.
                     </li>
-                    <li className="marker:text-2xl ">
-                      
-                      Peserta <span className='text-red-600 font-bold'>dilarang</span> berpindah lajur.
-                    </li>
+                    
                   </ul>
                 </div>
                 {/*  
