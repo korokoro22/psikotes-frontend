@@ -69,15 +69,16 @@ export default function psychologicaltests() {
     const [isLoading, setIsLoading] = useState(false)
 
     const handleNext = async () => {
-        try {
-            setIsLoading(true)
-            // Trigger clipboard permission saat user gesture (klik)
-            await navigator.clipboard.readText().catch(() => {});
-            router.push('/registrations')
-        } catch (error) {
-            setIsLoading(false)
-        }
+    try {
+        setIsLoading(true)
+        // Await tanpa .catch() agar benar-benar menunggu user respons izin
+        await navigator.clipboard.readText()
+        router.push('/registrations')
+    } catch (error) {
+        // Izin ditolak atau error lain — tetap lanjut pindah halaman
+        router.push('/registrations')
     }
+}
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 px-4 py-8">
