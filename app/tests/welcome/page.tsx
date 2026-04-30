@@ -236,7 +236,7 @@ export default function FrontPage()  {
         let total = 0
         for (let test of tests) {
             if (test === 'CFIT') {
-                total += 46
+                total += 63
             } else if ( test === 'DISC') {
                 total += 24
             } else if (test === 'MSDT') {

@@ -103,7 +103,7 @@ export default function CFITTest() {
               
               {/* Info box */}
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                {/* <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
                   <div className="text-blue-600">
                     <IconClock />
                   </div>
@@ -111,7 +111,7 @@ export default function CFITTest() {
                     <div className="text-slate-800 font-medium">Total Waktu</div>
                     <div className="text-slate-600">~ 12,5 menit (4 subtes)</div>
                   </div>
-                </div>
+                </div> */}
                 
                 <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
                   <div className="text-amber-600">
@@ -119,7 +119,7 @@ export default function CFITTest() {
                   </div>
                   <div className="text-sm">
                     <div className="text-slate-800 font-medium">Jumlah Soal</div>
-                    <div className="text-slate-600">Total 46 soal (tergantung versi)</div>
+                    <div className="text-slate-600">Total 63 soal (4 subtes)</div>
                   </div>
                 </div>
 

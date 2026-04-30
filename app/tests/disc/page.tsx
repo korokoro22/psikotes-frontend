@@ -271,7 +271,7 @@ export default function DISCInstructionPage() {
 
               {/* Info box */}
               <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                {/* <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
                   <div className="text-blue-600">
                     <Clock className="w-5 h-5" />
                   </div>
@@ -279,15 +279,15 @@ export default function DISCInstructionPage() {
                     <div className="text-slate-800 font-medium">Durasi</div>
                     <div className="text-slate-600">± 10–15 menit</div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
                   <div className="text-amber-600">
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-sm">
-                    <div className="text-slate-800 font-medium">Jumlah Kelompok</div>
-                    <div className="text-slate-600">Sekitar 24 pernyataan</div>
+                    <div className="text-slate-800 font-medium">Jumlah Pernyataan</div>
+                    <div className="text-slate-600">24 pernyataan</div>
                   </div>
                 </div>
 

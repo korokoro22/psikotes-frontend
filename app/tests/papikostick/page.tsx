@@ -244,15 +244,15 @@ export default function PapiInstructionPage() {
 
                 {/* Info box */}
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                    <div className="text-blue-600">
-                        <Clock className="w-5 h-5" />
-                    </div>
-                    <div className="text-sm">
-                        <div className="text-slate-800 font-medium">Durasi</div>
-                        <div className="text-slate-600">15 menit</div>
-                    </div>
-                    </div>
+                    {/* <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+                        <div className="text-blue-600">
+                            <Clock className="w-5 h-5" />
+                        </div>
+                        <div className="text-sm">
+                            <div className="text-slate-800 font-medium">Durasi</div>
+                            <div className="text-slate-600">15 menit</div>
+                        </div>
+                    </div> */}
 
                     <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
                     <div className="text-amber-600">
