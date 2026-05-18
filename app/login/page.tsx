@@ -49,74 +49,107 @@ export default function AdminLoginForm() {
   }, [])
 
     return(
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 px-4 py-10">
-      <div className="relative w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-indigo-100">
-        {/* Header */}
-        <div className="bg-linear-to-r from-blue-600 to-indigo-600 text-white text-center py-4">
-          <h1 className="text-xl font-bold tracking-wide">DASHBOARD ADMIN</h1>
-          <p className="text-xs opacity-90">tes psikotes</p>
-        </div>
+          <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 px-4 py-10">
 
-        {/* Form */}
-        <div className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Nama */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                Username
-              </label>
-              <input
-                type="text"
-                name="username"
-                id="username"
-                required
-                value={formData.username}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
-                placeholder="Masukkan Username"
-              />
-            </div>
+  <div className="w-full max-w-md overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-2xl">
 
-            <div>
-              <label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                id="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
-                placeholder="Masukkan Password"
-              />
-            </div>
+    {/* Header */}
+    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-8 text-center text-white">
 
-            {/* Tombol */}
-            <div className='flex justify-center'>
-              {isLoading ? (
-                <button
-                className={` disabled:pointer-events-nonew-1/2 w-1/2 bg-slate-400  py-2 text-sm font-semibold text-white rounded-md shadow-md transition-all duration-200 bg-gradient-to-r `}
-                disabled={isLoading}
+      <h1 className="text-3xl font-bold tracking-wide">
+        KURNIAWAN GROUP
+      </h1>
 
-              >
-                Mohon Tunggu...
-              </button>
-              ):(
-                <button
-                className={`w-1/2  py-2 text-sm font-semibold text-white rounded-md shadow-md transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700
-                `}
-              >
-                Login
-              </button>
-              )}
-              
-            </div>
-            
-          </form>
-        </div>
-      </div>
+      <p className="mt-2 text-sm text-blue-100">
+        Sistem Tes dan Assessment Peserta
+      </p>
+
     </div>
+
+    {/* Form */}
+    <div className="p-8">
+
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-5"
+      >
+
+        {/* Username */}
+        <div>
+
+          <label
+            htmlFor="username"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Username
+          </label>
+
+          <input
+            type="text"
+            name="username"
+            id="username"
+            required
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Masukkan username"
+            className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 shadow-sm outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+          />
+
+        </div>
+
+        {/* Password */}
+        <div>
+
+          <label
+            htmlFor="password"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
+
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Masukkan password"
+            className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-800 shadow-sm outline-none transition-all duration-200 placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
+          />
+
+        </div>
+
+        {/* Button */}
+        <div className="pt-2">
+
+          {isLoading ? (
+
+            <button
+              disabled
+              className="w-full rounded-2xl bg-gray-400 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200"
+            >
+              Mohon Tunggu...
+            </button>
+
+          ) : (
+
+            <button
+              className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-[1.01] hover:from-blue-700 hover:to-indigo-700"
+            >
+              Login
+            </button>
+
+          )}
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
     )
 }

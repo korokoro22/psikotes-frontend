@@ -96,80 +96,82 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
 
         {/* Overlay for mobile view when menu is open */}
 
-        <div 
-            className={
-                `bg-[#DFDFDE] font-sans min-h-screen flex  ${
-                isOpen === true
-                ?`block`
-                :`hidden md:block`
-                }`
-            }
-        >
-            <div className="flex flex-col min-h-screen justify-between ">
-            <div>
-            <div className=" border-gray-200 mb-10 py-5 mx-4">
-                <p className=" px-8 text-2xl font-bold ">TES PSIKOTES</p>
-            </div>
-            {/* <ul className="flex flex-col px-6 text-[#6c6e70]">
-                {menu.map(item => (
-                        <Link 
-                        key={item.href}
-                        href={item.href}
-                        className="mb-4 py-4 px-4 text-lg hover:bg-gray-200 rounded-lg font-semibold flex flex-row gap-x-3"
-                        >
-                            <div>{item.icon}</div>
-                            <div>{item.label}</div>
-                        </Link>
-                    
-                ))}
-                <button className="text-left px-4 flex gap-x-3 text-lg font-semibold hover:bg-gray-200 mb-4 py-4 rounded-lg"
-                    onClick={handleModal}
-                >
-                    <Image 
-                        src="/assets/logoutsvg.svg"
-                        width={25}
-                        height={25}
-                        alt=""
-                    />
-                    Logout
-                </button>
-            </ul> */}
-            <ul className="flex flex-col px-3 text-[#8a8a8a] gap-y-2">
-                {menu.map(item => {
-                    const Icon = item.icon  // ← huruf kapital penting!
-                    return (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={` py-3 hover:text-[] px-4 text-lg hover:bg-gray-200 rounded-lg font-base flex flex-row gap-x-3${
-                            pathname === item.href
-                            ? '  bg-[#FFFDF1] text-[#2C2C2C] font-semibold'
-                            : ''   
-                        }`}
-                    >
-                        <Icon className="w-7 h-7" />  {/* ← passing className di sini */}
-                        <div className="">{item.label}</div>
-                    </Link>
-                    )
-                })}
-                
-            </ul>
-            </div>
-            
-            <button className="text-left px-3 ml-5 flex gap-x-3 text-lg font-semibold hover:bg-gray-400 mb-4 py-3 rounded-lg"
-                    onClick={handleModal}
-                >
-                    <Image 
-                        src="/assets/logoutsvg.svg"
-                        width={25}
-                        height={25}
-                        alt=""
-                    />
-                    Logout
-            </button>
-            </div>
-            
-        </div>
+        <div
+  className={`min-h-screen bg-[#F5F6FA] font-sans transition-all duration-300 ${
+    isOpen ? 'block' : 'hidden md:block'
+  }`}
+>
+
+  <div className="flex min-h-screen flex-col justify-between border-r border-gray-200 bg-white px-4 py-5 shadow-sm">
+
+    {/* Top */}
+    <div>
+
+      {/* Logo */}
+      <div className="mb-10 border-b border-gray-100 pb-5">
+        <p className="px-4 text-2xl font-bold tracking-wide text-gray-800">
+          TES PSIKOTES
+        </p>
+      </div>
+
+      {/* Menu */}
+      <ul className="flex flex-col gap-2 text-gray-500">
+
+        {menu.map((item) => {
+
+          const Icon = item.icon
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-base transition-all duration-200 ${
+                pathname === item.href
+                  ? 'bg-blue-50 font-semibold text-blue-700 shadow-sm'
+                  : 'hover:bg-gray-100 hover:text-gray-700'
+              }`}
+            >
+
+              <Icon className="h-6 w-6" />
+
+              <span>
+                {item.label}
+              </span>
+
+            </Link>
+          )
+        })}
+
+      </ul>
+
+    </div>
+
+    {/* Bottom */}
+    <div className="pt-5">
+
+      <button
+        onClick={handleModal}
+        className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium text-red-500 transition-all duration-200 hover:bg-red-200 hover:text-red-600"
+      >
+
+        <Image
+          src="/assets/logoutsvg.svg"
+          width={22}
+          height={22}
+          alt="Logout"
+        />
+
+        <span>
+          Logout
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
         <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
             <p className='text-gray-800'>Apakah anda ingin log out?</p>
             <div className='flex gap-x-3 justify-evenly mt-4'>

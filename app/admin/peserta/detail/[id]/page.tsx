@@ -31,70 +31,130 @@ export default function AdminPesertaDetail({ params }: { params: Promise<{ id: s
   }, [])
     
     return(
-        <div className="">
-            <div className="mb-8 border-b pb-5 border-gray-300 flex justify-between items-center">
-                <p className="font-bold text-3xl">Info Peserta</p>
-                <Link 
-                    href='/admin/peserta'
-                    className="bg-gray-300 px-5 py-1 rounded-lg hover:bg-gray-400"
-                >
-                    Kembali
-                </Link>
-            </div>
-            <div className="flex gap-x-20">
-                {data 
-                ? <div className="flex gap-x-20">
-                    <ul className="flex flex-col gap-y-6">
-                    <li>    
-                        <p className="text-gray-600">Nama</p>
-                        <p className="font-semibold text-lg">{data.nama}</p>
-                    </li>
-                    <li>    
-                        <p className="text-gray-600">Usia</p>
-                        <p className="font-semibold text-lg">{data.usia}</p>
-                    </li>
-                    <li>    
-                        <p className="text-gray-600">Jenis Kelamin</p>
-                        <p className="font-semibold text-lg">{data.jenisKelamin}</p>
-                    </li>
-                </ul>                        
-                        
-                <ul className="flex flex-col gap-y-6">
-                    <li>    
-                        <p className="text-gray-600">Pendidikan Terakhir</p>
-                        <p className="font-semibold text-lg">{data.pendidikanTerakhir}</p>
-                    </li>
-                    <li>    
-                        <p className="text-gray-600">Jurusan</p>
-                        <p className="font-semibold text-lg">{data.jurusan}</p>
-                    </li>
-                    <li>    
-                        <p className="text-gray-600">Status Tes</p>
-                        <p className={` px-2 py-1 rounded-xl mt-2 text-white text-sm text-center ${
-                        data.testSession[0].statusTest === 2 
-                        ? 'bg-green-600'
-                        : data.testSession[0].statusTest === 1
-                        ? 'bg-yellow-400'
-                        : 'bg-red-600'
-                        }`}>{
-                        data.testSession[0].statusTest === 2 
-                        ? 'Selesai mengerjakan'
-                        : data.testSession[0].statusTest === 1
-                        ? 'Sedang mengerjakan'
-                        : 'Belum mengerjakan'
-                        }
-                        </p>
-                    </li>
-                </ul>
-                </div>
+        <div>
 
-                : <div>
-                    Data tidak ada
-                </div>
-            }
-                    
+  {/* Header */}
+  <div className="mb-8 flex items-center justify-between border-b border-gray-200 pb-5">
+    <div>
+      <h1 className="text-3xl font-bold text-gray-800">
+        Info Peserta
+      </h1>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Detail informasi peserta psikotes
+      </p>
+    </div>
+
+    <Link
+      href="/admin/peserta"
+      className="rounded-xl bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200"
+    >
+      Kembali
+    </Link>
+  </div>
+
+  {/* Content */}
+  {data ? (
+
+    <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
+
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+
+        {/* Left */}
+        <ul className="flex flex-col gap-7">
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Nama
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-gray-800">
+              {data.nama}
+            </p>
+          </li>
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Usia
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-gray-800">
+              {data.usia}
+            </p>
+          </li>
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Jenis Kelamin
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-gray-800">
+              {data.jenisKelamin}
+            </p>
+          </li>
+
+        </ul>
+
+        {/* Right */}
+        <ul className="flex flex-col gap-7">
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Pendidikan Terakhir
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-gray-800">
+              {data.pendidikanTerakhir}
+            </p>
+          </li>
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Jurusan
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-gray-800">
+              {data.jurusan}
+            </p>
+          </li>
+
+          <li>
+            <p className="text-sm text-gray-500">
+              Status Tes
+            </p>
+
+            <div className="mt-2 flex">
+              <p
+                className={`rounded-full px-4 py-2 text-sm font-semibold text-white ${
+                  data.testSession[0].statusTest === 2
+                    ? 'bg-green-600'
+                    : data.testSession[0].statusTest === 1
+                    ? 'bg-yellow-400'
+                    : 'bg-red-500'
+                }`}
+              >
+                {data.testSession[0].statusTest === 2
+                  ? 'Selesai mengerjakan'
+                  : data.testSession[0].statusTest === 1
+                  ? 'Sedang mengerjakan'
+                  : 'Belum mengerjakan'}
+              </p>
             </div>
-            
-        </div>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  ) : (
+
+    <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-500 shadow-sm">
+      Data tidak ada
+    </div>
+
+  )}
+</div>
     )
 }

@@ -57,75 +57,143 @@ export default function AdminHasilTesHasil({ params }: { params: Promise<{ id: s
   }, [])
 
     return (
-        <div className="">
-            <div className="">
-            <div className="mb-8 border-b pb-5 border-gray-300 flex justify-between items-center">
-                <p className="font-bold text-4xl">Hasil Tes Peserta</p>
-                <Link 
-                    href='/admin/hasiltes'
-                    className="bg-gray-300 px-5 py-1 rounded-lg hover:bg-gray-400"
-                >
-                    Kembali
-                </Link>
-            </div>
-            <div className="flex gap-x-20">
-                {data
-                ? <div className="w-full">
-                    <div className="flex gap-x-20">
-                        <ul className="flex flex-col gap-y-6">
-                            <li>    
-                                <p className="text-gray-600">Nama</p>
-                                <p className="font-semibold text-lg">{data.nama}</p>
-                            </li>
-                            <li>    
-                                <p className="text-gray-600">Umur</p>
-                                <p className="font-semibold text-lg">{data.umur} Tahun</p>
-                            </li>
-                            <li>    
-                                <p className="text-gray-600">Jenis Kelamin</p>
-                                <p className="font-semibold text-lg">{data.jenisKelamin}</p>
-                            </li>
-                        </ul>                        
-                                
-                        <ul className="flex flex-col gap-y-6">
-                            <li>    
-                                <p className="text-gray-600">Pendidikan Terakhir</p>
-                                <p className="font-semibold text-lg">{data.pendidikanTerakhir}</p>
-                            </li>
-                            <li>    
-                                <p className="text-gray-600">Posisi yang dilamar</p>
-                                <p className="font-semibold text-lg">{data.posisiYangDilamar}</p>
-                            </li>
-                            <li>    
-                                <p className="text-gray-600">Tanggal tes</p>
-                                <p className="font-semibold text-lg">{data.tanggalTes}</p>
-                            </li>
-                            
-                        </ul>
-                    </div>
-                     
+        <div>
 
-                    <div className="w-full border-t-2 mt-5 border-gray-300">
-                        {daftarTes
-                        .filter(item => data.tests.includes(item))
-                        .map(item => (
-                            <React.Fragment key={item}>
-                            <div className="py-5 border-b-2 border-gray-300">
-                                {componentMap[item]}
-                            </div>
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </div>
-                : <div>
-                    Data tidak ada
-                </div>}
-                   
-            </div>
+  {/* Header */}
+  <div className="mb-8 flex items-center justify-between border-b border-gray-200 pb-5">
 
-            
-            
+    <div>
+      <h1 className="text-4xl font-bold text-gray-800">
+        Hasil Tes Peserta
+      </h1>
+
+      <p className="mt-1 text-sm text-gray-500">
+        Detail hasil psikotes peserta
+      </p>
+    </div>
+
+    <Link
+      href="/admin/hasiltes"
+      className="rounded-xl bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-200"
+    >
+      Kembali
+    </Link>
+
+  </div>
+
+  {/* Content */}
+  {data ? (
+
+    <div className="space-y-6">
+
+      {/* Info Card */}
+      <div className="rounded-3xl border border-gray-200 bg-white p-8 shadow-sm">
+
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+
+          {/* Left */}
+          <ul className="flex flex-col gap-7">
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Nama
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.nama}
+              </p>
+            </li>
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Umur
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.umur} Tahun
+              </p>
+            </li>
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Jenis Kelamin
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.jenisKelamin}
+              </p>
+            </li>
+
+          </ul>
+
+          {/* Right */}
+          <ul className="flex flex-col gap-7">
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Pendidikan Terakhir
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.pendidikanTerakhir}
+              </p>
+            </li>
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Posisi yang Dilamar
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.posisiYangDilamar}
+              </p>
+            </li>
+
+            <li>
+              <p className="text-sm text-gray-500">
+                Tanggal Tes
+              </p>
+
+              <p className="mt-1 text-lg font-semibold text-gray-800">
+                {data.tanggalTes}
+              </p>
+            </li>
+
+          </ul>
+
         </div>
-        </div>
+
+      </div>
+
+      {/* Result Section */}
+      <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+
+        {daftarTes
+          .filter(item => data.tests.includes(item))
+          .map(item => (
+
+            <React.Fragment key={item}>
+
+              <div className="border-b border-gray-100 p-6 last:border-b-0">
+                {componentMap[item]}
+              </div>
+
+            </React.Fragment>
+
+          ))}
+
+      </div>
+
+    </div>
+
+  ) : (
+
+    <div className="rounded-3xl border border-gray-200 bg-white p-10 text-center text-gray-500 shadow-sm">
+      Data tidak ada
+    </div>
+
+  )}
+
+</div>
     )
 }
