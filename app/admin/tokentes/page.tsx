@@ -132,7 +132,7 @@ export default function AdminTokenTes() {
     <table className="w-full border-collapse">
 
       {/* Table Header */}
-      <thead className="bg-gray-50">
+      <thead className="bg-gray-200">
 
         <tr className="text-left text-sm font-semibold text-gray-700">
 

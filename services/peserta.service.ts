@@ -1,6 +1,10 @@
 import api from "@/lib/axiosBackend";
 
-export const getAllPeserta = () => api.get('/api/admin/peserta')
+export const getAllPeserta = (
+    currentPage: number, 
+    limit: number, 
+    posisi?: string 
+) => api.get(`/api/admin/peserta?page=${currentPage}&limit=${limit}&posisi=${posisi || ''}`)
 
 export const registerPeserta = (
     data: {
@@ -28,5 +32,7 @@ export const getHasilPeserta = () => api.get('/api/admin/hasiltes')
 export const getDetailHasilPeserta = (id: number) => api.get(`api/admin/hasiltes/hasil/${id}`)
 
 export const userExpiredDate = (nik: string) => api.patch(`api/user/user-expired/${nik}`) 
+
+export const getAllPosition = () => api.get(`/api/admin/peserta/posisi`)
 
 // export const setTrueService = (id: number) => api.put(`api/user/user-expired/${id}`)

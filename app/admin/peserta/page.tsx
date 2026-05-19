@@ -1,10 +1,11 @@
 'use client'
 import { div, tr } from "framer-motion/client";
 import Link from "next/link";
-import { getAllPeserta } from "@/services/peserta.service";
+import { getAllPeserta, getAllPosition } from "@/services/peserta.service";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Listbox } from "@headlessui/react";
+import { useSearchParams } from "next/navigation";
 
 interface TestSession {
     statusTest: number
@@ -24,57 +25,87 @@ type OpsiPosisi = {
     count: number
 }
 
+// type Props = {
+//   searchParams: Promise<{ [key: string]: string }>
+// }
 
 
 export default function AdminPeserta() {
+    const searchParams = useSearchParams()
     const [data, setData] = useState<Data[]>([])
     const router = useRouter()
-    const [opsiPosisi, setOpsiPosisi] = useState<OpsiPosisi[]>([])
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
+    const [totalData, setTotalData] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
+    const currentPage = parseInt(searchParams.get('page') || '1');
+    const limit = 10; // Jumlah item per halaman
+    // const [currentPages, setCurrentPages] = useState(1) // pagination
+    const [position, setPosition] = useState<OpsiPosisi[]>([])
+    const [selectedPosition, setSelectedPosition] = useState<OpsiPosisi | null>(null)
 
+    useEffect(()=> {
+        const getPosisi = async () => {
+            try {
+                const posisi = await getAllPosition()
+                setPosition(posisi.data.data)
+            } catch (error:any) {
+                console.error('error: ', error)
+            }
+        }
+        getPosisi()
+    }, [position])
     
+    useEffect(()=> {
+        console.log('ini posisi', selectedPosition)
+    }, [selectedPosition])
 
     useEffect(()=> {
         const getPeserta = async () => {
             try {
-                const peserta = await getAllPeserta()
+                // const peserta = await getAllPeserta(currentPages, limit)
+                const peserta = await getAllPeserta(currentPage, limit, selectedPosition?.label)
                 setData(peserta.data.data)
-                // Olah jadi opsi posisi
-                const fetchedData = peserta.data.data  // simpan dulu di variabel lokal
+                setTotalData(peserta.data.pagination.allData)
+                setTotalPages(peserta.data.pagination.totalPages)
+                // // Olah jadi opsi posisi
+                // const fetchedData = peserta.data.data  // simpan dulu di variabel lokal
 
-                // gunakan variabel lokal, bukan `data`
-                const grouped = fetchedData.reduce((acc: Record<string, number>, obj: { posisi: string }) => {
-                    const posisi = obj.posisi
-                    acc[posisi] = (acc[posisi] || 0) + 1
-                    return acc
-                }, {} as Record<string, number>)
+                // // gunakan variabel lokal, bukan `data`
+                // const grouped = fetchedData.reduce((acc: Record<string, number>, obj: { posisi: string }) => {
+                //     const posisi = obj.posisi
+                //     acc[posisi] = (acc[posisi] || 0) + 1
+                //     return acc
+                // }, {} as Record<string, number>)
 
-                const opsi = Object.entries(grouped).map(([label, count]) => ({ label, count: count as number}))
+                // const opsi = Object.entries(grouped).map(([label, count]) => ({ label, count: count as number}))
 
-                 const opsiSemua = {
-                    label: 'Semua',
-                    count: fetchedData.length,
-                }
-                setOpsiPosisi([opsiSemua, ...opsi])
+                //  const opsiSemua = {
+                //     label: 'Semua',
+                //     count: fetchedData.length,
+                // }
+                // setOpsiPosisi([opsiSemua, ...opsi])
 
                 // setSelected(opsiSemua)
             } catch (err:any){
-                router.push('/login')
+                console.error('gagal pagination')
             }   
         }
         getPeserta()
-    }, [])
+    }, [currentPage, selectedPosition])
 
+    // useEffect(()=> {
+    //     console.log('ini totalPages: ', totalPages)
+    // }, [totalPages])
     
 
-    const [selected, setSelected] = useState<OpsiPosisi | null>(null)
+    
     const [search, setSearch] = useState('')
     
 
     useEffect(()=> {
-        console.log('ini data',data)
-    }, [data])
+        console.log('ini total data',totalData)
+    }, [totalData])
 
 //     useEffect(()=> {
 //         console.log('ini opsi posisi',opsiPosisi)
@@ -84,60 +115,62 @@ export default function AdminPeserta() {
 //     document.title = "Peserta - Psychological Tests";
 //   }, [])
 
-    const filteredData = data.filter((item) => {
-        // FILTER POSISI
-        const matchPosisi =
-            selected === null ||
-            selected.label === 'Semua'
-            ? true
-            : item.posisi === selected.label
+    // const filteredData = data.filter((item) => {
+    //     // FILTER POSISI
+    //     const matchPosisi =
+    //         selected === null ||
+    //         selected.label === 'Semua'
+    //         ? true
+    //         : item.posisi === selected.label
 
-        // FILTER SEARCH NAMA
-        const matchSearch =
-            item.nama
-            .toLowerCase()
-            .includes(search.toLowerCase())
+    //     // FILTER SEARCH NAMA
+    //     const matchSearch =
+    //         item.nama
+    //         .toLowerCase()
+    //         .includes(search.toLowerCase())
 
-        // FILTER RANGE TANGGAL
-        const itemDate = new Date(item.createdAt)
+    //     // FILTER RANGE TANGGAL
+    //     const itemDate = new Date(item.createdAt)
 
-        let matchDate = true
+    //     let matchDate = true
 
-        if (startDate) {
-            matchDate =
-            itemDate >= new Date(startDate)
-        }
+    //     if (startDate) {
+    //         matchDate =
+    //         itemDate >= new Date(startDate)
+    //     }
 
-        if (endDate) {
+    //     if (endDate) {
 
-            // supaya full sampai jam 23:59
-            const end = new Date(endDate)
-            end.setHours(23, 59, 59, 999)
+    //         // supaya full sampai jam 23:59
+    //         const end = new Date(endDate)
+    //         end.setHours(23, 59, 59, 999)
 
-            matchDate =
-            matchDate && itemDate <= end
-        }
+    //         matchDate =
+    //         matchDate && itemDate <= end
+    //     }
 
-        return (
-            matchPosisi &&
-            matchSearch &&
-            matchDate
-        )
-        })
+    //     return (
+    //         matchPosisi &&
+    //         matchSearch &&
+    //         matchDate
+    //     )
+    //     })
+
+    const goToPage = (page: number) => {
+        router.push(`?page=${page}`)
+    }
 
     return (
         <div>
             <div className="mb-10">
+                <h1 className="text-4xl font-bold tracking-tight text-gray-800">
+                Peserta
+                </h1>
 
-    <h1 className="text-4xl font-bold tracking-tight text-gray-800">
-      Peserta
-    </h1>
-
-    <p className="mt-2 text-sm text-gray-500">
-      Kelola data peserta psikotes dan progres pengerjaan tes
-    </p>
-
-  </div>
+                <p className="mt-2 text-sm text-gray-500">
+                Kelola data peserta psikotes dan progres pengerjaan tes
+                </p>
+            </div>
             <div className="py-2 w-full flex flex-col gap-y-3 mb-6">
                 <div className="w-full">
                     <div className="relative">
@@ -193,20 +226,21 @@ export default function AdminPeserta() {
                     
                 <div className="flex gap-x-10 items-center">
                     <div className="w-44">
-                        <Listbox value={selected} onChange={setSelected}>
+                        <Listbox value={selectedPosition} onChange={setSelectedPosition}>
                             <div className=" relative text-sm ">
                             {/* Button */}
                             <Listbox.Button className="w-full rounded-lg text-center border border-gray-300 bg-white px-2 py-1 shadow-sm focus:outline-none">
-                                {selected
-                                ? `${selected.label} (${selected.count})`
+                                {selectedPosition
+                                ? `${selectedPosition.label} (${selectedPosition.count})`
                                 : 'Pilih posisi  ⏷'}
                             </Listbox.Button>
 
                             {/* Dropdown */}
                             <Listbox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg focus:outline-none">
-                                {opsiPosisi.map((item) => (
+                                {position.map((item) => (
                                 <Listbox.Option
                                     key={item.label}
+                                    
                                     value={item}
                                     className={({ active }) =>
                                     `cursor-pointer px-4 py-2 ${
@@ -287,81 +321,182 @@ export default function AdminPeserta() {
                 
             </div>
             <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-  <table className="w-full border-collapse">
+                <table className="w-full border-collapse">
 
-    {/* Header */}
-    <thead className="bg-gray-200">
-      <tr className="text-left text-sm font-semibold text-gray-700">
-        <th className="px-6 py-4">Tanggal Tes</th>
-        <th className="px-6 py-4">Nama</th>
-        <th className="px-6 py-4">Progres</th>
-        <th className="px-6 py-4">Posisi</th>
-        <th className="px-6 py-4">Aksi</th>
-      </tr>
-    </thead>
+                    {/* Header */}
+                    <thead className="bg-gray-200">
+                    <tr className="text-left text-sm font-semibold text-gray-700">
+                        <th className="px-6 py-4">Tanggal Tes</th>
+                        <th className="px-6 py-4">Nama</th>
+                        <th className="px-6 py-4">Progres</th>
+                        <th className="px-6 py-4">Posisi</th>
+                        <th className="px-6 py-4">Aksi</th>
+                    </tr>
+                    </thead>
 
-    {/* Body */}
-    <tbody>
-      {filteredData.map((item) => {
+                    {/* Body */}
+                    <tbody>
+                    {data.map((item) => {
 
-        const status = item.testSession[0].statusTest
+                        const status = item.testSession[0].statusTest
 
-        return (
-          <tr
-            key={item.id}
-            className="border-t border-gray-100 text-sm transition-colors duration-150 hover:bg-gray-50"
-          >
+                        return (
+                        <tr
+                            key={item.id}
+                            className="border-t border-gray-100 text-sm transition-colors duration-150 hover:bg-gray-50"
+                        >
 
-            <td className="px-6 py-4 text-gray-600">
-              {item.tanggal.toString()}
-            </td>
+                            <td className="px-6 py-4 text-gray-600">
+                                {item.tanggal.toString()}
+                            </td>
 
-            <td className="px-6 py-4 font-medium text-gray-800">
-              {item.nama}
-            </td>
+                            <td className="px-6 py-4 font-medium text-gray-800">
+                                {item.nama}
+                            </td>
 
-            <td className="px-6 py-4">
-              <div className="flex">
-                <p
-                  className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${
-                    status === 0
-                      ? 'bg-gray-400'
-                      : status === 1
-                      ? 'bg-yellow-400'
-                      : 'bg-green-600'
-                  }`}
-                >
-                  {status === 0
-                    ? 'Belum mengerjakan'
-                    : status === 1
-                    ? 'Sedang mengerjakan'
-                    : 'Selesai mengerjakan'}
-                </p>
-              </div>
-            </td>
+                            <td className="px-6 py-4">
+                                <div className="flex">
+                                    <p
+                                    className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${
+                                        status === 0
+                                        ? 'bg-gray-400'
+                                        : status === 1
+                                        ? 'bg-yellow-400'
+                                        : 'bg-green-600'
+                                    }`}
+                                    >
+                                    {status === 0
+                                        ? 'Belum mengerjakan'
+                                        : status === 1
+                                        ? 'Sedang mengerjakan'
+                                        : 'Selesai mengerjakan'}
+                                    </p>
+                                </div>
+                            </td>
 
-            <td className="px-6 py-4">
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-                {item.posisi}
-              </span>
-            </td>
+                            <td className="px-6 py-4">
+                                <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                    {item.posisi}
+                                </span>
+                            </td>
 
-            <td className="px-6 py-4">
-              <Link
-                href={`/admin/peserta/detail/${item.id}`}
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700"
-              >
-                Detail
-              </Link>
-            </td>
+                            <td className="px-6 py-4">
+                                <Link
+                                    href={`/admin/peserta/detail/${item.id}`}
+                                    className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-blue-700"
+                                >
+                                    Detail
+                                </Link>
+                            </td>
+                        </tr>
+                        )
+                    })}
+                    </tbody>
+                </table>
+            </div>
 
-          </tr>
-        )
-      })}
-    </tbody>
+            {/* Pagination */}
+            <div className="mt-6 flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white px-6 py-4 shadow-sm md:flex-row md:items-center md:justify-between">
 
-  </table>
-</div>
+                {/* Info */}
+                <div className="text-sm text-gray-500">
+                    Menampilkan
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {currentPage}
+                    </span>
+                    -
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {totalPages}
+                    </span>
+                    dari
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {totalData}
+                    </span>
+                    total
+                </div>
+
+                {/* Pagination */}
+                <div className="flex items-center gap-3">
+
+                    {/* Prev */}
+                    <button
+                        // onClick={()=> setCurrentPages(prev => prev - 1)}
+                        onClick={() => goToPage(currentPage - 1)}
+                        className={`
+                            rounded-2xl
+                            border 
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            
+                            transition-all
+                            duration-200
+                            ${currentPage <= 1 
+                            ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
+                            : "bg-white hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 text-gray-700 border-gray-200"
+                        }`}
+                    >
+                    Sebelumnya
+                    </button>
+
+                    {/* Current Page */}
+                    <div
+                    className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-2xl
+                        bg-blue-50
+                        px-4
+                        py-2
+                        text-sm
+                        font-semibold
+                        text-blue-700
+                    "
+                    >
+
+                    <span
+                        className="
+                        flex
+                        h-8
+                        w-8
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-blue-600
+                        text-white
+                        shadow-sm
+                        "
+                    >
+                        {currentPage}
+                    </span>
+
+                    <span>dari {totalPages}</span>
+                    </div>
+
+                    {/* Next */}
+                    <button
+                        // onClick={()=> setCurrentPages(prev => prev + 1)}
+                        onClick={() => goToPage(currentPage + 1)}
+                        className={`
+                            rounded-2xl
+                            border 
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            transition-all
+                            duration-200
+                            ${currentPage >= Math.ceil(totalData / limit)
+                            ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
+                            : "bg-white hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 text-gray-700 border-gray-200"
+                        }`}
+                    >
+                    Selanjutnya
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }
