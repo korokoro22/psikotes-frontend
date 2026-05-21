@@ -1,8 +1,8 @@
 'use client'
-import { div, tr } from "framer-motion/client";
+import { div, pre, tr } from "framer-motion/client";
 import Link from "next/link";
-import { getAllPeserta, getAllPosition } from "@/services/peserta.service";
-import { useEffect, useState } from "react";
+import { getAllHasilPosition, getAllPeserta } from "@/services/peserta.service";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Listbox } from "@headlessui/react";
 import { useSearchParams } from "next/navigation";
@@ -43,69 +43,82 @@ export default function AdminPeserta() {
     // const [currentPages, setCurrentPages] = useState(1) // pagination
     const [position, setPosition] = useState<OpsiPosisi[]>([])
     const [selectedPosition, setSelectedPosition] = useState<OpsiPosisi | null>(null)
+    const prevSelectedPosition = useRef(selectedPosition)
+    const prevStartDate = useRef(startDate)
+    const prevEndDate = useRef(endDate)
+    const [selectedName, setSelectedName] = useState('')
+    const [search, setSearch] = useState('')
 
     useEffect(()=> {
         const getPosisi = async () => {
             try {
-                const posisi = await getAllPosition()
-                setPosition(posisi.data.data)
+                // const posisi = await getAllPosition()
+                    const posisi = await getAllHasilPosition(search || undefined, startDate, endDate)
+                    setPosition(posisi.data.data)
             } catch (error:any) {
                 console.error('error: ', error)
+                router.push('/login')
             }
         }
         getPosisi()
-    }, [position])
+    }, [search, startDate, endDate])
     
     useEffect(()=> {
-        console.log('ini posisi', selectedPosition)
-    }, [selectedPosition])
+        console.log('ini totalData', totalData)
+    }, [totalData])
+
+    
+
+    const goToPage = (page: number) => {
+        router.push(`?page=${page}`)
+    }
+
+    
 
     useEffect(()=> {
         const getPeserta = async () => {
+            console.log('startDate:', startDate, 'endDate:', endDate)
             try {
-                // const peserta = await getAllPeserta(currentPages, limit)
-                const peserta = await getAllPeserta(currentPage, limit, selectedPosition?.label)
-                setData(peserta.data.data)
-                setTotalData(peserta.data.pagination.allData)
-                setTotalPages(peserta.data.pagination.totalPages)
-                // // Olah jadi opsi posisi
-                // const fetchedData = peserta.data.data  // simpan dulu di variabel lokal
-
-                // // gunakan variabel lokal, bukan `data`
-                // const grouped = fetchedData.reduce((acc: Record<string, number>, obj: { posisi: string }) => {
-                //     const posisi = obj.posisi
-                //     acc[posisi] = (acc[posisi] || 0) + 1
-                //     return acc
-                // }, {} as Record<string, number>)
-
-                // const opsi = Object.entries(grouped).map(([label, count]) => ({ label, count: count as number}))
-
-                //  const opsiSemua = {
-                //     label: 'Semua',
-                //     count: fetchedData.length,
-                // }
-                // setOpsiPosisi([opsiSemua, ...opsi])
-
-                // setSelected(opsiSemua)
+                if (selectedPosition != prevSelectedPosition.current || startDate != prevStartDate.current || endDate != prevEndDate.current) {
+                    prevSelectedPosition.current = selectedPosition
+                    prevStartDate.current = startDate
+                    prevEndDate.current = endDate
+                    goToPage(1)
+                    const peserta = await getAllPeserta(1, limit, selectedPosition?.label, search || undefined, startDate || undefined, endDate || undefined)
+                    // const filter = await getFilteredTime(startDate, endDate)
+                    // setStartDate(peserta.data.data)
+                    // setEndDate(peserta.data.data)
+                    setData(peserta.data.data)
+                    setTotalData(peserta.data.pagination.allData)
+                    setTotalPages(peserta.data.pagination.totalPages)
+                    return
+                } else {
+                    const peserta = await getAllPeserta(currentPage, limit, selectedPosition?.label, search || undefined, startDate || undefined, endDate || undefined)
+                    // const filter = await getFilteredTime(startDate, endDate)
+                    if(peserta?.data?.data) {
+                        setData(peserta.data.data)
+                        setTotalData(peserta.data.pagination.allData)
+                        setTotalPages(peserta.data.pagination.totalPages)
+                        // setStartDate(peserta.data.data)
+                        // setEndDate(peserta.data.data)
+                    }
+                }
+                
             } catch (err:any){
-                console.error('gagal pagination')
+                console.error('gagal pagination', err)
             }   
         }
         getPeserta()
-    }, [currentPage, selectedPosition])
+    }, [currentPage, selectedPosition, search, startDate, endDate])
 
-    // useEffect(()=> {
-    //     console.log('ini totalPages: ', totalPages)
-    // }, [totalPages])
-    
-
-    
-    const [search, setSearch] = useState('')
+    useEffect(()=> {
+        console.log('ini totalData: ', totalData)
+    }, [totalData])
     
 
     useEffect(()=> {
-        console.log('ini total data',totalData)
-    }, [totalData])
+        console.log('ini total date',startDate)
+    }, [startDate])
 
 //     useEffect(()=> {
 //         console.log('ini opsi posisi',opsiPosisi)
@@ -114,51 +127,7 @@ export default function AdminPeserta() {
 //     useEffect(() => {
 //     document.title = "Peserta - Psychological Tests";
 //   }, [])
-
-    // const filteredData = data.filter((item) => {
-    //     // FILTER POSISI
-    //     const matchPosisi =
-    //         selected === null ||
-    //         selected.label === 'Semua'
-    //         ? true
-    //         : item.posisi === selected.label
-
-    //     // FILTER SEARCH NAMA
-    //     const matchSearch =
-    //         item.nama
-    //         .toLowerCase()
-    //         .includes(search.toLowerCase())
-
-    //     // FILTER RANGE TANGGAL
-    //     const itemDate = new Date(item.createdAt)
-
-    //     let matchDate = true
-
-    //     if (startDate) {
-    //         matchDate =
-    //         itemDate >= new Date(startDate)
-    //     }
-
-    //     if (endDate) {
-
-    //         // supaya full sampai jam 23:59
-    //         const end = new Date(endDate)
-    //         end.setHours(23, 59, 59, 999)
-
-    //         matchDate =
-    //         matchDate && itemDate <= end
-    //     }
-
-    //     return (
-    //         matchPosisi &&
-    //         matchSearch &&
-    //         matchDate
-    //     )
-    //     })
-
-    const goToPage = (page: number) => {
-        router.push(`?page=${page}`)
-    }
+    
 
     return (
         <div>
@@ -173,12 +142,12 @@ export default function AdminPeserta() {
             </div>
             <div className="py-2 w-full flex flex-col gap-y-3 mb-6">
                 <div className="w-full">
-                    <div className="relative">
+                    <div className=" flex  gap-x-2">
                         <input
                         type="text"
                         placeholder="Cari nama peserta..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={selectedName}
+                        onChange={(e) => setSelectedName(e.target.value)}
                         className="
                             w-full
                             rounded-xl
@@ -197,17 +166,18 @@ export default function AdminPeserta() {
                             focus:ring-blue-100
                         "
                         />
-
-                        <svg
+                        <button 
+                        className="flex gap-x-2 items-center rounded-xl bg-blue-600 px-3 text-white hover:bg-blue-800 hover:text-gray-200"
+                        onClick={()=> setSearch(selectedName)}
+                        >
+                            <p className="text-sm">Search</p>
+                            <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="
-                            absolute
-                            right-4
-                            top-1/2
                             h-5
                             w-5
-                            -translate-y-1/2
-                            text-gray-400
+                            hover:text-gray-200
+                            text-white 
                         "
                         fill="none"
                         viewBox="0 0 24 24"
@@ -220,6 +190,8 @@ export default function AdminPeserta() {
                             d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
                         />
                         </svg>
+                        </button>
+                        
                     </div>
                 </div>
                 
@@ -320,7 +292,8 @@ export default function AdminPeserta() {
                 
                 
             </div>
-            <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+            {data?.length > 0 ? (
+                <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
                 <table className="w-full border-collapse">
 
                     {/* Header */}
@@ -336,6 +309,7 @@ export default function AdminPeserta() {
 
                     {/* Body */}
                     <tbody>
+                    
                     {data.map((item) => {
 
                         const status = item.testSession[0].statusTest
@@ -394,6 +368,12 @@ export default function AdminPeserta() {
                     </tbody>
                 </table>
             </div>
+            ):(
+                <div>
+                    Data tidak ditemukan
+                </div>
+            )}
+            
 
             {/* Pagination */}
             <div className="mt-6 flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white px-6 py-4 shadow-sm md:flex-row md:items-center md:justify-between">
@@ -422,6 +402,7 @@ export default function AdminPeserta() {
                     <button
                         // onClick={()=> setCurrentPages(prev => prev - 1)}
                         onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage <= 1}
                         className={`
                             rounded-2xl
                             border 
@@ -479,6 +460,7 @@ export default function AdminPeserta() {
                     <button
                         // onClick={()=> setCurrentPages(prev => prev + 1)}
                         onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage >= Math.ceil(totalData / limit) }
                         className={`
                             rounded-2xl
                             border 

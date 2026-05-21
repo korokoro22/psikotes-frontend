@@ -3,8 +3,11 @@ import api from "@/lib/axiosBackend";
 export const getAllPeserta = (
     currentPage: number, 
     limit: number, 
-    posisi?: string 
-) => api.get(`/api/admin/peserta?page=${currentPage}&limit=${limit}&posisi=${posisi || ''}`)
+    posisi?: string, 
+    nama?: string,
+    startDate?:string,
+    endDate?:string
+) => api.get(`/api/admin/peserta?page=${currentPage}&limit=${limit}&posisi=${posisi || ''}&nama=${nama || ''}&startDate=${startDate || ''}&endDate=${endDate || ''}`)
 
 export const registerPeserta = (
     data: {
@@ -27,12 +30,35 @@ export const getDetailPeserta = (id:number) => api.get(`/api/admin/peserta/detai
 
 export const getFormPeserta = () => api.get('/api/admin/peserta/form')
 
-export const getHasilPeserta = () => api.get('/api/admin/hasiltes')
+export const getHasilPeserta = (
+    currentPage: number, 
+    limit: number, 
+    posisi?: string, 
+    nama?: string,
+    startDate?:string,
+    endDate?:string
+) => api.get(`/api/admin/hasiltes?page=${currentPage}&limit=${limit}&posisi=${posisi || ''}&nama=${nama || ''}&startDate=${startDate || ''}&endDate=${endDate || ''}`)
 
 export const getDetailHasilPeserta = (id: number) => api.get(`api/admin/hasiltes/hasil/${id}`)
 
 export const userExpiredDate = (nik: string) => api.patch(`api/user/user-expired/${nik}`) 
 
-export const getAllPosition = () => api.get(`/api/admin/peserta/posisi`)
+export const getAllPosition = (
+    // posisi?:string,
+    nama?:string,
+    startDate?: string,
+    endDate?: string
+) => api.get(`/api/admin/peserta/posisi?nama=${nama || ''}&startDate=${startDate || ''}&endDate=${endDate || ''}`)
+
+export const getAllHasilPosition = (
+    nama?:string,
+    startDate?: string,
+    endDate?: string
+) => api.get(`/api/admin/hasiltes/posisi?nama=${nama || ''}&startDate=${startDate || ''}&endDate=${endDate || ''}`)
+
+// export const getFilteredTime = (
+//     startDate?: string,
+//     endDate?: string
+// ) => api.get(`/api/admin/peserta/time?startDate=${startDate}&endDate=${endDate}`)
 
 // export const setTrueService = (id: number) => api.put(`api/user/user-expired/${id}`)
