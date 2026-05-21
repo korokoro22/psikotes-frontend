@@ -1,5 +1,7 @@
 import api from "@/lib/axiosBackend";
 
+export const getCountAllPeserta = () => api.get(`/api/admin/peserta/count`)
+
 export const getAllPeserta = (
     currentPage: number, 
     limit: number, 

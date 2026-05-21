@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import DashboardChart from "@/app/components/DashboardChart";
 import DashboardBarChart from "@/app/components/DashboardBarChart";
 import { useEffect } from "react";
-import { getAllPeserta } from "@/services/peserta.service";
+import { getCountAllPeserta } from "@/services/peserta.service";
 
 export default function AdminDashboard() {
 
@@ -20,7 +20,7 @@ export default function AdminDashboard() {
     useEffect(()=> {
         const dashboard = async () => {
             try{
-            const res = await getAllPeserta()
+            const res = await getCountAllPeserta()
             } catch (err:any) {
                 router.push('/login')
             }
