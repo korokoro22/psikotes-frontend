@@ -1,4 +1,4 @@
-export default function Msdt() {
+export default function Msdt({data}:any) {
     return(
         <div className="pb-5 border-gray-300">
             <div className="mb-4">

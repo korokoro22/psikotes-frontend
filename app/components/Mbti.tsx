@@ -3,7 +3,7 @@ import BarChartComponent from "./BarChartComponent";
 
 
 
-export default function Mbti() {
+export default function Mbti({data}:any) {
 
     return(
         <div className="pb-5 border-gray-300">

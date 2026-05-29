@@ -4,7 +4,7 @@ import { useState } from "react"
 // import DiscChart from "./DiscChartComponent"
 
 
-export default function Disc() {
+export default function Disc({data}:any) {
 
 //     type DiscType = 'D' | 'I' | 'S' | 'C'
 

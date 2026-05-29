@@ -22,7 +22,7 @@ function calculatePanker(answers: Answer[][]) {
 }
 
 
-export default function Kraepelin() {
+export default function Kraepelin({data}:any) {
 
   // ⛔ nanti ini diganti dari hasil tes asli
   const [answers] = useState<Answer[][]>([
@@ -132,7 +132,7 @@ export default function Kraepelin() {
                             <tr className="text-center text-sm font-semibold text-gray-700  ">
                                 <td className="px-4 py-2 border border-gray-300">
                                     Ketahanan Kerja
-                                </td>
+                                </td> 
                                 <td className="px-4 py-2 border border-gray-300">
                                     Kemampuan bertahan dalam pekerjaan monoton
                                 </td>

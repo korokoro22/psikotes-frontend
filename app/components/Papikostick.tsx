@@ -1,6 +1,6 @@
 'use client'
 
-export default function Papikostick() {
+export default function Papikostick({data}:any) {
 
     return(
         <div className="pb-5 border-gray-300">
