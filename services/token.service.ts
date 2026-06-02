@@ -1,6 +1,12 @@
 import api from "@/lib/axiosBackend";
 
-export const getAllToken = () => api.get('/api/admin/token')
+export const getAllToken = (
+    currentPage: number, 
+    limit: number, 
+    startDate?:string,
+    endDate?:string,
+
+) => api.get(`/api/admin/token?page=${currentPage}&limit=${limit}&startDate=${startDate || ''}&endDate=${endDate || ''}`)
 
 export const postToken = ( data: {
     tests: string[],

@@ -44,6 +44,7 @@ export default function Peserta() {
     const prevEndDate = useRef(endDate)
     const [selectedName, setSelectedName] = useState('')
     const [search, setSearch] = useState('')
+    const prevSearch = useRef(search)
 
     useEffect(()=> {
         const getPosisi = async () => {
@@ -75,10 +76,11 @@ export default function Peserta() {
         const getPeserta = async () => {
             console.log('startDate:', startDate, 'endDate:', endDate)
             try {
-                if (selectedPosition != prevSelectedPosition.current || startDate != prevStartDate.current || endDate != prevEndDate.current) {
+                if (selectedPosition != prevSelectedPosition.current || startDate != prevStartDate.current || endDate != prevEndDate.current || search != prevSearch.current) {
                     prevSelectedPosition.current = selectedPosition
                     prevStartDate.current = startDate
                     prevEndDate.current = endDate
+                    prevSearch.current = search
                     goToPage(1)
                     const peserta = await getAllPeserta(1, limit, selectedPosition?.label, search || undefined, startDate || undefined, endDate || undefined)
                     // const filter = await getFilteredTime(startDate, endDate)

@@ -36,6 +36,7 @@ type OpsiPosisi = {
     const prevEndDate = useRef(endDate)
     const [selectedName, setSelectedName] = useState('')
     const [search, setSearch] = useState('')
+    const prevSearch = useRef(search)
 
     useEffect(()=> {
         const getPosisi = async () => {
@@ -58,12 +59,19 @@ type OpsiPosisi = {
     useEffect(()=> {
         const hasilPeserta = async () => {
             try {
-                 if (selectedPosition != prevSelectedPosition.current || startDate != prevStartDate.current || endDate != prevEndDate.current) {
+                 if (
+                    selectedPosition != prevSelectedPosition.current || 
+                    startDate != prevStartDate.current || 
+                    endDate != prevEndDate.current || 
+                    search != prevSearch.current) 
+                    {
                     prevSelectedPosition.current = selectedPosition
                     prevStartDate.current = startDate
                     prevEndDate.current = endDate
+                    prevSearch.current = search 
+                    
                     goToPage(1)
-                    const hasil = await getHasilPeserta(currentPage, limit, selectedPosition?.label, search || undefined, startDate || undefined, endDate || undefined)
+                    const hasil = await getHasilPeserta(1, limit, selectedPosition?.label, search || undefined, startDate || undefined, endDate || undefined)
                     setHasilPeserta(hasil.data.data)
                     setTotalData(hasil.data.pagination.allData)
                     setTotalPages(hasil.data.pagination.totalPages)

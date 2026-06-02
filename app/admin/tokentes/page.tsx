@@ -3,9 +3,9 @@
 import { div, ul } from "framer-motion/client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllToken, statusToken } from "@/services/token.service";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Data {
     id: number
@@ -19,11 +19,18 @@ interface Data {
 }
 
 export default function AdminTokenTes() {
-
+    const searchParams = useSearchParams()
     const [isCopied, setIsCopied] = useState(false)
     const [data, setData] = useState<Data[]>([])
-
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
     const router = useRouter()
+    const prevStartDate = useRef(startDate)
+    const prevEndDate = useRef(endDate)
+    const limit = 10; // Jumlah item per halaman
+    const currentPage = parseInt(searchParams.get('page') || '1');
+    const [totalData, setTotalData] = useState(0)
+    const [totalPages, setTotalPages] = useState(0)
 
     const copyToClipboard = async (text: string) => {
         try {
@@ -59,17 +66,39 @@ export default function AdminTokenTes() {
         }
     }
 
+    const goToPage = (page: number) => {
+        router.push(`?page=${page}`)
+    }
+
     useEffect(() => {
         const getTOken = async () => {
         try {
-            const token = await getAllToken()
+          if (startDate != prevStartDate.current || endDate != prevEndDate.current) {
+            prevStartDate.current = startDate
+            prevEndDate.current = endDate
+            goToPage(1)
+            const token = await getAllToken(1, limit, startDate || undefined, endDate || undefined)
             setData(token.data.data)
+            setTotalData(token.data.pagination.allData)
+            setTotalPages(token.data.pagination.totalPages)
+            return
+          } else {
+            const token = await getAllToken(currentPage, limit, startDate || undefined, endDate || undefined)
+                                
+                                if(token?.data?.data) {
+                                    setData(token.data.data)
+                                    setTotalData(token.data.pagination.allData)
+                                    setTotalPages(token.data.pagination.totalPages)
+                                    
+                                }
+          }
+            
         } catch( err:any) {
             router.push('/login')
         }
     }
     getTOken()
-    }, [])
+    }, [startDate, endDate, currentPage])
 
     const convertDate = (date: string | Date) => {
     const newDate = new Date(date)
@@ -126,8 +155,71 @@ export default function AdminTokenTes() {
 
   </div>
 
-  {/* Table */}
-  <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+  <div className="py-2 w-full flex flex-col gap-y-3 mb-6">
+    <div className="flex flex-wrap gap-4">
+
+                        {/* Start Date */}
+                        <div className="flex gap-1 items-center">
+                            <label className="text-sm font-medium text-gray-600">
+                            Dari Tanggal
+                            </label>
+
+                            <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="
+                                rounded-2xl
+                                border
+                                border-gray-200
+                                bg-white
+                                px-4
+                                py-3
+                                text-sm
+                                shadow-sm
+                                outline-none
+                                transition-all
+                                duration-200
+                                focus:border-blue-500
+                                focus:ring-4
+                                focus:ring-blue-100
+                            "
+                            />
+                        </div>
+
+                        {/* End Date */}
+                        <div className="flex items-center gap-1">
+                            <label className="text-sm font-medium text-gray-600">
+                            Sampai Tanggal
+                            </label>
+
+                            <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="
+                                rounded-2xl
+                                border
+                                border-gray-200
+                                bg-white
+                                px-4
+                                py-3
+                                text-sm
+                                shadow-sm
+                                outline-none
+                                transition-all
+                                duration-200
+                                focus:border-blue-500
+                                focus:ring-4
+                                focus:ring-blue-100
+                            "
+                            />
+                        </div>
+                    </div>
+  </div>
+
+      {data?.length > 0 ? (
+        <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
 
     <table className="w-full border-collapse">
 
@@ -296,6 +388,116 @@ export default function AdminTokenTes() {
     </table>
 
   </div>
+      ) : (
+        <div>
+          Data tidak ditemukan
+        </div>
+      )}
+
+      {/* Pagination */}
+            <div className="mt-6 flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white px-6 py-4 shadow-sm md:flex-row md:items-center md:justify-between">
+
+                {/* Info */}
+                <div className="text-sm text-gray-500">
+                    Menampilkan
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {currentPage}
+                    </span>
+                    -
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {totalPages}
+                    </span>
+                    dari
+                    <span className="mx-1 font-semibold text-gray-700">
+                    {totalData}
+                    </span>
+                    total
+                </div>
+
+                {/* Pagination */}
+                <div className="flex items-center gap-3">
+
+                    {/* Prev */}
+                    <button
+                        // onClick={()=> setCurrentPages(prev => prev - 1)}
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage <= 1}
+                        className={`
+                            rounded-2xl
+                            border 
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            
+                            transition-all
+                            duration-200
+                            ${currentPage <= 1 
+                            ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
+                            : "bg-white hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 text-gray-700 border-gray-200"
+                        }`}
+                    >
+                    Sebelumnya
+                    </button>
+
+                    {/* Current Page */}
+                    <div
+                    className="
+                        flex
+                        items-center
+                        gap-2
+                        rounded-2xl
+                        bg-blue-50
+                        px-4
+                        py-2
+                        text-sm
+                        font-semibold
+                        text-blue-700
+                    "
+                    >
+
+                    <span
+                        className="
+                        flex
+                        h-8
+                        w-8
+                        items-center
+                        justify-center
+                        rounded-xl
+                        bg-blue-600
+                        text-white
+                        shadow-sm
+                        "
+                    >
+                        {currentPage}
+                    </span>
+
+                    <span>dari {totalPages}</span>
+                    </div>
+
+                    {/* Next */}
+                    <button
+                        // onClick={()=> setCurrentPages(prev => prev + 1)}
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage >= Math.ceil(totalData / limit) }
+                        className={`
+                            rounded-2xl
+                            border 
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            transition-all
+                            duration-200
+                            ${currentPage >= Math.ceil(totalData / limit)
+                            ? "cursor-not-allowed bg-gray-200 text-gray-400 border-gray-300"
+                            : "bg-white hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 text-gray-700 border-gray-200"
+                        }`}
+                    >
+                    Selanjutnya
+                    </button>
+                </div>
+            </div>
 
 </div>
     )
