@@ -28,11 +28,11 @@ export default function AdminHasilTesHasil({ params }: { params: Promise<{ id: s
     
     const componentMap: Record<string, JSX.Element> = {
         CFIT:         <Cfit data={data?.skorCfit} />,
-        MBTI:         <Mbti data={data?.skorMbti} />,
-        DISC:         <Disc data={data?.skorDisc} />,
-        PAPIKOSTICK:  <Papikostick data={data?.skorPapikostik} />,
-        MSDT:         <Msdt data={data?.skorMsdt} />,
-        KRAEPELIN:    <Kraepelin data={data?.skorKraepelin} />
+        MBTI:         <Mbti data={data?.skorMbti[0]} />,
+        DISC:         <Disc data={data?.skorDisc[0]} />,
+        PAPIKOSTICK:  <Papikostick data={data?.skorPapikostik[0]} />,
+        MSDT:         <Msdt data={data?.skorMsdt[0]} />,
+        KRAEPELIN:    <Kraepelin data={data?.skorKraepelin[0]} />
     };
 
     useEffect(()=> {

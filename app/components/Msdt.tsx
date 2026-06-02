@@ -1,4 +1,21 @@
+import { useEffect, useState } from "react"
+
+    interface MsdtScoring {
+        id: number
+        hasilTest: number
+        status:number
+        mainExplanation1: number
+        mainExplanation2: number
+        description: string
+    }
+
 export default function Msdt({data}:any) {
+    const [score, setScore] = useState<MsdtScoring>()
+
+    useEffect(()=> {
+        setScore(data)
+        console.log("ini data scoring msdt: ", data)
+    }, [score])
     return(
         <div className="pb-5 border-gray-300">
             <div className="mb-4">
@@ -12,24 +29,26 @@ export default function Msdt({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Hasil Test
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
-                                    2
+                                <td className="text-left px-4 py-2 border border-gray-300">
+                                    {score?.hasilTest}
                                 </td>
                             </tr>
                             <tr className="text-center text-sm font-semibold text-gray-700  ">
                                 <td className="px-4 py-2 border border-gray-300">
                                     Status
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
-                                    4
+                                <td className="text-left px-4 py-2 border border-gray-300">
+                                    {score?.status}
                                 </td>
                             </tr>
                             <tr className="text-center text-sm font-semibold text-gray-700  ">
                                 <td className="px-4 py-2 border border-gray-300">
                                     Deskripsi
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
-                                    6
+                                <td className="text-left px-4 py-2 border border-gray-300 flex flex-col gap-y-2">
+                                    <p>{score?.mainExplanation1}</p>
+                                    <p>{score?.mainExplanation2}</p>
+                                    <p>{score?.description}</p>
                                 </td>
                             </tr>
                         </tbody>

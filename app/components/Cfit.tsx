@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // type CfitProps = {
 //     data: {
@@ -9,18 +9,30 @@ import { useEffect } from "react"
 //     }
 // }
 
+    interface CfitScore {
+        subtestScores: {
+            subtest1: number
+            subtest2: number
+            subtest3: number
+            subtest4: number
+        }
+        totalScore: number
+    }
+
 export default function Cfit({data}:any) {
+    const [score, setScore] = useState<CfitScore>()
 
     useEffect(()=> {
+        setScore(data)
         console.log("data", data)
-    }, [data])
+    }, [score])
     
     return(
         <div className=" pb-5 border-gray-300">
             <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes CFIT</p>
             </div>
-            {data? (
+            {data && score? (
                 <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
                 <table className="w-full border-collapse">
 
@@ -42,23 +54,23 @@ export default function Cfit({data}:any) {
                         >
 
                             <td className="px-6 py-4 text-gray-600">
-                                0/13
+                                {score?.subtestScores?.subtest1}/13
                             </td>
 
                             <td className="px-6 py-4 font-medium text-gray-800">
-                                0/10
+                                {score?.subtestScores?.subtest2}/10
                             </td>
 
                             <td className="px-6 py-4 font-medium text-gray-800">
-                                0/13
+                                {score?.subtestScores?.subtest3}/13
                             </td>
 
                             <td className="px-6 py-4 font-medium text-gray-800">
-                                0/10
+                                {score?.subtestScores?.subtest4}/10
                             </td>
 
                             <td className="px-6 py-4 font-medium text-gray-800">
-                                2/46
+                                {score?.totalScore}/46
                             </td>
                         </tr>
                         

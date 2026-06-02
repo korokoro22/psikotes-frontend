@@ -1,11 +1,41 @@
 'use client'
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 // import DiscChart from "./DiscChartComponent"
 
+interface DiscScoring {
+    id: number
+    maskType: string
+    maskCharacteristics: string
+    coreType: string
+    coreCharacteristics: string
+    jobMatch: string
+    mirrorType: string
+    mirrorCharacteristics: string
+    personalityDescription: string
+}
 
 export default function Disc({data}:any) {
+    const [score, setScore] = useState<DiscScoring>()
+    const [maskCharacteristic, setMaskCharacteristic] = useState([''])
+    const [coreCharacteristics, setCoreCharacteristics] = useState([''])
+    const [mirrorCharacterisctics, setMirrorCharacteristics] = useState([''])
 
+    useEffect(()=> {
+        setScore(data)
+        console.log("ini isi disc", score)
+    }, [score])
+
+    useEffect(()=> {
+        if(score){
+            const maskCharacteristic = score.maskCharacteristics.split(",")
+            const coreCharacteristics = score.coreCharacteristics.split(",")
+            const mirrorCharacterisctics = score.mirrorCharacteristics.split(",")
+            setMaskCharacteristic(maskCharacteristic)
+            setCoreCharacteristics(coreCharacteristics)
+            setMirrorCharacteristics(mirrorCharacterisctics)
+        }
+    }, [score])
 //     type DiscType = 'D' | 'I' | 'S' | 'C'
 
 //     type DiscAnswer = {
@@ -48,17 +78,13 @@ export default function Disc({data}:any) {
                             </p>
 
                             <h2 className="mt-2 text-xl font-bold text-gray-900">
-                                ADVISOR
+                                {score?.maskType}
                             </h2>
                         </div>
                     </div>
 
                     <div className="mt-4 space-y-2">
-                        {[
-                            "Hangat",
-                            "Simpati",
-                            "Tenang dalam situasi sosial",
-                        ].map((item) => (
+                        {maskCharacteristic.map((item) => (
                             <div
                                 key={item}
                                 className="flex items-start gap-2"
@@ -81,17 +107,13 @@ export default function Disc({data}:any) {
                             </p>
 
                             <h2 className="mt-2 text-xl font-bold text-gray-900">
-                                INQUIRER
+                                {score?.coreType}
                             </h2>
                         </div>
                     </div>
 
                     <div className="mt-4 space-y-2">
-                        {[
-                            "Hangat",
-                            "Simpati",
-                            "Tenang dalam situasi sosial",
-                        ].map((item) => (
+                        {coreCharacteristics.map((item) => (
                             <div
                                 key={item}
                                 className="flex items-start gap-2"
@@ -120,11 +142,7 @@ export default function Disc({data}:any) {
                     </div>
 
                     <div className="mt-4 space-y-2">
-                        {[
-                            "Hangat",
-                            "Simpati",
-                            "Tenang dalam situasi sosial",
-                        ].map((item) => (
+                        {mirrorCharacterisctics.map((item) => (
                             <div
                                 key={item}
                                 className="flex items-start gap-2"
@@ -142,13 +160,13 @@ export default function Disc({data}:any) {
             <div className="mt-10">
                 <p className="mb-2 font-bold text-lg">Deskripsi Kepribadian</p>
                 <div className="w-full rounded-3xl border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md">
-                    Ia adalah orang yang baik secara alamiah dan sangat berorientasi detil.  Ia peduli dengan orang-orang di sekitarnya dan mempunyai kualitas yang membuatnya sangat teliti dalam penyelesaian tugas.  Ia mempertimbangkan sekelilingnya dengan hati-hati sebelum membuat keputusan untuk melihat pengaruhnya pada mereka; saat tertentu ia terlalu hati-hati.  Jika ia merasa seseorang memanfaatkan situasi, ia akan memperlambat kerjanya sehingga dapat mengamati apa yang sedang berlangsung di sekitarnya.
+                    {score?.personalityDescription}
                 </div>
             </div>
             <div className="mt-10">
                 <p className="mb-2 font-bold text-lg">Job Match</p>
                 <div className="w-full rounded-3xl border border-gray-200 bg-white p-3 shadow-sm transition-all hover:shadow-md">
-                    Office (Manager, Supervisor, Person), Chief Clerk, General Administrator, Production Supervisor, Planner, Accountant, Research and Development, Flight Attendant, Engineering (Project Manager, Supervisor, Technician), Computer Programmer, Draughtsman, Soft/Service Selling, Doctor, Cashier, Receptionist, Data Entry, Planner, Word Processing, Property Manager, Database Administrator, Health Care, Statistician, Nursing-Administration, Company Secretary, System Analyst, Programmer, Statistician, Accounting-General, Security Specialist.
+                    {score?.jobMatch}
                 </div>
             </div>
             
