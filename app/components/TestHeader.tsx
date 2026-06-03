@@ -18,6 +18,7 @@ export default function TestHeader() {
               <h1 className="text-xl font-bold text-gray-800 hidden md:block">Kurniawan Group</h1>
           </div>
           <div>
+            
             <Camera />
           </div>
         </div>
