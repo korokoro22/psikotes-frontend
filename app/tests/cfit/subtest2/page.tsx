@@ -62,7 +62,7 @@ export default function CFITSubtest2() {
       return `${minutes}:${remaining.toString().padStart(2, '0')}`;
     };
 
-    const EXAM_DURATION = 2 * 60;
+    const EXAM_DURATION = 5 * 60;
 
     // Server-safe: selalu mulai dari EXAM_DURATION
     const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);

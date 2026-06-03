@@ -70,7 +70,7 @@ export default function CFITSubtest1Test() {
 
   const [isBlank, setIsBlank] = useState<number[]>([])
 
-  const EXAM_DURATION = 3 * 60 
+  const EXAM_DURATION = 5 * 60 
     
     const getRemainingTime = (): number => {
         if (typeof window === "undefined") return EXAM_DURATION

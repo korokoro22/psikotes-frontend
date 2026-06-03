@@ -92,11 +92,11 @@ export default function psychologicaltests() {
                         width={150}
                         height={150}
                     />
-                    {isLoading && (
+                    {/* {isLoading && (
                         <div className="text-center text-base p-1 bg-red-500 border border-red-600 text-white rounded-lg">
                             Harap memberikan 'Allow' ketika muncul izin untuk akses clipboard
                         </div>
-                    )}
+                    )} */}
                     <button 
                         className={`px-20 py-2 text-white rounded-lg ${
                             isLoading
