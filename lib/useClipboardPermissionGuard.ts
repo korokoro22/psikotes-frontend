@@ -1,9 +1,8 @@
-// hooks/usePermissionGuard.ts
 "use client";
 
 import { useEffect, useState } from "react";
 
-export function useClipboardPermissionGuard() {
+export function useClipboardPermissionGuard(checkCamera = false) {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -11,48 +10,44 @@ export function useClipboardPermissionGuard() {
 
     const updateModal = () => {
       const hasInvalidPermission = permissionStatuses.some(
-        (permission) => permission.state !== "granted"
+        (p) => p.state !== "granted"
       );
-
       setShowModal(hasInvalidPermission);
     };
 
     const init = async () => {
-      try {
-        const permissionsToCheck: PermissionName[] = [
-          "clipboard-read" as PermissionName,
+      // Clipboard selalu dicek
+      const permissionsToCheck: PermissionName[] = [
+        "clipboard-read" as PermissionName,
+      ];
+
+      // Camera & mic hanya dicek kalau halaman memang pakai kamera
+      if (checkCamera) {
+        permissionsToCheck.push(
           "camera" as PermissionName,
-          "microphone" as PermissionName,
-        ];
-
-        for (const permissionName of permissionsToCheck) {
-          try {
-            const permission = await navigator.permissions.query({
-              name: permissionName,
-            });
-
-            permissionStatuses.push(permission);
-
-            permission.onchange = () => {
-              updateModal();
-            };
-          } catch {
-            // Browser tidak mendukung permission tertentu
-          }
-        }
-
-        updateModal();
-      } catch (error) {
-        console.error("Permission check error:", error);
+          "microphone" as PermissionName
+        );
       }
+
+      for (const permissionName of permissionsToCheck) {
+        try {
+          const permission = await navigator.permissions.query({
+            name: permissionName,
+          });
+          permissionStatuses.push(permission);
+          permission.onchange = () => updateModal();
+        } catch {
+          // skip
+        }
+      }
+
+      updateModal();
     };
 
     init();
 
     return () => {
-      permissionStatuses.forEach((permission) => {
-        permission.onchange = null;
-      });
+      permissionStatuses.forEach((p) => (p.onchange = null));
     };
   }, []);
 
