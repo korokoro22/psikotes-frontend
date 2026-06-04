@@ -18,7 +18,7 @@ export default function Mbti({data}:any) {
 
 
     return(
-        <div className="pb-5 border-gray-300">
+        <div className="pb-5 border-gray-300 html2pdf__page-break">
             <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes MBTI</p>
             </div>

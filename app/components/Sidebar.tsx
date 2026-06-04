@@ -120,13 +120,14 @@ export default function Sidebar({isOpen, toggle}: SidebarProps) {
         {menu.map((item) => {
 
           const Icon = item.icon
+          const isActive = pathname.startsWith(item.href);
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-base transition-all duration-200 ${
-                pathname === item.href
+                isActive
                   ? 'bg-blue-50 font-semibold text-blue-700 shadow-sm'
                   : 'hover:bg-gray-100 hover:text-gray-700'
               }`}

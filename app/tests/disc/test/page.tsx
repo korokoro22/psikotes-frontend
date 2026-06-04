@@ -284,7 +284,9 @@ export default function DISCTestPage() {
     document.title = "Test - Psychological Tests";
   }, [])
 
-  const { showModal } = useClipboardPermissionGuard()
+  // console.log("🔍 sebelum hook, checkCamera value: true")
+const { showModal } = useClipboardPermissionGuard(true)
+// console.log("🔍 setelah hook")
 
   const checkScroll = () => {
         const el = scrollRef.current;
@@ -576,6 +578,29 @@ export default function DISCTestPage() {
           
 
         </div>
+        <PermissionModal isOpen={showModal} onClose={()=> {}}>
+            <div
+              className='text-gray-700'
+            >
+              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
+              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
+              <div className='flex justify-center my-4'>
+                <Image 
+                  src="/assets/blockedAcces.png"
+                  width={200}
+                  height={200}
+                  className='rounded-lg '
+                  alt=''
+                />
+              </div>
+              <div className='text-left ml-8'>
+                <ol className=' list-decimal flex flex-col gap-y-1'>
+                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
+                  <li>Reload Kembali halaman (F5)</li>
+                </ol>
+              </div>
+            </div>
+          </PermissionModal>
       </main>
 
       <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
@@ -622,29 +647,7 @@ export default function DISCTestPage() {
           
         </div>
       </Modal>
-      <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
-            >
-              <p className='font-bold text-2xl mb-3'>PERHATIAN</p>
-              <p>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedClipboardEditted.png"
-                  width={250}
-                  height={250}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Ikuti petunjuk sesuai gambar</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
-              </div>
-            </div>
-          </PermissionModal>
+      
           <BackGuardModal {...modalProps} />
     </div>
   );
