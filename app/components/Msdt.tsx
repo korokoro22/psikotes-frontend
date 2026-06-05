@@ -17,7 +17,7 @@ export default function Msdt({data}:any) {
         console.log("ini data scoring msdt: ", data)
     }, [score])
     return(
-        <div className="pb-5 border-gray-300">
+        <div className="pb-5 border-gray-300 html2pdf__page-break">
             <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes MSDT</p>
             </div>
@@ -29,7 +29,7 @@ export default function Msdt({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Hasil Test
                                 </td>
-                                <td className="text-left px-4 py-2 border border-gray-300">
+                                <td className="text-left px-4 py-2 border border-gray-300 font-normal">
                                     {score?.hasilTest}
                                 </td>
                             </tr>
@@ -37,7 +37,7 @@ export default function Msdt({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Status
                                 </td>
-                                <td className="text-left px-4 py-2 border border-gray-300">
+                                <td className="text-left px-4 py-2 border border-gray-300 font-normal">
                                     {score?.status}
                                 </td>
                             </tr>
@@ -45,7 +45,7 @@ export default function Msdt({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Deskripsi
                                 </td>
-                                <td className="text-left px-4 py-2 border border-gray-300 flex flex-col gap-y-2">
+                                <td className="text-left px-4 py-2 border border-gray-300 flex flex-col gap-y-2 font-normal">
                                     <p>{score?.mainExplanation1}</p>
                                     <p>{score?.mainExplanation2}</p>
                                     <p>{score?.description}</p>

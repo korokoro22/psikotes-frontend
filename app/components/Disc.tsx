@@ -36,36 +36,9 @@ export default function Disc({data}:any) {
             setMirrorCharacteristics(mirrorCharacterisctics)
         }
     }, [score])
-//     type DiscType = 'D' | 'I' | 'S' | 'C'
-
-//     type DiscAnswer = {
-//         groupId: number
-//         type: DiscType
-//     }
-
-//     type DiscAnswers = {
-//         most: DiscAnswer[]
-//         least: DiscAnswer[]
-// }
-
-
-//     const [answers] = useState<DiscAnswers>({
-//         most: [
-//             { groupId: 0, type: 'D'},
-//             { groupId: 1, type: 'C'},
-//             { groupId: 2, type: 'S'},
-//         ],
-//         least: [
-//             {groupId: 0, type: 'I'},
-//             {groupId: 1, type: 'D'},
-//             {groupId: 2, type: 'S'},
-//         ]
-//     })
-
-{/* <DiscChart answers = {answers}/> */}
 
     return(
-        <div className="pb-5 border-gray-300">
+        <div className="pb-5 border-gray-300 html2pdf__page-break">
              <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes DISC</p>
             </div>

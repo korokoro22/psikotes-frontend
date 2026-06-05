@@ -357,10 +357,6 @@ type OpsiPosisi = {
                                 Hasil
                             </Link>
 
-                            <button className="rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-red-600">
-                                Hapus
-                            </button>
-
                             </div>
                         </td>
 

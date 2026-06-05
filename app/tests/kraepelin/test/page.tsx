@@ -134,6 +134,7 @@ interface KraepelinColumnProps {
   inputValues: (number | null)[]; // nilai input 1 kolom
   focusedPair: number | null;  // pair yang fokus di kolom ini (null jika kolom lain)
   isActiveCol: boolean;
+  isTransitioning: boolean;
   isSystemActiveCol: boolean;
   isTimedOut: boolean;
   timeLeftMs: number;
@@ -156,6 +157,7 @@ const KraepelinColumn = memo(function KraepelinColumn({
   isTimedOut,
   timeLeftMs,
   status,
+  isTransitioning,
   isAccessible,
   inputRefs,
   focusHandledRef,
@@ -261,7 +263,7 @@ const KraepelinColumn = memo(function KraepelinColumn({
                         : "border-stone-300 bg-white hover:border-blue-400",
                   ].join(" ")}
                   placeholder={answer === null ? "?" : ""}
-                  disabled={status !== "playing" || !isAccessible}
+                  disabled={status !== "playing" || !isAccessible || isTransitioning}
                 />
               </div>
             );
@@ -314,6 +316,7 @@ export default function KraeplinTest() {
   // Jika habis sebelum user tekan Next, dicatat sebagai pelanggaran.
   const [graceTimeLeftMs, setGraceTimeLeftMs] = useState<number | null>(null);
   const gracePenalizedRef = useRef(false); // agar pelanggaran grace hanya dicatat sekali
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   const [isClient, setIsClient] = useState(false);
   const [countdown, setCountdown] = useState<number>(5);
@@ -357,6 +360,7 @@ export default function KraeplinTest() {
   const warningPlayedRef = useRef(false);
   // Pastikan unlock audio hanya dilakukan sekali
   const audioUnlockedRef = useRef(false);
+  const isTransitioningRef = useRef(false);
  
   // Waktu tersisa lajur aktif sistem (untuk ditampilkan di UI)
   const timeLeftMs = colStates[systemActiveCol]?.timeLeftMs ?? COL_TIME_MS;
@@ -581,6 +585,8 @@ export default function KraeplinTest() {
  
     // Auto-advance ke lajur berikutnya
     const targetCol = systemActiveCol + 1;
+    isTransitioningRef.current = true;
+    setIsTransitioning(true);
     setSystemActiveCol(targetCol);
     setActiveCol(targetCol);
     setLegitimateCol(targetCol);
@@ -594,7 +600,9 @@ export default function KraeplinTest() {
       setFocusedInput({ col: targetCol, pair: targetPair });
       setTimeout(() => {
         inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-      }, 50);
+        isTransitioningRef.current = false; // buka kunci setelah fokus settle
+        setIsTransitioning(false);
+      }, 500);
       return prev;
     });
   }, [colStates, systemActiveCol, status]);
@@ -616,6 +624,7 @@ export default function KraeplinTest() {
    */
   const handleInput = useCallback((digit: number, col: number, pairIdx: number) => {
     if (status !== "playing") return;
+    if (isTransitioningRef.current) return;
  
     /*
       ATURAN PELANGGARAN — patokan = legitimateCol + expectedPair:
@@ -986,6 +995,7 @@ export default function KraeplinTest() {
                 status={status}
                 isAccessible={cIdx === activeCol}
                 inputRefs={inputRefs}
+                isTransitioning={isTransitioning}
                 focusHandledRef={focusHandledRef}
                 onInputClick={handleInputClick}
                 onInput={handleInput}
@@ -1111,7 +1121,7 @@ export default function KraeplinTest() {
                         handleInput(n, focusedInput.col, focusedInput.pair);
                       }
                     }}
-                    disabled={!focusedInput}
+                    disabled={!focusedInput || isTransitioning}
                     className="bg-white border-2 border-stone-200 hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 text-stone-700 font-bold text-lg rounded-lg shadow-sm transition-all duration-100 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
                     style={{ height: "3.25rem" }}
                   >

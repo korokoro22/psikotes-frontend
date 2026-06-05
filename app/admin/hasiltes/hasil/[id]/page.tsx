@@ -13,15 +13,6 @@ import { useRouter } from "next/navigation"
 import { div } from "framer-motion/client"
 import { useHtml2Pdf } from "@/lib/useHtml2Pdf"
 
-const peserta = {
-    nama: 'Rezky',
-    umur: 20,
-    jeniskelamin: 'laki-laki',
-    pendidikan: 'S1',
-    jurusan: 'Teknik Informatika',
-    tes: ['cfit', 'msdt', 'mbti', 'kraepelin', 'papikostick', 'disc']
-}
-
 export default function AdminHasilTesHasil({ params }: { params: Promise<{ id: string }> }) {
     const [data, setData] = useState<any>(null)
     const router = useRouter()

@@ -98,7 +98,7 @@ export default function Kraepelin({data}:any) {
       
     // </div>
 
-    <div className="pb-5 border-gray-300">
+    <div className="pb-5 border-gray-300 html2pdf__page-break">
             <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes Kraepelin</p>
             </div>
@@ -131,10 +131,10 @@ export default function Kraepelin({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Kuantitas pekerjaan dalam satu waktu
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {formatDesimal(score?.skorKecepatan.toFixed(3))}
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {score?.kecepatanVariabel}
                                 </td>
                             </tr>
@@ -145,10 +145,10 @@ export default function Kraepelin({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Jumlah kesalahan saat bekerja	
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {formatDesimal(score?.skorKetelitian.toFixed(3))}
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {score?.ketelitianVariabel}
                                 </td>
                             </tr>
@@ -159,10 +159,10 @@ export default function Kraepelin({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Kestabilan kerja saat menghadapi tekanan	
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {formatDesimal(score?.skorKeajegan.toFixed(3))}
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {score?.keajeganVariabel}
                                 </td>
                             </tr>
@@ -173,10 +173,10 @@ export default function Kraepelin({data}:any) {
                                 <td className="px-4 py-2 border border-gray-300">
                                     Kemampuan bertahan dalam pekerjaan monoton
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {formatDesimal(score?.skorKetahanan.toFixed(3))}
                                 </td>
-                                <td className="px-4 py-2 border border-gray-300">
+                                <td className="px-4 py-2 border border-gray-300 font-normal">
                                     {score?.ketahananVariabel}
                                 </td>
                             </tr>

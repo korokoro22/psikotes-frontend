@@ -36,7 +36,7 @@ export default function Papikostick({data}:any) {
     }, [score])
 
     return(
-        <div className="pb-5 border-gray-300">
+        <div className="pb-5 border-gray-300 html2pdf__page-break">
             <div className="mb-4">
                 <p className="font-bold text-2xl">Hasil Tes Papikostick</p>
             </div>
@@ -52,7 +52,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan ={1} className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk berprestasi
                                 </td>
-                                <td colSpan ={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan ={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub1}
                                 </td>
                                 
@@ -61,7 +61,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk menyelesaikan tugas
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub2}
                                 </td>
                                 
@@ -70,7 +70,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Peran sebagai pekerja keras
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub3}
                                 </td>
                             </tr>
@@ -83,7 +83,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Tipe Terorganisir
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub4}
                                 </td>
                             </tr>
@@ -91,7 +91,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Tipe kerja dengan detail
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub5}
                                 </td>
                             </tr>
@@ -99,7 +99,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Tipe teoritis
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub6}
                                 </td>
                                 
@@ -113,7 +113,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Tipe semangat
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub7}
                                 </td>
                             </tr>
@@ -121,7 +121,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Tipe sibuk
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub8}
                                 </td>
                             </tr>
@@ -135,7 +135,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk diatur dan diawasi
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub9}
                                 </td>
                             </tr>
@@ -143,7 +143,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan membantu atasan
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub10}
                                 </td>
                             </tr>
@@ -157,15 +157,15 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Gaya kepemimpinan
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub11}
                                 </td>
                             </tr>
-                            <tr className="text-center text-sm font-semibold text-gray-700  ">
+                            <tr className="text-center text-sm font-semibold text-gray-700">
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk mengontrol orang lain
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub12}
                                 </td>
                             </tr>
@@ -173,7 +173,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kemampuan mengambil keputusan
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub13}
                                 </td>
                                 
@@ -187,7 +187,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Peran sosial
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub14}
                                 </td>
                             </tr>
@@ -195,7 +195,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan menjadi bagian dari grup
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub15}
                                 </td>
                             </tr>
@@ -203,7 +203,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan akan kedekatan dan perhatian
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub16}
                                 </td>
                                 
@@ -212,7 +212,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan akan penerimaan
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub17}
                                 </td>
                                 
@@ -226,7 +226,7 @@ export default function Papikostick({data}:any) {
                                 <td colSpan={1} className="px-4 py-2 border border-gray-300">
                                     Ketahanan emosional
                                 </td>
-                                <td colSpan={1} className="px-4 py-2 border border-gray-300">
+                                <td colSpan={1} className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub18}
                                 </td>
                             </tr>
@@ -234,7 +234,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk maju
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub19}
                                 </td>
                             </tr>
@@ -242,7 +242,7 @@ export default function Papikostick({data}:any) {
                                 <td  className="px-4 py-2 border border-gray-300">
                                     Kebutuhan untuk berubah
                                 </td>
-                                <td  className="px-4 py-2 border border-gray-300">
+                                <td  className="px-4 py-2 border border-gray-300 font-normal text-left">
                                     {score?.sub20}
                                 </td>
                                 
