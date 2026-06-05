@@ -2,14 +2,12 @@
 
 interface BackGuardModalProps {
   isOpen: boolean;
-//   message: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
 export default function BackGuardModal({
   isOpen,
-//   message,
   onConfirm,
   onCancel,
 }: BackGuardModalProps) {
@@ -21,13 +19,20 @@ export default function BackGuardModal({
         {/* Titlebar */}
         <div className="flex items-center gap-2 border-b border-gray-300 bg-gray-200 px-4 py-2">
           <span className="text-base">⚠️</span>
-          <span className="text-sm font-semibold text-gray-700">Konfirmasi</span>
+          <span className="text-sm font-semibold text-gray-700">
+            Konfirmasi
+          </span>
         </div>
 
         {/* Body */}
         <div className="px-5 pb-4 pt-5 text-center">
-          <p className="text-sm leading-relaxed text-gray-800">Apakah Anda yakin ingin kembali?</p>
-          <p className="text-sm leading-relaxed text-red-700">(TES YANG SEDANG BERLANGSUNG AKAN DIBATALKAN DAN TIDAK DAPAT DILANJUTKAN)</p>
+          <p className="text-sm leading-relaxed text-gray-800">
+            Apakah Anda yakin ingin kembali?
+          </p>
+          <p className="text-sm leading-relaxed text-red-700">
+            (TES YANG SEDANG BERLANGSUNG AKAN DIBATALKAN DAN TIDAK DAPAT
+            DILANJUTKAN)
+          </p>
         </div>
 
         {/* Footer */}

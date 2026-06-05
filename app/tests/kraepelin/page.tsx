@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Brain, Info, Clock, ListChecks } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import Modal from '@/app/components/Modal';
-import TestHeader from '@/app/components/TestHeader';
-import { useAntiCheat } from '@/lib/useAntiCheat';
-import BackGuardModal from '@/app/components/BackGuardModal';
-import { useBackGuard } from '@/lib/useBackGuard';
-import { checkMoveTab } from '@/lib/checkMoveTab';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Brain, Info, Clock, ListChecks } from "lucide-react";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import Modal from "@/app/components/Modal";
+import TestHeader from "@/app/components/TestHeader";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { useBackGuard } from "@/lib/useBackGuard";
+import { checkMoveTab } from "@/lib/checkMoveTab";
 
 interface Question {
-  id: number
-  num1: number
-  num2: number
-  answer: number
-  explanationRight: string
-  explanationFalse: string
+  id: number;
+  num1: number;
+  num2: number;
+  answer: number;
+  explanationRight: string;
+  explanationFalse: string;
 }
 
 function IconMath() {
@@ -39,65 +39,60 @@ function IconMath() {
   );
 }
 
-type Answer = 0 | 1
+type Answer = 0 | 1;
 
 const KraepelinInstructionPage: React.FC = () => {
   const TOTAL_QUESTIONS = 10;
-  const TOTAL_EXAMPLES = 5
+  const TOTAL_EXAMPLES = 5;
 
-  const [showResult, setShowResult] = useState(false)
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const [showResult, setShowResult] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [numbers, setNumbers] = useState<[number, number]>([0, 0]);
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getRemainingTime = (): number => {
-        if (typeof window === "undefined") return EXAM_DURATION
-        const startTime = localStorage.getItem("examStartTime");
-        if (!startTime) return EXAM_DURATION;
-        const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        return EXAM_DURATION - elapsed; // bisa negatif = overtime
-    };
+    if (typeof window === "undefined") return EXAM_DURATION;
+    const startTime = localStorage.getItem("examStartTime");
+    if (!startTime) return EXAM_DURATION;
+    const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+    return EXAM_DURATION - elapsed;
+  };
 
-    const   formatTime = (seconds: number) => {
-      const minutes = Math.floor(seconds / 60);
-      const remaining = seconds % 60;
-      return `${minutes}:${remaining.toString().padStart(2, '0')}`;
-    };
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remaining = seconds % 60;
+    return `${minutes}:${remaining.toString().padStart(2, "0")}`;
+  };
 
-    const EXAM_DURATION = 2 * 60;
+  const EXAM_DURATION = 2 * 60;
 
-    // Server-safe: selalu mulai dari EXAM_DURATION
-    const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
-    const [isReady, setIsReady] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
+  const [isReady, setIsReady] = useState(false);
 
-    // Jalankan hanya di client setelah hydration selesai
-    useEffect(() => {
-      const existing = localStorage.getItem("examStartTime");
-      if (!existing) {
-        localStorage.setItem("examStartTime", Date.now().toString());
-      }
+  useEffect(() => {
+    const existing = localStorage.getItem("examStartTime");
+    if (!existing) {
+      localStorage.setItem("examStartTime", Date.now().toString());
+    }
 
-      const remaining = getRemainingTime();
-      setTimeLeft(Math.max(0, remaining));
-      setIsReady(true);
-    }, []);
+    const remaining = getRemainingTime();
+    setTimeLeft(Math.max(0, remaining));
+    setIsReady(true);
+  }, []);
 
-    // Timer berjalan hanya setelah isReady
-    useEffect(() => {
-      if (!isReady) return;
-      if (timeLeft <= 0) {
-        handleTestComplete();
-        return;
-      }
-      const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearInterval(timer);
-    }, [timeLeft, isReady]);
+  useEffect(() => {
+    if (!isReady) return;
+    if (timeLeft <= 0) {
+      handleTestComplete();
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isReady]);
 
-  // generate soal baru
   const generateNumbers = () => {
-    
     const a = Math.floor(Math.random() * 9) + 1;
     const b = Math.floor(Math.random() * 9) + 1;
     setNumbers([a, b]);
@@ -108,77 +103,65 @@ const KraepelinInstructionPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log('number: ', numbers)
-  })
+    const testSession = sessionStorage.getItem("testSession");
+    if (!testSession) return;
 
-  useEffect(() => {
-    console.log('Currentindex: ', currentIndex)
-  })
-
-   useEffect(()=> {
-        const testSession = sessionStorage.getItem('testSession')
-        if(!testSession)
-            return console.log('gagal')
-        
-        const testSessionParsed = JSON.parse(testSession)
-        const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-        console.log('ini tests:', testSessionParsed.currentIndex)
-    })
+    const testSessionParsed = JSON.parse(testSession);
+    const tests = testSessionParsed.tests[testSessionParsed.currentIndex];
+  });
 
   const handleInput = (value: string) => {
-  if (!/^\d$/.test(value) || showResult) return
+    if (!/^\d$/.test(value) || showResult) return;
 
-  const [a, b] = numbers
-  const correctAnswer = (a + b) % 10
-  const correct = Number(value) === correctAnswer
+    const [a, b] = numbers;
+    const correctAnswer = (a + b) % 10;
+    const correct = Number(value) === correctAnswer;
 
-  setIsCorrect(correct)
-  setShowResult(true)
+    setIsCorrect(correct);
+    setShowResult(true);
 
-  setAnswers(prev => [...prev, correct ? 1 : 0])
-}
-
+    setAnswers((prev) => [...prev, correct ? 1 : 0]);
+  };
 
   const router = useRouter();
   const handleTestComplete = () => {
-    router.push('/tests/kraepelin/example');
+    router.push("/tests/kraepelin/example");
   };
 
   const handleNext = () => {
-  if (currentIndex < TOTAL_EXAMPLES - 1) {
-    setCurrentIndex(prev => prev + 1)
-    setShowResult(false)
-    setIsCorrect(null)
-    generateNumbers()
-  }
-}
+    if (currentIndex < TOTAL_EXAMPLES - 1) {
+      setCurrentIndex((prev) => prev + 1);
+      setShowResult(false);
+      setIsCorrect(null);
+      generateNumbers();
+    }
+  };
 
   const handleModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   useAntiCheat({ mode: "silent" });
 
-  checkMoveTab()
+  checkMoveTab();
 
   useEffect(() => {
     document.title = "Instructions - Psychological Tests";
-  }, [])
+  }, []);
 
   const { modalProps } = useBackGuard();
 
-  const [testsCount, setTestsCount] = useState<number | null>(null)
+  const [testsCount, setTestsCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
+    const testSession = sessionStorage.getItem("testSession");
     if (!testSession) {
-      console.log('gagal')
-      return
+      return;
     }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
+
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
 
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
@@ -189,7 +172,7 @@ const KraepelinInstructionPage: React.FC = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-10">
-      <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -200,11 +183,13 @@ const KraepelinInstructionPage: React.FC = () => {
             <div className="p-6 md:p-8">
               {/* Breadcrumb */}
               <div className="mb-4">
-                
-                <div className='flex items-center mb-8 justify-between'>
+                <div className="flex items-center mb-8 justify-between">
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
-                      Tes Psikotes <span className='text-xl text-slate-700 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span>
+                      Tes Psikotes{" "}
+                      <span className="text-xl text-slate-700 font-semibold ml-3">
+                        (TES KE-{testsCount ?? "..."})
+                      </span>
                     </h2>
                   </div>
                   <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
@@ -230,8 +215,12 @@ const KraepelinInstructionPage: React.FC = () => {
                     <ListChecks className="w-5 h-5" />
                   </div>
                   <div className="text-sm">
-                    <div className="text-slate-800 font-medium">Jumlah Lajur</div>
-                    <div className="text-slate-600">Beberapa kolom angka vertikal</div>
+                    <div className="text-slate-800 font-medium">
+                      Jumlah Lajur
+                    </div>
+                    <div className="text-slate-600">
+                      Beberapa kolom angka vertikal
+                    </div>
                   </div>
                 </div>
 
@@ -264,13 +253,16 @@ const KraepelinInstructionPage: React.FC = () => {
                       Jumlahkan dua angka yang berdekatan secara vertikal.
                     </li>
                     <li className="marker:text-2xl">
-                      Tuliskan <strong className="text-blue-600">digit terakhir</strong> hasil penjumlahan.
+                      Tuliskan{" "}
+                      <strong className="text-blue-600">digit terakhir</strong>{" "}
+                      hasil penjumlahan.
                     </li>
                     <li className="marker:text-2xl">
                       Setiap lajur memiliki batas waktu.
                     </li>
                     <li className="marker:text-2xl">
-                      Setelah waktu habis, sistem akan berpindah otomatis ke lajur berikutnya.
+                      Setelah waktu habis, sistem akan berpindah otomatis ke
+                      lajur berikutnya.
                     </li>
                     <li className="marker:text-2xl">
                       Kerjakan secepat dan seakurat mungkin.
@@ -281,10 +273,11 @@ const KraepelinInstructionPage: React.FC = () => {
 
               {/* Section: Contoh Soal */}
               <section className="mb-10">
-
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Petunjuk Teknis Soal</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                  Petunjuk Teknis Soal
+                </h2>
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                  <ul className='grid grid-cols-1 gap-y-2 gap-x-5 text-sm text-slate-700 list-disc marker:text-slate-400 pl-3'>
+                  <ul className="grid grid-cols-1 gap-y-2 gap-x-5 text-sm text-slate-700 list-disc marker:text-slate-400 pl-3">
                     <li className="marker:text-2xl">
                       Soal terbagi ke dalam beberapa lajur.
                     </li>
@@ -292,30 +285,58 @@ const KraepelinInstructionPage: React.FC = () => {
                       Pengerjaan dimulai dari bagian bawah lajur.
                     </li>
                     <li className="marker:text-2xl ">
-                      Peserta cukup langsung mengisi jawaban pada kotak yang tersedia tanpa melakukan aktivitas tambahan, seperti memindahkan soal atau berpindah lajur secara mandiri.
+                      Peserta cukup langsung mengisi jawaban pada kotak yang
+                      tersedia tanpa melakukan aktivitas tambahan, seperti
+                      memindahkan soal atau berpindah lajur secara mandiri.
                     </li>
                     <li className="marker:text-2xl ">
-                      Pengisian jawaban dapat dilakukan menggunakan keyboard maupun numpad yang tersedia di samping soal.
+                      Pengisian jawaban dapat dilakukan menggunakan keyboard
+                      maupun numpad yang tersedia di samping soal.
                     </li>
                     <li className="marker:text-2xl ">
-                      Jawaban diisi berdasarkan hasil penjumlahan dua angka yang berdekatan dengan ketentuan sebagai berikut:
+                      Jawaban diisi berdasarkan hasil penjumlahan dua angka yang
+                      berdekatan dengan ketentuan sebagai berikut:
                     </li>
-                      <ul className='ml-7 list-disc marker:text-slate-400 pl-3'>
-                        <li className="marker:text-2xl">
-                          Jika hasil penjumlahan berupa satu digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>3 + 4 = 7</span> ), maka yang diinput adalah angka tersebut, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>7</span>.
-                        </li>
-                        <li className="marker:text-2xl">
-                          Jika hasil penjumlahan berupa dua digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>7 + 5 = 12</span> ), maka yang diinput adalah digit satuan atau angka terakhir, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>2</span>.
-                        </li>
-                        <li className="marker:text-2xl">
-                          Jika hasil penjumlahan berupa dua digit (misalnya <span className='bg-green-300 px-1 rounded-lg border border-green-500'>4 + 6 = 10</span> ), maka yang diinput adalah digit satuan atau angka terakhir, yaitu <span className='bg-green-300 px-1 rounded-lg border border-green-500'>0</span>.
-                        </li>
-                      </ul>
+                    <ul className="ml-7 list-disc marker:text-slate-400 pl-3">
+                      <li className="marker:text-2xl">
+                        Jika hasil penjumlahan berupa satu digit (misalnya{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          3 + 4 = 7
+                        </span>{" "}
+                        ), maka yang diinput adalah angka tersebut, yaitu{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          7
+                        </span>
+                        .
+                      </li>
+                      <li className="marker:text-2xl">
+                        Jika hasil penjumlahan berupa dua digit (misalnya{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          7 + 5 = 12
+                        </span>{" "}
+                        ), maka yang diinput adalah digit satuan atau angka
+                        terakhir, yaitu{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          2
+                        </span>
+                        .
+                      </li>
+                      <li className="marker:text-2xl">
+                        Jika hasil penjumlahan berupa dua digit (misalnya{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          4 + 6 = 10
+                        </span>{" "}
+                        ), maka yang diinput adalah digit satuan atau angka
+                        terakhir, yaitu{" "}
+                        <span className="bg-green-300 px-1 rounded-lg border border-green-500">
+                          0
+                        </span>
+                        .
+                      </li>
+                    </ul>
                     <li className="marker:text-2xl ">
-                      
                       Segera pindah lajur ketika muncul instruksi untuk pindah.
                     </li>
-                    
                   </ul>
                 </div>
                 {/*  
@@ -397,8 +418,8 @@ const KraepelinInstructionPage: React.FC = () => {
               {/* Tombol aksi */}
               <div className="mt-8 border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-slate-600">
-                  <strong className="text-slate-800">Sebelum mulai:</strong> pastikan Anda
-                  fokus dan siap mengerjakan tanpa gangguan.
+                  <strong className="text-slate-800">Sebelum mulai:</strong>{" "}
+                  pastikan Anda fokus dan siap mengerjakan tanpa gangguan.
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.03 }}
@@ -416,21 +437,27 @@ const KraepelinInstructionPage: React.FC = () => {
           <div className="mt-6 text-center text-xs text-slate-400">
             Sistem akan otomatis memulai timer saat tes dimulai.
           </div>
-          </motion.div>
+        </motion.div>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-        <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-        <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-        <div className='flex gap-x-3 justify-evenly mt-4'>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-            onClick={()=> setIsModalOpen(false)}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan
+          dan sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Pastikan koneksi internet stabil dan Anda berada di lingkungan yang
+          kondusif.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
+          <button
+            className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+            onClick={() => setIsModalOpen(false)}
           >
             Kembali
           </button>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+          <button
+            className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
             onClick={handleTestComplete}
           >
             Mulai Latihan
@@ -440,6 +467,6 @@ const KraepelinInstructionPage: React.FC = () => {
       <BackGuardModal {...modalProps} />
     </div>
   );
-}
+};
 
 export default KraepelinInstructionPage;

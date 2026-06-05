@@ -1,51 +1,46 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Image from 'next/image'
-import { registerPeserta, userExpiredDate } from '@/services/peserta.service'
-import { number } from 'framer-motion'
-import { useAntiCheat } from '@/lib/useAntiCheat'
-import PermissionModal from '../components/PermissionModal'
-import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { registerPeserta } from "@/services/peserta.service";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import PermissionModal from "../components/PermissionModal";
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard";
 
 export default function TestForm() {
-
-  const [data, setData] = useState<any>(null)
-  const [errorMessage, setErrorMessage] = useState('')
-
-  const imgUrl = data?.data[0]?.imageUrl
-  const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    nama: '',
-    email: '',
-    nik: '',
-    tanggalLahir: '',
-    jenisKelamin: '',
-    unit: '',
-    usia: '',
-    pendidikanTerakhir: '',
-    jurusan: '',
-    posisi: '',
-    tokenPeserta: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    nama: "",
+    email: "",
+    nik: "",
+    tanggalLahir: "",
+    jenisKelamin: "",
+    unit: "",
+    usia: "",
+    pendidikanTerakhir: "",
+    jurusan: "",
+    posisi: "",
+    tokenPeserta: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: name === 'usia' ? Number(value) : value }))
-    console.log(formData)
-  }
-
-  const handleBlank = () => {
-    // if (formData.)
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "usia" ? Number(value) : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       const form = {
         nama: formData.nama,
         email: formData.email,
@@ -57,43 +52,43 @@ export default function TestForm() {
         pendidikanTerakhir: formData.pendidikanTerakhir,
         jurusan: formData.jurusan,
         posisi: formData.posisi,
-        tokenPeserta: formData.tokenPeserta
+        tokenPeserta: formData.tokenPeserta,
+      };
+
+      const res = await registerPeserta(form);
+      const statusCode = res.data.statusCode;
+
+      if (statusCode === 3) {
+        setErrorMessage("Peserta masih aktif, belum perlu tes ulang");
+        return;
       }
-      
-        const res = await registerPeserta(form)
-        const statusCode = res.data.statusCode
 
-        if (statusCode === 3) {
-            setErrorMessage('Peserta masih aktif, belum perlu tes ulang')
-            return
-        }
-
-        if (!res.data.status) {
-            setErrorMessage(res.data.message)
-            return
-        }
-
-        // statusCode 0 atau 2 → lanjut ke tes
-        const startTime = Date.now()
-        localStorage.setItem("examStartTime", startTime.toString())
-
-        sessionStorage.setItem('testSession', 
-            JSON.stringify({
-                sessionId: res.data.data.sessionId,
-                pesertaId: res.data.data.pesertaId,
-                tests: res.data.data.tests,
-                currentIndex: 0
-            })
-        )
-
-        router.push('/tests/welcome')
-      
-    } catch (err:any) {
-      setErrorMessage(err.response?.data?.message || 'Login gagal')
-      } finally {
-        setIsSubmitting(false);
+      if (!res.data.status) {
+        setErrorMessage(res.data.message);
+        return;
       }
-  }
+
+      // statusCode 0 atau 2 → lanjut ke tes
+      const startTime = Date.now();
+      localStorage.setItem("examStartTime", startTime.toString());
+
+      sessionStorage.setItem(
+        "testSession",
+        JSON.stringify({
+          sessionId: res.data.data.sessionId,
+          pesertaId: res.data.data.pesertaId,
+          tests: res.data.data.tests,
+          currentIndex: 0,
+        }),
+      );
+
+      router.push("/tests/welcome");
+    } catch (err: any) {
+      setErrorMessage(err.response?.data?.message || "Login gagal");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     document.title = "Registration - Psychological Tests";
@@ -107,18 +102,18 @@ export default function TestForm() {
       const permStatus = await navigator.permissions.query({
         name: "clipboard-read" as PermissionName,
       });
-      return permStatus.state; // "granted" | "denied" | "prompt"
+      return permStatus.state;
     } catch {
-      return "prompt"; // browser tidak support
+      return "prompt";
     }
   };
 
   useEffect(() => {
     const check = async () => {
       const state = await checkClipboardPermission();
-      
+
       if (state !== "granted") {
-        setShowPermissionModal(true); // tampilkan modal
+        setShowPermissionModal(true);
       }
     };
 
@@ -137,15 +132,20 @@ export default function TestForm() {
         {/* Form */}
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMessage === '' ? '' :
-            <div className='bg-red-200 py-2 text-sm text-red-800 font-medium rounded-md flex'>
-              <p className='ml-2'>{errorMessage}.</p>
-            </div>
-            }
-            
+            {errorMessage === "" ? (
+              ""
+            ) : (
+              <div className="bg-red-200 py-2 text-sm text-red-800 font-medium rounded-md flex">
+                <p className="ml-2">{errorMessage}.</p>
+              </div>
+            )}
+
             {/* Nama */}
             <div>
-              <label htmlFor="nama" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="nama"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Nama Lengkap
               </label>
               <input
@@ -157,13 +157,16 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan nama lengkap"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email
               </label>
               <input
@@ -175,13 +178,16 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan email"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* NIK */}
             <div>
-              <label htmlFor="nik" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="nik"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Nomor Induk Kependudukan (NIK)
               </label>
               <input
@@ -193,72 +199,84 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan Nomor Induk Kependudukan (NIK)"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* tanggal lahir */}
             <div>
-              <label htmlFor="tanggalLahir" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="tanggalLahir"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 tanggalLahir
               </label>
-              <input 
-                type="date" 
-                name='tanggalLahir'
-                id='tanggalLahir'
+              <input
+                type="date"
+                name="tanggalLahir"
+                id="tanggalLahir"
                 required
                 value={formData.tanggalLahir}
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Masukkan tanggal Lahir"
-                />
+              />
             </div>
 
             {/* Jenis Kelamin */}
-              <div>
-                <label htmlFor="jenisKelamin" className="block text-sm font-medium text-gray-700 mb-1">
-                  Jenis Kelamin
-                </label>
-                <select
-                  name="jenisKelamin"
-                  id="jenisKelamin"
-                  required  
-                  value={formData.jenisKelamin}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
-                >
-                  <option value="">Pilih Jenis Kelamin</option>
-                  <option value="LAKI_LAKI">Laki-laki</option>
-                  <option value="PEREMPUAN">Perempuan</option>
-                </select>
-              </div>
+            <div>
+              <label
+                htmlFor="jenisKelamin"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Jenis Kelamin
+              </label>
+              <select
+                name="jenisKelamin"
+                id="jenisKelamin"
+                required
+                value={formData.jenisKelamin}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
+              >
+                <option value="">Pilih Jenis Kelamin</option>
+                <option value="LAKI_LAKI">Laki-laki</option>
+                <option value="PEREMPUAN">Perempuan</option>
+              </select>
+            </div>
 
             {/* Unit */}
-              <div>
-                <label htmlFor="jenisKelamin" className="block text-sm font-medium text-gray-700 mb-1">
-                  Perusahaan yang dilamar
-                </label>
-                <select
-                  name="unit"
-                  id="unit"
-                  required  
-                  value={formData.unit}
-                  onChange={handleChange}
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
-                >
-                  <option value="">Pilih Perusahaan</option>
-                  <option value="SMP">PT. Samamaju Prima</option>
-                  <option value="MPP">PT. Makassar Putra Prima</option>
-                  <option value="MMPP">PT. Makassar Mega Putra Prima</option>
-                  <option value="IMP">PT. Indo Mega Prima</option>
-                  <option value="PPH">PT. Putra Prima Hotel</option>
-                  <option value="ACS">PT. Aptana Citra Solusindo</option>
-                </select>
-              </div>
+            <div>
+              <label
+                htmlFor="jenisKelamin"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Perusahaan yang dilamar
+              </label>
+              <select
+                name="unit"
+                id="unit"
+                required
+                value={formData.unit}
+                onChange={handleChange}
+                className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
+              >
+                <option value="">Pilih Perusahaan</option>
+                <option value="SMP">PT. Samamaju Prima</option>
+                <option value="MPP">PT. Makassar Putra Prima</option>
+                <option value="MMPP">PT. Makassar Mega Putra Prima</option>
+                <option value="IMP">PT. Indo Mega Prima</option>
+                <option value="PPH">PT. Putra Prima Hotel</option>
+                <option value="ACS">PT. Aptana Citra Solusindo</option>
+              </select>
+            </div>
 
             {/* Usia */}
             <div>
-              <label htmlFor="usia" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="usia"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Usia
               </label>
               <input
@@ -270,15 +288,16 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: 20"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
-            
-
             {/* Pendidikan */}
             <div>
-              <label htmlFor="pendidikanTerakhir" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="pendidikanTerakhir"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Pendidikan Terakhir
               </label>
               <input
@@ -290,31 +309,37 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: SMA / S1"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* Pekerjaan */}
             <div>
-              <label htmlFor="jurusan" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="jurusan"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Jurusan
               </label>
               <input
                 type="text"
-                name="jurusan"  // (perubahan) kesalahan penulisan name, sebelumnya jursan @rezky
+                name="jurusan" // (perubahan) kesalahan penulisan name, sebelumnya jursan @rezky
                 id="jurusan"
                 required
                 value={formData.jurusan}
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: Teknik Informatika"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* Pendidikan */}
             <div>
-              <label htmlFor="posisi" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="posisi"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Posisi yang dilamar
               </label>
               <input
@@ -326,13 +351,16 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: Fullstack Developer"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
             {/* Token */}
             <div>
-              <label htmlFor="tokenPeserta" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="tokenPeserta"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Token Tes
               </label>
               <input
@@ -344,7 +372,7 @@ export default function TestForm() {
                 onChange={handleChange}
                 className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 px-3 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-sm"
                 placeholder="Contoh: 123"
-                autoComplete='off'
+                autoComplete="off"
               />
             </div>
 
@@ -352,43 +380,43 @@ export default function TestForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              // disabled={!isFormValid}
               className={`w-full py-2 text-sm font-semibold text-white rounded-md shadow-md  
                 ${
                   isSubmitting
-                  ? 'bg-slate-500'
-                  : 'transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'
+                    ? "bg-slate-500"
+                    : "transition-all duration-200 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                 }`}
             >
-              {isSubmitting ? 'Memproses...' : 'Mulai Tes'}
+              {isSubmitting ? "Memproses..." : "Mulai Tes"}
             </button>
           </form>
         </div>
       </div>
-        <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
-            >
-              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
-              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedAcces.png"
-                  width={200}
-                  height={200}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
-              </div>
-            </div>
-          </PermissionModal>
+      <PermissionModal isOpen={showModal} onClose={() => {}}>
+        <div className="text-gray-700">
+          <p className="font-bold text-xl mb-3">PERHATIAN</p>
+          <p className="text-sm">
+            Harap berikan izin untuk akses clipboard untuk mengakses halaman tes
+          </p>
+          <div className="flex justify-center my-4">
+            <Image
+              src="/assets/blockedAcces.png"
+              width={200}
+              height={200}
+              className="rounded-lg "
+              alt=""
+            />
+          </div>
+          <div className="text-left ml-8">
+            <ol className=" list-decimal flex flex-col gap-y-1">
+              <li>
+                Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on
+              </li>
+              <li>Reload Kembali halaman (F5)</li>
+            </ol>
+          </div>
+        </div>
+      </PermissionModal>
     </div>
-    
-  )
+  );
 }

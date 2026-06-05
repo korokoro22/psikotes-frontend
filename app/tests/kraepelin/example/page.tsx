@@ -24,7 +24,14 @@ type Status = "idle" | "playing" | "finished";
 // Audit log — mencatat hanya anomali/pelanggaran
 interface AuditEntry {
   timestamp: string;
-  event: "Mengisi jawaban mundur dalam lajur yang sama" | "Mengisi jawaban maju dalam lajur yang sama" | "Mengisi jawaban di lajur yang berbeda" | "Mengisi ulang kotak yang sudah dijawab" | "Mengisi jawaban setelah waktu habis" | "Terlambat pindah lajur" | "Melangkahi kotak jawaban";
+  event:
+    | "Mengisi jawaban mundur dalam lajur yang sama"
+    | "Mengisi jawaban maju dalam lajur yang sama"
+    | "Mengisi jawaban di lajur yang berbeda"
+    | "Mengisi ulang kotak yang sudah dijawab"
+    | "Mengisi jawaban setelah waktu habis"
+    | "Terlambat pindah lajur"
+    | "Melangkahi kotak jawaban";
   // remainingTimeMs: number;
 }
 
@@ -54,48 +61,6 @@ const KRAEPELIN_DATA: number[][] = [
   [5,3,8,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2,7,4,9,1,6,3,8,5,2],
   [2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9,3,6,5,8,4,2,7,1,9],
   [9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5,1,8,3,7,2,9,4,6,5],
-  // [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
-  // [3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1,9,7,4,2,6,3,8,5,1],
-  // [7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4,6,1,8,3,5,7,2,9,4],
-  // [1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7,2,5,9,8,3,1,6,4,7],
-  // [8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3,7,9,6,1,4,8,5,2,3],
-  // [4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6,5,3,2,4,8,4,9,7,6],
-  // [5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8,9,4,7,6,2,5,1,3,8],
-  // [2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4,1,7,3,9,5,2,8,6,4],
-  // [7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1,6,5,8,2,4,7,3,9,1],
-  // [9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5,3,8,1,7,4,9,6,2,5],
-  // [4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9,8,1,6,3,5,4,2,7,9],
-  // [1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3],
-  // [6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7,2,4,5,9,3,6,8,1,7],
-  // [3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2,5,6,9,1,7,3,4,8,2],
-  // [8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6,4,2,3,4,9,8,7,5,6],
-  // [2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4,8,7,6,5,3,2,1,9,4],
-  // [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
-  // [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
-  // [1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7,6,5,9,4,2,1,3,8,7],
-  // [4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3,5,1,7,6,9,4,8,2,3],
-  // [9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5,4,7,3,8,1,9,2,6,5],
-  // [6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9,3,2,8,4,7,6,5,1,9],
-  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
-  // [8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4,7,9,4,2,6,8,1,5,4],
-  // [2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8,1,3,6,9,5,2,4,7,8],
-  // [5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1,9,8,2,7,4,5,6,3,1],
-  // [1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6,2,4,5,3,7,1,9,8,6],
-  // [4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7,5,1,9,6,8,4,3,2,7],
-  // [7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3,4,5,2,1,9,7,8,6,3],
-  // [9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2,6,7,8,3,1,9,5,4,2],
-  // [6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4,3,9,7,5,8,6,2,1,4],
-  // [3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9,8,2,4,6,1,3,7,5,9],
-  // [8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5,1,6,3,2,7,8,4,9,5],
-  // [1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8,4,3,5,9,2,1,6,7,8],
-  // [5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6,7,8,1,4,9,5,2,3,6],
-  // [2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1,5,7,6,8,3,2,9,4,1],
-  // [7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3,9,4,8,2,5,7,1,6,3],
-  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2],
-  // [5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8,1,3,4,7,2,5,9,3,8],
-  // [6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8,4,2,7,5,9,6,1,3,8],
-  // [7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1,9,8,2,3,5,7,6,4,1],
-  // [3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2,8,6,1,5,4,3,7,9,2]
 ];
 
 const ROWS = KRAEPELIN_DATA[0].length;
@@ -124,10 +89,10 @@ function initColStates(): ColState[] {
    ═══════════════════════════════════════════════════════════ */
 interface KraepelinColumnProps {
   cIdx: number;
-  colData: number[];           // array angka 1 kolom
-  answers: (1 | 0 | null)[];  // jawaban 1 kolom
+  colData: number[]; // array angka 1 kolom
+  answers: (1 | 0 | null)[]; // jawaban 1 kolom
   inputValues: (number | null)[]; // nilai input 1 kolom
-  focusedPair: number | null;  // pair yang fokus di kolom ini (null jika kolom lain)
+  focusedPair: number | null; // pair yang fokus di kolom ini (null jika kolom lain)
   isActiveCol: boolean;
   isSystemActiveCol: boolean;
   isTimedOut: boolean;
@@ -219,7 +184,9 @@ const KraepelinColumn = memo(function KraepelinColumn({
             return (
               <div key={rIdx} className="h-6 flex items-center justify-center">
                 <input
-                  ref={el => { inputRefs.current[`${cIdx}-${pairIdx}`] = el; }}
+                  ref={(el) => {
+                    inputRefs.current[`${cIdx}-${pairIdx}`] = el;
+                  }}
                   type="text"
                   maxLength={1}
                   readOnly
@@ -272,7 +239,7 @@ const KraepelinColumn = memo(function KraepelinColumn({
    ═══════════════════════════════════════════════════════════ */
 export default function KraeplinTest() {
   const router = useRouter();
-  
+
   /* ── STATE ──
    * grid          : data soal (angka per lajur)
    * systemActiveCol: lajur yang timer-nya sedang berjalan (patokan sistem)
@@ -281,22 +248,25 @@ export default function KraeplinTest() {
   const [grid, setGrid] = useState<number[][]>([]);
   const [systemActiveCol, setSystemActiveCol] = useState<number>(0);
   const [activeCol, setActiveCol] = useState<number>(0);
-  
+
   // answers[col][pair]: null = belum dijawab, 1 = benar, 0 = salah
-  const [answers, setAnswers] = useState<(1 | 0 | null)[][]>(
-    () => Array.from({ length: COLS }, () => Array(PAIRS).fill(null))
+  const [answers, setAnswers] = useState<(1 | 0 | null)[][]>(() =>
+    Array.from({ length: COLS }, () => Array(PAIRS).fill(null)),
   );
   // inputValues[col][pair]: angka yang diketik user, ditampilkan di kotak
-  const [inputValues, setInputValues] = useState<(number | null)[][]>(
-    () => Array.from({ length: COLS }, () => Array(PAIRS).fill(null))
+  const [inputValues, setInputValues] = useState<(number | null)[][]>(() =>
+    Array.from({ length: COLS }, () => Array(PAIRS).fill(null)),
   );
   const [colStates, setColStates] = useState<ColState[]>(initColStates);
   const [status, setStatus] = useState<Status>("idle");
   const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Kotak jawaban yang sedang difokus
-  const [focusedInput, setFocusedInput] = useState<{col: number, pair: number} | null>(null);
+  const [focusedInput, setFocusedInput] = useState<{
+    col: number;
+    pair: number;
+  } | null>(null);
 
   // legitimateCol: lajur yang sah dikerjakan tanpa pelanggaran.
   // Hanya naik saat user tekan Next SETELAH waktu lajur habis.
@@ -310,7 +280,7 @@ export default function KraeplinTest() {
   // Jika habis sebelum user tekan Next, dicatat sebagai pelanggaran.
   const [graceTimeLeftMs, setGraceTimeLeftMs] = useState<number | null>(null);
   const gracePenalizedRef = useRef(false); // agar pelanggaran grace hanya dicatat sekali
-  
+
   const [isClient, setIsClient] = useState(false);
   const [countdown, setCountdown] = useState<number>(5);
   const [showCountdown, setShowCountdown] = useState(true);
@@ -318,25 +288,24 @@ export default function KraeplinTest() {
   useAntiCheat({ mode: "silent" });
   const { modalProps } = useBackGuard();
 
-  checkMoveTab()
+  checkMoveTab();
 
   useEffect(() => {
     document.title = "Example - Psychological Tests";
-  }, [])
+  }, []);
 
-  const [testsCount, setTestsCount] = useState<number | null>(null)
+  const [testsCount, setTestsCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
+    const testSession = sessionStorage.getItem("testSession");
     if (!testSession) {
-      console.log('gagal')
-      return
+      return;
     }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
-  
+
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
+
   useEffect(() => {
     setIsClient(true);
     setGrid(genGrid());
@@ -399,12 +368,12 @@ export default function KraeplinTest() {
    */
   const calculateColumnResults = useCallback((): ColumnResult[] => {
     const results: ColumnResult[] = [];
-    
+
     for (let c = 0; c < COLS; c++) {
       let correctAnswers = 0;
       let wrongAnswers = 0;
       let totalAnswered = 0;
-      
+
       for (let r = 0; r < PAIRS; r++) {
         if (answers[c][r] !== null) {
           totalAnswered++;
@@ -415,7 +384,7 @@ export default function KraeplinTest() {
           }
         }
       }
-      
+
       results.push({
         columnIndex: c,
         answers: [...answers[c]],
@@ -424,13 +393,13 @@ export default function KraeplinTest() {
         totalAnswered,
       });
     }
-    
+
     return results;
   }, [answers]);
 
   const handleModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   const handleRestart = async () => {
     setGrid(genGrid());
@@ -449,18 +418,16 @@ export default function KraeplinTest() {
     setTimeout(() => {
       inputRefs.current[`0-0`]?.focus();
     }, 100);
-    setIsModalOpen(false)
-  } 
+    setIsModalOpen(false);
+  };
 
   /* ═══ SUBMIT RESULTS TO BACKEND ═══
    * Mengemas hasil tes (jawaban per lajur + auditLog pelanggaran) lalu
    * mengirimnya ke backend menggunakan sessionId dari sessionStorage.
    */
   const handleSubmit = async () => {
-    router.push("/tests/kraepelin/test");  
-  }
-
-  
+    router.push("/tests/kraepelin/test");
+  };
 
   /* ═══ TIMER PER LAJUR ═══
    * Countdown 100ms sekali untuk lajur yang sedang aktif (systemActiveCol).
@@ -515,8 +482,8 @@ export default function KraeplinTest() {
     setLegitimateCol(targetCol);
     setGraceTimeLeftMs(null);
     gracePenalizedRef.current = false;
-    setAnswers(prev => {
-      const firstEmpty = prev[targetCol].findIndex(a => a === null);
+    setAnswers((prev) => {
+      const firstEmpty = prev[targetCol].findIndex((a) => a === null);
       const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
       setExpectedPair(targetPair);
       setFocusedInput({ col: targetCol, pair: targetPair });
@@ -528,7 +495,7 @@ export default function KraeplinTest() {
   }, [colStates, systemActiveCol, status]);
 
   // Trigger submit otomatis saat status berubah menjadi "finished"
-  
+
   useEffect(() => {
     if (status === "finished") {
       handleModal();
@@ -543,98 +510,115 @@ export default function KraeplinTest() {
    *   3. Majukan expectedPair jika jawaban di posisi yang benar
    *   4. Auto-focus ke kotak kosong berikutnya
    */
-  const handleInput = useCallback((digit: number, col: number, pairIdx: number) => {
-    if (status !== "playing") return;
+  const handleInput = useCallback(
+    (digit: number, col: number, pairIdx: number) => {
+      if (status !== "playing") return;
 
-    /*
+      /*
       ATURAN PELANGGARAN — patokan = legitimateCol + expectedPair:
       - col !== legitimateCol             → isi jawaban di lajur yang bukan seharusnya
       - col === legitimateCol && timedOut → isi jawaban setelah waktu habis
       - col === legitimateCol && skip     → melangkahi kotak (pairIdx !== expectedPair)
       - overwrite                         → isi ulang kotak yang sudah dijawab
     */
-    const isOverwrite  = answers[col][pairIdx] !== null;
-    const isWrongCol   = col !== legitimateCol;
-    const isTimedOut   = colStates[legitimateCol]?.timedOut === true;
-    // Melangkahi kotak: di lajur benar, waktu belum habis, tapi bukan kotak yang seharusnya
-    const isSkipped    = !isWrongCol && !isTimedOut && !isOverwrite && pairIdx !== expectedPair;
+      const isOverwrite = answers[col][pairIdx] !== null;
+      const isWrongCol = col !== legitimateCol;
+      const isTimedOut = colStates[legitimateCol]?.timedOut === true;
+      // Melangkahi kotak: di lajur benar, waktu belum habis, tapi bukan kotak yang seharusnya
+      const isSkipped =
+        !isWrongCol && !isTimedOut && !isOverwrite && pairIdx !== expectedPair;
 
-    if (isOverwrite || isWrongCol || isTimedOut || isSkipped) {
-      let eventType: AuditEntry["event"];
-      if (isOverwrite) {
-        eventType = "Mengisi ulang kotak yang sudah dijawab";
-      } else if (isWrongCol) {
-        eventType = "Mengisi jawaban di lajur yang berbeda";
-      } else if (isTimedOut) {
-        eventType = "Mengisi jawaban setelah waktu habis";
-      } else {
-        eventType = "Melangkahi kotak jawaban";
+      if (isOverwrite || isWrongCol || isTimedOut || isSkipped) {
+        let eventType: AuditEntry["event"];
+        if (isOverwrite) {
+          eventType = "Mengisi ulang kotak yang sudah dijawab";
+        } else if (isWrongCol) {
+          eventType = "Mengisi jawaban di lajur yang berbeda";
+        } else if (isTimedOut) {
+          eventType = "Mengisi jawaban setelah waktu habis";
+        } else {
+          eventType = "Melangkahi kotak jawaban";
+        }
+        setAuditLog((prev) => [
+          ...prev,
+          {
+            timestamp: new Date().toISOString(),
+            event: eventType,
+          },
+        ]);
       }
-      setAuditLog(prev => [...prev, {
-        timestamp: new Date().toISOString(),
-        event: eventType,
-      }]);
-    }
 
-    // pairIdx 0 = pasangan paling bawah = grid row (ROWS-1-1) dan (ROWS-1)
-    const topRowIdx    = ROWS - 2 - pairIdx;
-    const bottomRowIdx = ROWS - 1 - pairIdx;
-    const top    = grid[col][topRowIdx];
-    const bottom = grid[col][bottomRowIdx];
-    const isCorrect = digit === (top + bottom) % 10;
+      // pairIdx 0 = pasangan paling bawah = grid row (ROWS-1-1) dan (ROWS-1)
+      const topRowIdx = ROWS - 2 - pairIdx;
+      const bottomRowIdx = ROWS - 1 - pairIdx;
+      const top = grid[col][topRowIdx];
+      const bottom = grid[col][bottomRowIdx];
+      const isCorrect = digit === (top + bottom) % 10;
 
-    // Update answers
-    setAnswers(prev => {
-      const next = prev.map(c => [...c]);
-      next[col][pairIdx] = isCorrect ? 1 : 0;
-      return next;
-    });
+      // Update answers
+      setAnswers((prev) => {
+        const next = prev.map((c) => [...c]);
+        next[col][pairIdx] = isCorrect ? 1 : 0;
+        return next;
+      });
 
-    // Simpan angka yang diinput user
-    setInputValues(prev => {
-      const next = prev.map(c => [...c]);
-      next[col][pairIdx] = digit;
-      return next;
-    });
+      // Simpan angka yang diinput user
+      setInputValues((prev) => {
+        const next = prev.map((c) => [...c]);
+        next[col][pairIdx] = digit;
+        return next;
+      });
 
-    // Simulasi answers setelah update untuk navigasi (state belum terupdate saat ini)
-    const updatedAnswers = answers.map(c => [...c]);
-    updatedAnswers[col][pairIdx] = (digit === (grid[col][ROWS - 2 - pairIdx] + grid[col][ROWS - 1 - pairIdx]) % 10) ? 1 : 0;
+      // Simulasi answers setelah update untuk navigasi (state belum terupdate saat ini)
+      const updatedAnswers = answers.map((c) => [...c]);
+      updatedAnswers[col][pairIdx] =
+        digit ===
+        (grid[col][ROWS - 2 - pairIdx] + grid[col][ROWS - 1 - pairIdx]) % 10
+          ? 1
+          : 0;
 
-    // Majukan expectedPair ke kotak kosong berikutnya jika diisi di posisi yang benar
-    if (!isWrongCol && !isTimedOut && pairIdx === expectedPair) {
-      let nextExpected = expectedPair + 1;
-      while (nextExpected < PAIRS && updatedAnswers[col][nextExpected] !== null) {
-        nextExpected++;
+      // Majukan expectedPair ke kotak kosong berikutnya jika diisi di posisi yang benar
+      if (!isWrongCol && !isTimedOut && pairIdx === expectedPair) {
+        let nextExpected = expectedPair + 1;
+        while (
+          nextExpected < PAIRS &&
+          updatedAnswers[col][nextExpected] !== null
+        ) {
+          nextExpected++;
+        }
+        setExpectedPair(Math.min(nextExpected, PAIRS - 1));
       }
-      setExpectedPair(Math.min(nextExpected, PAIRS - 1));
-    }
 
-    // Auto-focus ke kotak kosong pertama di atas pairIdx (skip yang sudah terisi)
-    let nextFocus = pairIdx + 1;
-    while (nextFocus < PAIRS && updatedAnswers[col][nextFocus] !== null) {
-      nextFocus++;
-    }
-    if (nextFocus < PAIRS) {
-      setFocusedInput({ col, pair: nextFocus });
-      setTimeout(() => {
-        inputRefs.current[`${col}-${nextFocus}`]?.focus();
-      }, 50);
-    }
-  }, [status, grid, answers, colStates, legitimateCol, expectedPair]);
+      // Auto-focus ke kotak kosong pertama di atas pairIdx (skip yang sudah terisi)
+      let nextFocus = pairIdx + 1;
+      while (nextFocus < PAIRS && updatedAnswers[col][nextFocus] !== null) {
+        nextFocus++;
+      }
+      if (nextFocus < PAIRS) {
+        setFocusedInput({ col, pair: nextFocus });
+        setTimeout(() => {
+          inputRefs.current[`${col}-${nextFocus}`]?.focus();
+        }, 50);
+      }
+    },
+    [status, grid, answers, colStates, legitimateCol, expectedPair],
+  );
 
   /* ═══ HANDLE CLICK KOTAK JAWABAN ═══
    * Dipanggil saat user mengklik kotak input.
    * Hanya memindahkan fokus — pelanggaran TIDAK dicatat di sini,
    * melainkan saat user benar-benar mengisi jawaban (handleInput).
    */
-  const handleInputClick = useCallback((col: number, pairIdx: number) => {
-    if (status !== "playing") return;
-    if (col !== activeCol) {
-      setActiveCol(col);
-    }
-    setFocusedInput({ col, pair: pairIdx });
-  }, [status, activeCol]);
+  const handleInputClick = useCallback(
+    (col: number, pairIdx: number) => {
+      if (status !== "playing") return;
+      if (col !== activeCol) {
+        setActiveCol(col);
+      }
+      setFocusedInput({ col, pair: pairIdx });
+    },
+    [status, activeCol],
+  );
 
   /* ═══ KEYBOARD LISTENER ═══
    * Menangkap input angka 0-9 dari keyboard fisik sebagai alternatif numpad.
@@ -666,40 +650,46 @@ export default function KraeplinTest() {
    *
    * Selalu auto-fokus ke kotak kosong pertama di lajur tujuan.
    */
-  const handleMoveColumn = useCallback((direction: "prev" | "next") => {
-    if (direction === "next") {
-      const targetCol = activeCol + 1;
-      if (targetCol >= COLS) return;
+  const handleMoveColumn = useCallback(
+    (direction: "prev" | "next") => {
+      if (direction === "next") {
+        const targetCol = activeCol + 1;
+        if (targetCol >= COLS) return;
 
-      const isTimedOut = colStates[systemActiveCol]?.timedOut;
+        const isTimedOut = colStates[systemActiveCol]?.timedOut;
 
-      // Klik Next sebelum waktu habis → catat pelanggaran, tetap pindah tampilan
-      if (!isTimedOut && targetCol > systemActiveCol) {
-        setAuditLog(prev => [...prev, {
-          timestamp: new Date().toISOString(),
-          event: "Terlambat pindah lajur" as AuditEntry["event"],
-        }]);
+        // Klik Next sebelum waktu habis → catat pelanggaran, tetap pindah tampilan
+        if (!isTimedOut && targetCol > systemActiveCol) {
+          setAuditLog((prev) => [
+            ...prev,
+            {
+              timestamp: new Date().toISOString(),
+              event: "Terlambat pindah lajur" as AuditEntry["event"],
+            },
+          ]);
+        }
+
+        setActiveCol(targetCol);
+        const firstEmpty = answers[targetCol].findIndex((a) => a === null);
+        const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
+        setFocusedInput({ col: targetCol, pair: targetPair });
+        setTimeout(() => {
+          inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
+        }, 50);
+      } else {
+        const targetCol = activeCol - 1;
+        if (targetCol < 0) return;
+        setActiveCol(targetCol);
+        const firstEmpty = answers[targetCol].findIndex((a) => a === null);
+        const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
+        setFocusedInput({ col: targetCol, pair: targetPair });
+        setTimeout(() => {
+          inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
+        }, 50);
       }
-
-      setActiveCol(targetCol);
-      const firstEmpty = answers[targetCol].findIndex(a => a === null);
-      const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-      setFocusedInput({ col: targetCol, pair: targetPair });
-      setTimeout(() => {
-        inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-      }, 50);
-    } else {
-      const targetCol = activeCol - 1;
-      if (targetCol < 0) return;
-      setActiveCol(targetCol);
-      const firstEmpty = answers[targetCol].findIndex(a => a === null);
-      const targetPair = firstEmpty !== -1 ? firstEmpty : 0;
-      setFocusedInput({ col: targetCol, pair: targetPair });
-      setTimeout(() => {
-        inputRefs.current[`${targetCol}-${targetPair}`]?.focus();
-      }, 50);
-    }
-  }, [systemActiveCol, activeCol, colStates, answers]);
+    },
+    [systemActiveCol, activeCol, colStates, answers],
+  );
 
   /* ═══ START TEST ═══
    * Mereset semua state ke kondisi awal dan memulai tes dari lajur pertama.
@@ -735,14 +725,14 @@ export default function KraeplinTest() {
       startTest();
       return;
     }
-    const t = setTimeout(() => setCountdown(prev => prev - 1), 1000);
+    const t = setTimeout(() => setCountdown((prev) => prev - 1), 1000);
     return () => clearTimeout(t);
   }, [isClient, countdown, showCountdown]);
 
   /* ═══════════════════════════════════════════════════════════
      RENDER
      ═══════════════════════════════════════════════════════════ */
-  
+
   // Tunggu hingga komponen ter-mount di client dan data soal siap
   if (!isClient || grid.length === 0) {
     return (
@@ -752,15 +742,15 @@ export default function KraeplinTest() {
     );
   }
 
-  
-  
   return (
     <div className="w-screen h-screen flex flex-col bg-stone-100 select-none overflow-hidden select-none">
-
       {/* ── TOP BAR ── */}
       <div className="h-13 shrink-0 flex items-center justify-between px-4 border-b border-stone-200 bg-white">
         <h1 className="text-xs font-semibold tracking-widest text-stone-500 uppercase">
-          Tes Psikotes <span className='text-xs text-stone-500 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span>
+          Tes Psikotes{" "}
+          <span className="text-xs text-stone-500 font-semibold ml-3">
+            (TES KE-{testsCount ?? "..."})
+          </span>
         </h1>
 
         <div className="flex items-center gap-x-3">
@@ -770,20 +760,24 @@ export default function KraeplinTest() {
             </div>
           )} */}
 
-          {status === "playing" && timeLeftMs <= 5000 && !colStates[systemActiveCol].timedOut && (
-            <div className="hidden md:block rounded-lg p-2 text-center text-xs font-semibold bg-yellow-100 border border-yellow-300 text-yellow-700">
-              ⚠ Waktu hampir selesai, bersiap pindah otomatis!
-            </div>
-          )}
+          {status === "playing" &&
+            timeLeftMs <= 5000 &&
+            !colStates[systemActiveCol].timedOut && (
+              <div className="hidden md:block rounded-lg p-2 text-center text-xs font-semibold bg-yellow-100 border border-yellow-300 text-yellow-700">
+                ⚠ Waktu hampir selesai, bersiap pindah otomatis!
+              </div>
+            )}
         </div>
-        
 
         {/* Pesan pindah lajur saat 5 detik terakhir, timeout, atau grace period */}
-        
 
-        {status === 'playing' && (
+        {status === "playing" && (
           <div className="text-xs text-stone-500">
-            Lajur Sistem: <span className="font-bold text-blue-600">{systemActiveCol + 1}</span>/{COLS} 
+            Lajur Sistem:{" "}
+            <span className="font-bold text-blue-600">
+              {systemActiveCol + 1}
+            </span>
+            /{COLS}
             {/* {activeCol !== systemActiveCol && (
               <span className="text-red-500 font-semibold ml-2">
                 (Anda di Lajur {activeCol + 1})
@@ -795,7 +789,6 @@ export default function KraeplinTest() {
 
       {/* ── MAIN AREA ── */}
       <div className="flex-1 flex overflow-hidden min-h-0">
-
         {/* ─── GRID AREA ─── */}
         <div className="flex-1 overflow-auto p-3">
           <div className="flex gap-3 w-max">
@@ -806,7 +799,9 @@ export default function KraeplinTest() {
                 colData={colData}
                 answers={answers[cIdx]}
                 inputValues={inputValues[cIdx]}
-                focusedPair={focusedInput?.col === cIdx ? focusedInput.pair : null}
+                focusedPair={
+                  focusedInput?.col === cIdx ? focusedInput.pair : null
+                }
                 isActiveCol={cIdx === activeCol}
                 isSystemActiveCol={cIdx === systemActiveCol}
                 isTimedOut={colStates[cIdx].timedOut}
@@ -824,28 +819,31 @@ export default function KraeplinTest() {
 
         {/* ─── RIGHT PANEL ─── */}
         <div className="w-52 shrink-0 border-l border-stone-200 bg-white flex flex-col items-center justify-center gap-5 px-4">
-          
           {/* {status === "playing" && (
             <div className=" md:hidden text-sm text-stone-500 border border-stone-300 p-2 rounded-lg">
               Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
             </div>
           )} */}
 
-          {timeLeftMs <= 5000 && status === "playing" && !colStates[systemActiveCol].timedOut && (
-            <div className="md:hidden rounded-lg p-2 text-center text-xs font-semibold bg-yellow-100 border border-yellow-300 text-yellow-700">
-              ⚠ Waktu hampir selesai, bersiap pindah otomatis!
-            </div>
-          )}
+          {timeLeftMs <= 5000 &&
+            status === "playing" &&
+            !colStates[systemActiveCol].timedOut && (
+              <div className="md:hidden rounded-lg p-2 text-center text-xs font-semibold bg-yellow-100 border border-yellow-300 text-yellow-700">
+                ⚠ Waktu hampir selesai, bersiap pindah otomatis!
+              </div>
+            )}
           {/* ── IDLE: Start ── */}
           {status === "idle" && (
             <div className="flex flex-col items-center gap-4 w-full">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full">
                 <p className="text-stone-600 text-xs leading-relaxed">
-                  • Klik kotak jawaban untuk mulai<br />
-                  • Gunakan angka <span className="font-semibold">0–9</span><br />
+                  • Klik kotak jawaban untuk mulai
+                  <br />• Gunakan angka{" "}
+                  <span className="font-semibold">0–9</span>
+                  <br />
                   {/* • Waktu: <span className="font-semibold">15 detik</span> per lajur<br /> */}
-                  • Otomatis pindah saat waktu habis<br />
-                  • Kotak yang sudah diisi tidak bisa diubah
+                  • Otomatis pindah saat waktu habis
+                  <br />• Kotak yang sudah diisi tidak bisa diubah
                 </p>
               </div>
               <button
@@ -862,9 +860,16 @@ export default function KraeplinTest() {
             <>
               {/* Info */}
               <div className="bg-stone-50 border border-stone-200 rounded-lg p-3 w-full">
-                <div className="text-[10px] text-stone-400 font-medium mb-1 text-center">FOKUS SAAT INI</div>
+                <div className="text-[10px] text-stone-400 font-medium mb-1 text-center">
+                  FOKUS SAAT INI
+                </div>
                 <div className="text-sm text-stone-700 flex flex-col items-center justify-center gap-y-1">
-                  <span>Lajur <span className="font-bold text-blue-600">{(focusedInput?.col ?? 0) + 1}</span></span>
+                  <span>
+                    Lajur{" "}
+                    <span className="font-bold text-blue-600">
+                      {(focusedInput?.col ?? 0) + 1}
+                    </span>
+                  </span>
                   {/* {focusedInput && (
                     <span className="text-stone-400 text-xs  ml-1">
                       · Soal {PAIRS - focusedInput.pair}
@@ -874,39 +879,43 @@ export default function KraeplinTest() {
                     Waktu: <span className="font-mono font-bold text-blue-600">{Math.ceil(timeLeftMs / 1000)} detik</span>
                   </div> */}
                 </div>
-                
 
                 {/* Tampilkan soal yang sedang di-highlight */}
-                {focusedInput && grid.length > 0 && (() => {
-                  const col = focusedInput.col;
-                  const pairIdx = focusedInput.pair;
-                  const topRowIdx = ROWS - 2 - pairIdx;
-                  const bottomRowIdx = ROWS - 1 - pairIdx;
-                  const topNum = grid[col][topRowIdx];
-                  const bottomNum = grid[col][bottomRowIdx];
-                  const correctAnswer = (topNum + bottomNum) % 10;
-                  return (
-                    <div className="mt-2 flex flex-col items-center justify-center gap-2">
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-9 h-9 flex items-center justify-center text-lg font-bold bg-blue-600 text-white rounded-lg shadow">
-                          {topNum}
+                {focusedInput &&
+                  grid.length > 0 &&
+                  (() => {
+                    const col = focusedInput.col;
+                    const pairIdx = focusedInput.pair;
+                    const topRowIdx = ROWS - 2 - pairIdx;
+                    const bottomRowIdx = ROWS - 1 - pairIdx;
+                    const topNum = grid[col][topRowIdx];
+                    const bottomNum = grid[col][bottomRowIdx];
+                    const correctAnswer = (topNum + bottomNum) % 10;
+                    return (
+                      <div className="mt-2 flex flex-col items-center justify-center gap-2">
+                        <div className="flex flex-col items-center gap-1">
+                          <div className="w-9 h-9 flex items-center justify-center text-lg font-bold bg-blue-600 text-white rounded-lg shadow">
+                            {topNum}
+                          </div>
+                          <div className="w-9 h-9 flex items-center justify-center text-lg font-bold bg-blue-600 text-white rounded-lg shadow">
+                            {bottomNum}
+                          </div>
                         </div>
-                        <div className="w-9 h-9 flex items-center justify-center text-lg font-bold bg-blue-600 text-white rounded-lg shadow">
-                          {bottomNum}
+                        <div className="flex flex-col items-center gap-0.5 text-stone-400 text-xs font-semibold">
+                          {/* <span className="text-sm">+</span> */}
+                          {/* <span className="text-stone-300 text-sm">──</span> */}
+                          <span>Jawaban</span>
+                          <span className="text-sm text-stone-400 border border-stone-200 rounded-lg p-2">
+                            {topNum}+{bottomNum}={topNum + bottomNum} →{" "}
+                            <span className="text-blue-600 font-bold">
+                              {correctAnswer}
+                            </span>
+                          </span>
                         </div>
                       </div>
-                      <div className="flex flex-col items-center gap-0.5 text-stone-400 text-xs font-semibold">
-                        {/* <span className="text-sm">+</span> */}
-                        {/* <span className="text-stone-300 text-sm">──</span> */}
-                        <span>Jawaban</span>
-                        <span className="text-sm text-stone-400 border border-stone-200 rounded-lg p-2">{topNum}+{bottomNum}={topNum+bottomNum} → <span className="text-blue-600 font-bold">{correctAnswer}</span></span>
-                      </div>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
               </div>
-
-              
 
               {/* Tombol pindah lajur */}
               <div className="flex gap-2 w-full">
@@ -961,18 +970,24 @@ export default function KraeplinTest() {
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-        <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-        <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-        <div className='flex gap-x-3 justify-evenly mt-4'>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan
+          dan sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Pastikan koneksi internet stabil dan Anda berada di lingkungan yang
+          kondusif.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
+          <button
+            className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
             onClick={handleRestart}
           >
             Kembali
           </button>
-          <button 
-            className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+          <button
+            className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
             onClick={handleSubmit}
           >
             Mulai Tes
@@ -985,15 +1000,26 @@ export default function KraeplinTest() {
       {showCountdown && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl px-10 py-8 flex flex-col items-center gap-5 max-w-xs w-full mx-4">
-            <div className="text-xs font-semibold tracking-widest text-stone-400 uppercase">Tes Psikotes — Contoh</div>
+            <div className="text-xs font-semibold tracking-widest text-stone-400 uppercase">
+              Tes Psikotes — Contoh
+            </div>
             <div className="text-stone-700 text-sm text-center leading-relaxed">
               Tes akan dimulai secara otomatis dalam
             </div>
             <div className="relative flex items-center justify-center">
               <svg width="96" height="96" viewBox="0 0 96 96">
-                <circle cx="48" cy="48" r="40" fill="none" stroke="#e7e5e4" strokeWidth="6" />
                 <circle
-                  cx="48" cy="48" r="40"
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  fill="none"
+                  stroke="#e7e5e4"
+                  strokeWidth="6"
+                />
+                <circle
+                  cx="48"
+                  cy="48"
+                  r="40"
                   fill="none"
                   stroke="#2563eb"
                   strokeWidth="6"
@@ -1004,11 +1030,16 @@ export default function KraeplinTest() {
                   style={{ transition: "stroke-dashoffset 0.8s linear" }}
                 />
               </svg>
-              <span className="absolute text-4xl font-bold text-blue-600">{countdown}</span>
+              <span className="absolute text-4xl font-bold text-blue-600">
+                {countdown}
+              </span>
             </div>
             <div className="text-stone-400 text-xs">detik lagi…</div>
             <button
-              onClick={() => { setShowCountdown(false); startTest(); }}
+              onClick={() => {
+                setShowCountdown(false);
+                startTest();
+              }}
               className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-sm py-2.5 rounded-xl transition-all shadow"
             >
               Mulai Sekarang →

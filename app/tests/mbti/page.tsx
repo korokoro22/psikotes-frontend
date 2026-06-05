@@ -1,215 +1,229 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Brain, Info, Clock, ListChecks } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import Modal from '@/app/components/Modal';
-import TestHeader from '@/app/components/TestHeader';
-import { useAntiCheat } from '@/lib/useAntiCheat';
-import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
-import PermissionModal from '@/app/components/PermissionModal';
-import Image from 'next/image';
-import BackGuardModal from '@/app/components/BackGuardModal';
-import { useBackGuard } from '@/lib/useBackGuard';
-import { checkMoveTab } from '@/lib/checkMoveTab';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Brain, Info, Clock, ListChecks } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import Modal from "@/app/components/Modal";
+import TestHeader from "@/app/components/TestHeader";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard";
+import PermissionModal from "@/app/components/PermissionModal";
+import Image from "next/image";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { useBackGuard } from "@/lib/useBackGuard";
+import { checkMoveTab } from "@/lib/checkMoveTab";
 
 interface MbtiQuestion {
-    id: number,
-    questions: string,
-    options: {
-        text: string
-        type: 1 | 2 
-        }[]
+  id: number;
+  questions: string;
+  options: {
+    text: string;
+    type: 1 | 2;
+  }[];
 }
 
 function IconSeries() {
   return (
     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="2" y="4" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="9" y="8" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="16" y="12" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
+      <rect
+        x="2"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="9"
+        y="8"
+        width="6"
+        height="6"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="16"
+        y="12"
+        width="6"
+        height="6"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
 
-
 export default function MbtiInstructionPage() {
-    const router = useRouter()
-    const [currentGroup, setCurrentGroup] = useState(0)
-    const [answers, setAnswers] = useState<
-        { groupId: number; type: number }[]
-        >([]);
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [currentGroup, setCurrentGroup] = useState(0);
+  const [answers, setAnswers] = useState<{ groupId: number; type: number }[]>(
+    [],
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const getRemainingTime = (): number => {
-        if (typeof window === "undefined") return EXAM_DURATION
-        const startTime = localStorage.getItem("examStartTime");
-        if (!startTime) return EXAM_DURATION;
-        const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        return EXAM_DURATION - elapsed; // bisa negatif = overtime
-    };
+  const getRemainingTime = (): number => {
+    if (typeof window === "undefined") return EXAM_DURATION;
+    const startTime = localStorage.getItem("examStartTime");
+    if (!startTime) return EXAM_DURATION;
+    const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+    return EXAM_DURATION - elapsed;
+  };
 
-    const formatTime = (seconds: number) => {
-      const minutes = Math.floor(seconds / 60);
-      const remaining = seconds % 60;
-      return `${minutes}:${remaining.toString().padStart(2, '0')}`;
-    };
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remaining = seconds % 60;
+    return `${minutes}:${remaining.toString().padStart(2, "0")}`;
+  };
 
-    const EXAM_DURATION = 5 * 60;
+  const EXAM_DURATION = 5 * 60;
 
-    // Server-safe: selalu mulai dari EXAM_DURATION
-    const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
-    const [isReady, setIsReady] = useState(false);
-
-    // Jalankan hanya di client setelah hydration selesai
-    useEffect(() => {
-      const existing = localStorage.getItem("examStartTime");
-      if (!existing) {
-        localStorage.setItem("examStartTime", Date.now().toString());
-      }
-
-      const remaining = getRemainingTime();
-      setTimeLeft(Math.max(0, remaining));
-      setIsReady(true);
-    }, []);
-
-    // Timer berjalan hanya setelah isReady
-    useEffect(() => {
-      if (!isReady) return;
-      if (timeLeft <= 0) {
-        handleTestComplete();
-        return;
-      }
-      const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearInterval(timer);
-    }, [timeLeft, isReady]);
-    
-    const mbti: MbtiQuestion[]  = [
-        {
-            id: 1,
-            questions: 'Anda Lebih suka',
-            options: [
-                {text: 'Berbicara dengan banyak orang', type: 1},
-                {text: 'Menyendiri dengan buku', type: 2}
-            ]
-        },
-        {
-            id: 2,
-            questions: 'Anda merasa lebih nyaman',
-            options: [
-                {text: 'Saat segala sesuatunya terencana', type: 1},
-                {text: 'Ketika memiliki fleksibilitas', type: 2}
-            ]
-        },
-        {
-            id: 3,
-            questions: 'Dalam pekerjaan kelompok, anda lebih suka',
-            options: [
-                {text: 'Memimpin proyek', type: 1},
-                {text: 'Beradaptasi dengan kebutuhan proyek', type: 2}
-            ]
-        }
-    ]
-
-    const handleStart = () => {
-    router.push('/tests/mbti/test');
-    };
-
-    const handleNext = () => {
-        // resetState()
-        setCurrentGroup(prev => prev + 1)
-    }
-
-    const handleTestComplete = () => {
-        try {
-            const setLoading = setIsLoading(true)
-            const startTime = Date.now();
-            localStorage.setItem("examStartTime", startTime.toString());
-            resetState()
-            router.push('/tests/mbti/test');
-        } catch (error) {
-            const setLoading = setIsLoading(false)
-        }
-        
-    };
-
-    const handleModal = () => {
-        setIsModalOpen(true)
-    }
-
-    const handleSelection = (newType: number) => {
-        setAnswers(prev => {
-            const updated = [...prev];
-
-            updated[currentGroup] = {
-            groupId: currentGroup,
-            type: newType,
-            };
-
-            return updated;
-  });
-
-       
-    }
-
-    useEffect(()=> {
-        console.log('isi new answers: ', answers)
-    }, [answers])
-
-    const resetState = () => {
-        setAnswers([]);
-    }
-
-    useAntiCheat({ mode: "silent" });
-
-    const { showModal } = useClipboardPermissionGuard()
-
-    useEffect(() => {
-    document.title = "Instructions - Psychological Tests";
-  }, [])
-
-    const { modalProps } = useBackGuard();
-
-    checkMoveTab()
-    
-    const [testsCount, setTestsCount] = useState<number | null>(null)
+  const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
-    if (!testSession) {
-      console.log('gagal')
-      return
+    const existing = localStorage.getItem("examStartTime");
+    if (!existing) {
+      localStorage.setItem("examStartTime", Date.now().toString());
     }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
 
-    return(
-        <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
-            {/* Header */}
-            <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
-                <TestHeader />
-            </header>
+    const remaining = getRemainingTime();
+    setTimeLeft(Math.max(0, remaining));
+    setIsReady(true);
+  }, []);
 
-        {/* Main Content */}
-        <main className="container mx-auto px-4 py-10">
+  useEffect(() => {
+    if (!isReady) return;
+    if (timeLeft <= 0) {
+      handleTestComplete();
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isReady]);
+
+  const mbti: MbtiQuestion[] = [
+    {
+      id: 1,
+      questions: "Anda Lebih suka",
+      options: [
+        { text: "Berbicara dengan banyak orang", type: 1 },
+        { text: "Menyendiri dengan buku", type: 2 },
+      ],
+    },
+    {
+      id: 2,
+      questions: "Anda merasa lebih nyaman",
+      options: [
+        { text: "Saat segala sesuatunya terencana", type: 1 },
+        { text: "Ketika memiliki fleksibilitas", type: 2 },
+      ],
+    },
+    {
+      id: 3,
+      questions: "Dalam pekerjaan kelompok, anda lebih suka",
+      options: [
+        { text: "Memimpin proyek", type: 1 },
+        { text: "Beradaptasi dengan kebutuhan proyek", type: 2 },
+      ],
+    },
+  ];
+
+  const handleStart = () => {
+    router.push("/tests/mbti/test");
+  };
+
+  const handleNext = () => {
+    setCurrentGroup((prev) => prev + 1);
+  };
+
+  const handleTestComplete = () => {
+    try {
+      const setLoading = setIsLoading(true);
+      const startTime = Date.now();
+      localStorage.setItem("examStartTime", startTime.toString());
+      resetState();
+      router.push("/tests/mbti/test");
+    } catch (error) {
+      const setLoading = setIsLoading(false);
+    }
+  };
+
+  const handleModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSelection = (newType: number) => {
+    setAnswers((prev) => {
+      const updated = [...prev];
+
+      updated[currentGroup] = {
+        groupId: currentGroup,
+        type: newType,
+      };
+
+      return updated;
+    });
+  };
+
+  const resetState = () => {
+    setAnswers([]);
+  };
+
+  useAntiCheat({ mode: "silent" });
+
+  const { showModal } = useClipboardPermissionGuard();
+
+  useEffect(() => {
+    document.title = "Instructions - Psychological Tests";
+  }, []);
+
+  const { modalProps } = useBackGuard();
+
+  checkMoveTab();
+
+  const [testsCount, setTestsCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const testSession = sessionStorage.getItem("testSession");
+    if (!testSession) {
+      return;
+    }
+
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
+
+  return (
+    <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
+      {/* Header */}
+      <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
+        <TestHeader />
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-10">
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8"
-            >
-            {/* Card utama */}
-            <section>
-                <div className=" md:p-8">
-                {/* Breadcrumb */}
-                <div className="mb-4">
-                    <nav className="text-xs text-slate-500 mb-2" aria-label="Breadcrumb">
-                    {/* <ol className="inline-flex items-center space-x-2">
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8"
+        >
+          {/* Card utama */}
+          <section>
+            <div className=" md:p-8">
+              {/* Breadcrumb */}
+              <div className="mb-4">
+                <nav
+                  className="text-xs text-slate-500 mb-2"
+                  aria-label="Breadcrumb"
+                >
+                  {/* <ol className="inline-flex items-center space-x-2">
                         <li>
                         <Link href="/tests" className="hover:underline">
                             Tes
@@ -220,25 +234,28 @@ export default function MbtiInstructionPage() {
                         </li>
                         <li className="font-medium text-slate-700">MBTI</li>
                     </ol> */}
-                    </nav>
-                    <div className='flex items-center mb-8 justify-between'>
-                        <div>
-                            <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
-                            Tes Psikotes <span className='text-xl text-slate-700 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span>
-                            </h2>
-                        </div>
-                        <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
-                            <span>{isReady ? formatTime(timeLeft) : "--:--"}</span>
-                        </div>
-                    </div>
-                    {/* <p className="mt-2 text-sm text-slate-600">
+                </nav>
+                <div className="flex items-center mb-8 justify-between">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
+                      Tes Psikotes{" "}
+                      <span className="text-xl text-slate-700 font-semibold ml-3">
+                        (TES KE-{testsCount ?? "..."})
+                      </span>
+                    </h2>
+                  </div>
+                  <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
+                    <span>{isReady ? formatTime(timeLeft) : "--:--"}</span>
+                  </div>
+                </div>
+                {/* <p className="mt-2 text-sm text-slate-600">
                         Tes untuk mengidentifikasi kebutuhan, motivasi, dan gaya perilaku individu dalam lingkungan kerja.
                     </p> */}
-                </div>
+              </div>
 
-                {/* Info box */}
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+              {/* Info box */}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-lg">
                         <div className="text-blue-600">
                             <Clock className="w-5 h-5" />
                         </div>
@@ -248,213 +265,229 @@ export default function MbtiInstructionPage() {
                         </div>
                     </div> */}
 
-                    <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
-                        <div className="text-amber-600">
-                            <Info className="w-5 h-5" />
-                        </div>
-                        <div className="text-sm">
-                            <div className="text-slate-800 font-medium">Jumlah Soal</div>
-                            <div className="text-slate-600">70 Soal</div>
-                        </div>
+                <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-lg">
+                  <div className="text-amber-600">
+                    <Info className="w-5 h-5" />
+                  </div>
+                  <div className="text-sm">
+                    <div className="text-slate-800 font-medium">
+                      Jumlah Soal
                     </div>
-
-                    <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-lg">
-                        <div className="text-emerald-600">
-                            <IconSeries />
-                        </div>
-                        <div className="text-sm">
-                            <div className="text-slate-800 font-medium">Format</div>
-                            <div className="text-slate-600">Verbal • Teks & Pernyataan </div>
-                        </div>
-                    </div>
+                    <div className="text-slate-600">70 Soal</div>
+                  </div>
                 </div>
 
-                {/* Section: Petunjuk */}
-                <section className="mt-10 mb-10">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
-                    <ListChecks className="text-blue-600" size={22} />
-                    Petunjuk Tes
-                    </h2>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                    <p className="text-gray-700 mb-4">
-                        Pada tes ini, Anda akan diberikan sejumlah pernyataan. Setiap pertanyaan berisi dua pernyataan.
-                    </p>
-                    <ul className="list-disc list-inside space-y-2 text-gray-700">
-                        <li>Pilih satu kata yang paling menggambarkan diri Anda.</li>
-                        <li>
-                        <Clock className="inline-block text-blue-500 mr-1" size={16} />
-                        Waktu pengerjaan: <span className="font-semibold">15 menit</span>
-                        </li>
-                    </ul>
+                <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-100 rounded-lg">
+                  <div className="text-emerald-600">
+                    <IconSeries />
+                  </div>
+                  <div className="text-sm">
+                    <div className="text-slate-800 font-medium">Format</div>
+                    <div className="text-slate-600">
+                      Verbal • Teks & Pernyataan{" "}
                     </div>
-                </section>
-
-                {/* Section: Contoh Soal */}
-                <section className="mb-10">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
-                    <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
-                    <p className="text-sm text-gray-600 mb-4">
-                        Berikut contoh tampilan soal. Pilih satu kata yang paling menggambarkan diri Anda.
-                    </p>
-                    <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
-                        <div className='w-full'>
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                            key={currentGroup}
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -40 }}
-                            transition={{ duration: 0.4 }}
-                            >
-                            <div className="grid grid-cols-1 gap-4 w-full">
-                                <p className='text-lg font-bold  text-gray-700'>{mbti[currentGroup].questions}...</p>
-                                {mbti[currentGroup].options.map((option, index) => {
-
-                                const selected = answers[currentGroup]?.type === option.type;
-
-                                return (
-                                    <div
-                                    className="flex gap-3 "
-                                    key={index}
-                                    >
-                                        
-                                        <button
-                                        // disabled={(!isMost && mostTaken) || isLeast}
-                                        onClick={() => handleSelection(option.type)}
-                                        className={`p4 rounded-md text-lg font-medium border  text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
-                                            selected
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-gray-50 hover:bg-gray-300 border-gray-300'
-                                            }`}
-                                        >
-                                        {option.text}
-                                        </button>
-
-                                    </div>
-                                );
-                                })}
-                            </div>
-                            </motion.div>
-                        </AnimatePresence>
-
-                        <div className="flex justify-between items-center mt-7">
-                                    <button
-                                        onClick={() => 
-                                        {
-                                            setCurrentGroup(prev => Math.max(0, prev - 1))
-                                            // resetState()
-                                        }}
-                                        disabled={currentGroup === 0}
-                                        className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
-                                        currentGroup === 0
-                                            ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
-                                            : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
-                                        }`}
-                                    >
-                                        ← Sebelumnya
-                                    </button>
-
-                                    <button
-                                        onClick={
-                                        currentGroup === mbti.length - 1
-                                            ? handleModal
-                                            : handleNext
-                                        }
-                                        className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
-                                    >
-                                        {currentGroup === mbti.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
-                                    </button>
-                                </div>
-                        </div>
-                        
-                    </div>
-                    </div>
-                </section>
-
-                {/* Tombol aksi */}
-                <div className="mt-8 border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="text-sm text-slate-600">
-                    <strong className="text-slate-800">Sebelum mulai:</strong> pastikan
-                    Anda berada di tempat yang tenang dan siap fokus.
-                    </div>
-                    <motion.button
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleModal}
-                    className="px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:shadow-lg transition-all"
-                    >
-                    Mulai Tes
-                    </motion.button>
+                  </div>
                 </div>
+              </div>
+
+              {/* Section: Petunjuk */}
+              <section className="mt-10 mb-10">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+                  <ListChecks className="text-blue-600" size={22} />
+                  Petunjuk Tes
+                </h2>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                  <p className="text-gray-700 mb-4">
+                    Pada tes ini, Anda akan diberikan sejumlah pernyataan.
+                    Setiap pertanyaan berisi dua pernyataan.
+                  </p>
+                  <ul className="list-disc list-inside space-y-2 text-gray-700">
+                    <li>
+                      Pilih satu kata yang paling menggambarkan diri Anda.
+                    </li>
+                    <li>
+                      <Clock
+                        className="inline-block text-blue-500 mr-1"
+                        size={16}
+                      />
+                      Waktu pengerjaan:{" "}
+                      <span className="font-semibold">15 menit</span>
+                    </li>
+                  </ul>
                 </div>
-            </section>
+              </section>
 
-            {/* Footer kecil */}
-            <div className="mt-6 text-center text-xs text-slate-400">
-                Sistem ini menampilkan instruksi — waktu akan mulai otomatis saat tes dimulai.
-            </div>
-            </motion.div>
-        </main>
-
-        <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-            <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-            <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-            <div className='flex gap-x-3 justify-evenly mt-4'>
-                <button 
-                    className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-                        isLoading
-                        ? 'bg-slate-400'
-                        : 'from-blue-600 to-indigo-600' }`}
-                    onClick={()=> setIsModalOpen(false)}
-                    disabled={isLoading}
-                >
-                    Kembali
-                </button>
-                {isLoading ? (
-                    <button
-                        className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-                        aria-label="Mulai CFIT Subtes 1"
-                        onClick={handleTestComplete}
-                        disabled={isLoading}
+              {/* Section: Contoh Soal */}
+              <section className="mb-10">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                  Contoh Soal
+                </h2>
+                <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
+                  <p className="text-sm text-gray-600 mb-4">
+                    Berikut contoh tampilan soal. Pilih satu kata yang paling
+                    menggambarkan diri Anda.
+                  </p>
+                  <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
+                    <div className="w-full">
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={currentGroup}
+                          initial={{ opacity: 0, y: 40 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -40 }}
+                          transition={{ duration: 0.4 }}
                         >
-                          Mohon Tunggu...
-                    </button>
-                ):(
-                    <button 
-                    className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-                    onClick={handleTestComplete}
-                    >
-                        Mulai Tes
-                    </button>
-                )}
-                
+                          <div className="grid grid-cols-1 gap-4 w-full">
+                            <p className="text-lg font-bold  text-gray-700">
+                              {mbti[currentGroup].questions}...
+                            </p>
+                            {mbti[currentGroup].options.map((option, index) => {
+                              const selected =
+                                answers[currentGroup]?.type === option.type;
+
+                              return (
+                                <div className="flex gap-3 " key={index}>
+                                  <button
+                                    onClick={() => handleSelection(option.type)}
+                                    className={`p4 rounded-md text-lg font-medium border  text-gray-700 flex items-center justify-between p-4 transition-all  w-full  ${
+                                      selected
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-50 hover:bg-gray-300 border-gray-300"
+                                    }`}
+                                  >
+                                    {option.text}
+                                  </button>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      </AnimatePresence>
+
+                      <div className="flex justify-between items-center mt-7">
+                        <button
+                          onClick={() => {
+                            setCurrentGroup((prev) => Math.max(0, prev - 1));
+                          }}
+                          disabled={currentGroup === 0}
+                          className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
+                            currentGroup === 0
+                              ? "opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200"
+                              : "bg-white border-slate-300 hover:bg-slate-50 text-slate-700"
+                          }`}
+                        >
+                          ← Sebelumnya
+                        </button>
+
+                        <button
+                          onClick={
+                            currentGroup === mbti.length - 1
+                              ? handleModal
+                              : handleNext
+                          }
+                          className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                        >
+                          {currentGroup === mbti.length - 1
+                            ? "Selesai"
+                            : "Soal Berikutnya →"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Tombol aksi */}
+              <div className="mt-8 border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-sm text-slate-600">
+                  <strong className="text-slate-800">Sebelum mulai:</strong>{" "}
+                  pastikan Anda berada di tempat yang tenang dan siap fokus.
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleModal}
+                  className="px-5 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:shadow-lg transition-all"
+                >
+                  Mulai Tes
+                </motion.button>
+              </div>
             </div>
-        </Modal>
-        <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
+          </section>
+
+          {/* Footer kecil */}
+          <div className="mt-6 text-center text-xs text-slate-400">
+            Sistem ini menampilkan instruksi — waktu akan mulai otomatis saat
+            tes dimulai.
+          </div>
+        </motion.div>
+      </main>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan
+          dan sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Pastikan koneksi internet stabil dan Anda berada di lingkungan yang
+          kondusif.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
+          <button
+            className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+              isLoading ? "bg-slate-400" : "from-blue-600 to-indigo-600"
+            }`}
+            onClick={() => setIsModalOpen(false)}
+            disabled={isLoading}
+          >
+            Kembali
+          </button>
+          {isLoading ? (
+            <button
+              className="disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              aria-label="Mulai CFIT Subtes 1"
+              onClick={handleTestComplete}
+              disabled={isLoading}
             >
-              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
-              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedAcces.png"
-                  width={200}
-                  height={200}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
-              </div>
-            </div>
-          </PermissionModal>
-          <BackGuardModal {...modalProps} />
+              Mohon Tunggu...
+            </button>
+          ) : (
+            <button
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              onClick={handleTestComplete}
+            >
+              Mulai Tes
+            </button>
+          )}
+        </div>
+      </Modal>
+      <PermissionModal isOpen={showModal} onClose={() => {}}>
+        <div className="text-gray-700">
+          <p className="font-bold text-xl mb-3">PERHATIAN</p>
+          <p className="text-sm">
+            Harap berikan izin untuk akses clipboard untuk mengakses halaman tes
+          </p>
+          <div className="flex justify-center my-4">
+            <Image
+              src="/assets/blockedAcces.png"
+              width={200}
+              height={200}
+              className="rounded-lg "
+              alt=""
+            />
+          </div>
+          <div className="text-left ml-8">
+            <ol className=" list-decimal flex flex-col gap-y-1">
+              <li>
+                Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on
+              </li>
+              <li>Reload Kembali halaman (F5)</li>
+            </ol>
+          </div>
+        </div>
+      </PermissionModal>
+      <BackGuardModal {...modalProps} />
     </div>
-    )
+  );
 }

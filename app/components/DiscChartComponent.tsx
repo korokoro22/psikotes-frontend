@@ -1,8 +1,4 @@
-'use client'
-
-// interface DiscBarChartProps {
-//     answers: 
-// }
+"use client";
 
 import {
   Chart as ChartJS,
@@ -10,111 +6,97 @@ import {
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
-} from 'chart.js'
-import { Bar } from 'react-chartjs-2'
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
-type DiscType = 'D' | 'I' | 'S' | 'C'
-type DiscCount = Record<DiscType, number>
-
+type DiscType = "D" | "I" | "S" | "C";
+type DiscCount = Record<DiscType, number>;
 
 type DiscAnswer = {
-    groupId: number
-    type: DiscType
-}
+  groupId: number;
+  type: DiscType;
+};
 
 type DiscAnswers = {
-    most: DiscAnswer[]
-    least: DiscAnswer[]
-}
+  most: DiscAnswer[];
+  least: DiscAnswer[];
+};
 
 type DiscChartProps = {
-    answers: DiscAnswers
-}
+  answers: DiscAnswers;
+};
 
-export default function DiscChart({answers}: DiscChartProps) {
+export default function DiscChart({ answers }: DiscChartProps) {
+  const labels = ["D", "I", "S", "C"];
 
-    const labels = [
-        'D', 'I', 'S', 'C'
-    ]
-
-    const data = {
+  const data = {
     labels: labels,
     datasets: [
       {
-        label: 'Peserta',
+        label: "Peserta",
         data: [2, 5, 8, 1, 9, 4, 7, 4, 2, 8, 5, 7],
-        backgroundColor: 'rgba(59, 130, 246, 0.7)' // biru
+        backgroundColor: "rgba(59, 130, 246, 0.7)", // biru
       },
-    ]
-  }
+    ],
+  };
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const
+        position: "top" as const,
       },
       tooltip: {
-        enabled: true
-      }
+        enabled: true,
+      },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Kolom'
-        }
+          text: "Kolom",
+        },
       },
       y: {
         title: {
           display: true,
-          text: 'Frekuensi'
+          text: "Frekuensi",
         },
-        beginAtZero: true
-      }
-    }
-  }
+        beginAtZero: true,
+      },
+    },
+  };
 
-    const initCount = (): DiscCount => ({
-        D: 0,
-        I: 0,
-        S: 0,
-        C: 0,
-    })
+  const initCount = (): DiscCount => ({
+    D: 0,
+    I: 0,
+    S: 0,
+    C: 0,
+  });
 
-    const mostCount: DiscCount = initCount()
-    const leastCount: DiscCount = initCount()
+  const mostCount: DiscCount = initCount();
+  const leastCount: DiscCount = initCount();
 
-    answers.most.forEach(item => {
-        mostCount[item.type] += 1
-    })
+  answers.most.forEach((item) => {
+    mostCount[item.type] += 1;
+  });
 
-    answers.least.forEach(item => {
-        leastCount[item.type] += 1
-    })
+  answers.least.forEach((item) => {
+    leastCount[item.type] += 1;
+  });
 
-    const mostD = mostCount.D
-    const mostI = mostCount.I
-    const mostS = mostCount.S
-    const mostC = mostCount.C
+  const mostD = mostCount.D;
+  const mostI = mostCount.I;
+  const mostS = mostCount.S;
+  const mostC = mostCount.C;
 
-    const leastD = leastCount.D
-    const leastI = leastCount.I
-    const leastS = leastCount.S
-    const leastC = leastCount.C 
-    
-    return (
-        <div>
-            
-        </div>
-    )
+  const leastD = leastCount.D;
+  const leastI = leastCount.I;
+  const leastS = leastCount.S;
+  const leastC = leastCount.C;
+
+  return <div></div>;
 }

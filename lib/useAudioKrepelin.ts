@@ -16,7 +16,7 @@ export default function useAudioKraepelin({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const warningPlayedRef = useRef(false);
 
-  // 🎧 init audio
+  // init audio
   useEffect(() => {
     const audio = new Audio(audioSrc);
     audio.preload = "auto";

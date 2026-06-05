@@ -13,7 +13,9 @@ interface UseAntiCheatSilentOptions {
   mode: "silent";
 }
 
-type UseAntiCheatOptions = UseAntiCheatWithLogOptions | UseAntiCheatSilentOptions;
+type UseAntiCheatOptions =
+  | UseAntiCheatWithLogOptions
+  | UseAntiCheatSilentOptions;
 
 export function useAntiCheat(options: UseAntiCheatOptions) {
   const pendingClear = useRef(false); // ada screenshot yang perlu dihapus?
@@ -21,24 +23,24 @@ export function useAntiCheat(options: UseAntiCheatOptions) {
   const clearClipboard = useCallback(async () => {
     try {
       await navigator.clipboard.writeText("");
-      // console.log("🧹 Clipboard cleared");
+      // console.log(" Clipboard cleared");
       pendingClear.current = false;
     } catch (err) {
-      // console.warn("⚠️ Clear gagal (mungkin tidak focused), akan retry saat focus:", err);
+      // console.warn(" Clear gagal (mungkin tidak focused), akan retry saat focus:", err);
       pendingClear.current = true; // tandai untuk diclear saat focus kembali
     }
   }, []);
 
   const handleViolation = useCallback(
     (type: ViolationType) => {
-      // console.log(`🚨 ${type} terdeteksi!`);
+      // console.log(` ${type} terdeteksi!`);
       pendingClear.current = true; // tandai ada yang perlu dihapus
 
       if (options.mode === "log") {
         options.onViolation(type, new Date());
       }
     },
-    [options]
+    [options],
   );
 
   useEffect(() => {
@@ -60,7 +62,7 @@ export function useAntiCheat(options: UseAntiCheatOptions) {
         // Cek apakah clipboard berisi image
         const items = await navigator.clipboard.read();
         const hasImage = items.some((item) =>
-          item.types.some((type) => type.startsWith("image/"))
+          item.types.some((type) => type.startsWith("image/")),
         );
 
         if (hasImage) {
@@ -70,7 +72,7 @@ export function useAntiCheat(options: UseAntiCheatOptions) {
         // Permission denied — skip deteksi image
       }
 
-      // ✅ Selalu clear saat focus kembali, baik ada violation atau tidak
+      // Selalu clear saat focus kembali, baik ada violation atau tidak
       await clearClipboard();
     };
 

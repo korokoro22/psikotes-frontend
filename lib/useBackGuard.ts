@@ -2,26 +2,10 @@
 
 import { useEffect, useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation"; // ganti ke "next/router" jika Pages Router
-import BackGuardModal from "@/app/components/BackGuardModal";
 
-/**
- * useBackGuard
- *
- * Kembalikan { BackGuardModal, modalProps } lalu render modal di halaman.
- * Hook ini menangani logika back button Chrome + Next.js router.push.
- *
- * Cara pakai:
- *   const { modalProps } = useBackGuard("Yakin ingin keluar?");
- *   return (
- *     <>
- *       <BackGuardModal {...modalProps} />
- *       ... isi halaman ...
- *     </>
- *   );
- */
 export function useBackGuard(
   message = "Apakah Anda yakin ingin keluar? (TES YANG SEDANG BERLANGSUNG AKAN DIBATALKAN DAN TIDAK DAPAT DILANJUTKAN)",
-  enabled = true
+  enabled = true,
 ) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -86,10 +70,8 @@ export function useBackGuard(
   }, [enabled, showModal, router]);
 
   return {
-    // Spread langsung ke <BackGuardModal {...modalProps} />
     modalProps: {
       isOpen,
-    //   message,
       onConfirm: handleConfirm,
       onCancel: handleCancel,
     },

@@ -3,10 +3,30 @@
 import { useState, useRef } from "react";
 
 const slides = [
-  { id: 1, title: "Slide Pertama", description: "Ini adalah konten slide pertama", bg: "#6366f1" },
-  { id: 2, title: "Slide Kedua", description: "Ini adalah konten slide kedua", bg: "#8b5cf6" },
-  { id: 3, title: "Slide Ketiga", description: "Ini adalah konten slide ketiga", bg: "#ec4899" },
-  { id: 4, title: "Slide Keempat", description: "Ini adalah konten slide keempat", bg: "#f59e0b" },
+  {
+    id: 1,
+    title: "Slide Pertama",
+    description: "Ini adalah konten slide pertama",
+    bg: "#6366f1",
+  },
+  {
+    id: 2,
+    title: "Slide Kedua",
+    description: "Ini adalah konten slide kedua",
+    bg: "#8b5cf6",
+  },
+  {
+    id: 3,
+    title: "Slide Ketiga",
+    description: "Ini adalah konten slide ketiga",
+    bg: "#ec4899",
+  },
+  {
+    id: 4,
+    title: "Slide Keempat",
+    description: "Ini adalah konten slide keempat",
+    bg: "#f59e0b",
+  },
 ];
 
 export default function Carousel() {
@@ -20,7 +40,6 @@ export default function Carousel() {
   const isFirst = current === 0;
   const isLast = current === slides.length - 1;
 
-  // Swipe handler
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -29,12 +48,19 @@ export default function Carousel() {
     touchEndX.current = e.changedTouches[0].clientX;
     const diff = touchStartX.current - touchEndX.current;
 
-    if (diff > 50) next();       // swipe kiri → next
-    if (diff < -50) prev();      // swipe kanan → prev
+    if (diff > 50) next(); // swipe kiri → next
+    if (diff < -50) prev(); // swipe kanan → prev
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "600px", margin: "0 auto", userSelect: "none" }}>
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "600px",
+        margin: "0 auto",
+        userSelect: "none",
+      }}
+    >
       {/* Slide */}
       <div
         onTouchStart={handleTouchStart}
@@ -52,10 +78,14 @@ export default function Carousel() {
           position: "relative",
         }}
       >
-        <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "8px" }}>
+        <h2
+          style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "8px" }}
+        >
           {slides[current].title}
         </h2>
-        <p style={{ fontSize: "16px", opacity: 0.9 }}>{slides[current].description}</p>
+        <p style={{ fontSize: "16px", opacity: 0.9 }}>
+          {slides[current].description}
+        </p>
 
         {/* Tombol Prev — disembunyikan di slide pertama */}
         <button
@@ -64,7 +94,9 @@ export default function Carousel() {
           style={{
             position: "absolute",
             left: "16px",
-            background: isFirst ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.3)",
+            background: isFirst
+              ? "rgba(255,255,255,0.1)"
+              : "rgba(255,255,255,0.3)",
             border: "none",
             borderRadius: "50%",
             width: "40px",
@@ -88,7 +120,9 @@ export default function Carousel() {
           style={{
             position: "absolute",
             right: "16px",
-            background: isLast ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.3)",
+            background: isLast
+              ? "rgba(255,255,255,0.1)"
+              : "rgba(255,255,255,0.3)",
             border: "none",
             borderRadius: "50%",
             width: "40px",
@@ -107,7 +141,14 @@ export default function Carousel() {
       </div>
 
       {/* Dots */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginTop: "16px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "8px",
+          marginTop: "16px",
+        }}
+      >
         {slides.map((_, i) => (
           <button
             key={i}
@@ -127,7 +168,14 @@ export default function Carousel() {
       </div>
 
       {/* Counter */}
-      <p style={{ textAlign: "center", marginTop: "8px", color: "#6b7280", fontSize: "14px" }}>
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: "8px",
+          color: "#6b7280",
+          fontSize: "14px",
+        }}
+      >
         {current + 1} / {slides.length}
       </p>
     </div>

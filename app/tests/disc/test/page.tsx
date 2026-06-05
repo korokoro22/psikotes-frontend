@@ -1,369 +1,341 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, ArrowLeft } from 'lucide-react';
-import Modal from '@/app/components/Modal';
-import { storeAnswersDisc } from '@/services/answers.service';
-import TestHeader from '@/app/components/TestHeader';
-import { updateStatusTest, triggerN8n } from "@/services/answers.service"
-import { getSoalDiscService } from '@/services/questions.service';
-import { useAntiCheat } from '@/lib/useAntiCheat';
-import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
-import PermissionModal from '@/app/components/PermissionModal';
-import Image from 'next/image';
-import { useBackGuard } from '@/lib/useBackGuard';
-import BackGuardModal from '@/app/components/BackGuardModal';
-import { checkMoveTab } from '@/lib/checkMoveTab';
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Brain, ArrowLeft } from "lucide-react";
+import Modal from "@/app/components/Modal";
+import { storeAnswersDisc } from "@/services/answers.service";
+import TestHeader from "@/app/components/TestHeader";
+import { updateStatusTest, triggerN8n } from "@/services/answers.service";
+import { getSoalDiscService } from "@/services/questions.service";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard";
+import PermissionModal from "@/app/components/PermissionModal";
+import Image from "next/image";
+import { useBackGuard } from "@/lib/useBackGuard";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { checkMoveTab } from "@/lib/checkMoveTab";
 
 interface WordGroup {
   id: number;
   words: {
     text: string;
-    type: 'D' | 'I' | 'S' | 'C';
+    type: "D" | "I" | "S" | "C";
   }[];
 }
 
 interface DiscQuestion {
-  id: number
-  questionIndex: number
+  id: number;
+  questionIndex: number;
   option: {
-    sentences: string
-    optionIndex: number
-  }[]
+    sentences: string;
+    optionIndex: number;
+  }[];
 }
 
 export default function DISCTestPage() {
   const { modalProps } = useBackGuard();
 
-  const discQuestion:DiscQuestion[] = [
+  const discQuestion: DiscQuestion[] = [
     {
       id: 0,
       questionIndex: 1,
       option: [
-        { sentences: 'Mudah bergaul', optionIndex: 1 },
-        { sentences: 'Suka menyendiri', optionIndex: 2 },
-        { sentences: 'Kurang nyaman di kerumunan', optionIndex: 3 },
-        { sentences: 'Nyaman di keramaian asalkan dengan teman', optionIndex: 4 }
+        { sentences: "Mudah bergaul", optionIndex: 1 },
+        { sentences: "Suka menyendiri", optionIndex: 2 },
+        { sentences: "Kurang nyaman di kerumunan", optionIndex: 3 },
+        {
+          sentences: "Nyaman di keramaian asalkan dengan teman",
+          optionIndex: 4,
+        },
       ],
     },
     {
       id: 1,
       questionIndex: 2,
       option: [
-        { sentences: 'Rendah hati, Sederhana', optionIndex: 1 },
-        { sentences: 'Ingin Kemajuan', optionIndex: 2 },
-        { sentences: 'Terbuka memperlihatkan perasaan', optionIndex: 3 },
-        { sentences: 'Puas dengan segalanya', optionIndex: 4 }
+        { sentences: "Rendah hati, Sederhana", optionIndex: 1 },
+        { sentences: "Ingin Kemajuan", optionIndex: 2 },
+        { sentences: "Terbuka memperlihatkan perasaan", optionIndex: 3 },
+        { sentences: "Puas dengan segalanya", optionIndex: 4 },
       ],
-    }
-  ]
+    },
+  ];
 
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState(0);
-  const [question, setQuestion] = useState<DiscQuestion[]>([])
+  const [question, setQuestion] = useState<DiscQuestion[]>([]);
   const [answers, setAnswers] = useState<{
-    most: { groupId: number; questionIndex:number}[];
-    least: { groupId: number; questionIndex:number}[];
+    most: { groupId: number; questionIndex: number }[];
+    least: { groupId: number; questionIndex: number }[];
   }>({ most: [], least: [] });
 
-//   const [answers, setAnswers] = useState<{
-//     most: { groupId: number; questionIndex:number}[];
-//     least: { groupId: number; questionIndex:number}[];
-//   }>({
-//     most: Array.from({ length: discQuestion.length}, (_, index)=>({
-//       groupId: index+1, questionIndex: 0
-//     })),
-//     least: Array.from({ length: discQuestion.length}, (_, index)=>({
-//       groupId: index, questionIndex: 0
-//     }))
-// });
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // const [timeLeft, setTimeLeft] = useState(900); 
-  // const [isOvertime, setIsOvertime] = useState(false);
-  // const [overtime, setOvertime] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isPassed, setIsPassed] = useState<number[]>(() => {
     if (typeof window === "undefined") return [];
     const saved = localStorage.getItem("isPassed");
     return saved ? JSON.parse(saved) : [];
-    });
-      
+  });
+
   const [aktif, setAktif] = useState(1);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isBlank, setIsBlank] = useState<number[]>([])
+  const [isBlank, setIsBlank] = useState<number[]>([]);
 
-  
-
-  useEffect(()=> {
+  useEffect(() => {
     const getDiscQuestions = async () => {
       try {
-      const getQuestion = await getSoalDiscService()
-      setQuestion(getQuestion.data.data)
-      } catch (error) {
-        console.log('gagal')
-      }
-    }
-      getDiscQuestions()
-  }, [])
-
-  useEffect(() => {
-    console.log('soal disc: ', question)
-  }, [question])
-
-  useEffect(() => {
-    console.log('answers:', answers);
-    }, [answers]);  
-
-  useEffect(() => {
-    console.log('current group:', currentGroup);
-    }, [currentGroup]);
-
-    const EXAM_DURATION = 60 * 60 
-    
-    const getRemainingTime = (): number => {
-        if (typeof window === "undefined") return EXAM_DURATION
-        const startTime = localStorage.getItem("examStartTime");
-        if (!startTime) return EXAM_DURATION;
-        const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        return EXAM_DURATION - elapsed; // bisa negatif = overtime
+        const getQuestion = await getSoalDiscService();
+        setQuestion(getQuestion.data.data);
+      } catch (error) {}
     };
-    
-    const [timeLeft, setTimeLeft] = useState(() => Math.max(0, getRemainingTime()));
-    const [isOvertime, setIsOvertime] = useState(() => getRemainingTime() < 0);
-    const [overtime, setOvertime] = useState(() => Math.max(0, -getRemainingTime()));
+    getDiscQuestions();
+  }, []);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            const remaining = getRemainingTime();
+  const EXAM_DURATION = 60 * 60;
 
-            if (remaining > 0) {
-                setTimeLeft(remaining);
-                setIsOvertime(false);
-            } else {
-                setTimeLeft(0);
-                setIsOvertime(true);
-                setOvertime(Math.abs(remaining));
-            }
-        }, 1000);
+  const getRemainingTime = (): number => {
+    if (typeof window === "undefined") return EXAM_DURATION;
+    const startTime = localStorage.getItem("examStartTime");
+    if (!startTime) return EXAM_DURATION;
+    const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+    return EXAM_DURATION - elapsed;
+  };
 
-        return () => clearInterval(timer);
-    }, []);
+  const [timeLeft, setTimeLeft] = useState(() =>
+    Math.max(0, getRemainingTime()),
+  );
+  const [isOvertime, setIsOvertime] = useState(() => getRemainingTime() < 0);
+  const [overtime, setOvertime] = useState(() =>
+    Math.max(0, -getRemainingTime()),
+  );
 
   useEffect(() => {
-        if (!isOvertime && timeLeft <= 0) {
-            setIsOvertime(true);
-            return;
-        }
+    const timer = setInterval(() => {
+      const remaining = getRemainingTime();
 
-        if (isOvertime) {
-            const timer = setInterval(() => setOvertime((prev) => prev + 1), 1000);
-            return () => clearInterval(timer);
-        }
+      if (remaining > 0) {
+        setTimeLeft(remaining);
+        setIsOvertime(false);
+      } else {
+        setTimeLeft(0);
+        setIsOvertime(true);
+        setOvertime(Math.abs(remaining));
+      }
+    }, 1000);
 
-        const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-        return () => clearInterval(timer);
-    }, [timeLeft, isOvertime]);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!isOvertime && timeLeft <= 0) {
+      setIsOvertime(true);
+      return;
+    }
+
+    if (isOvertime) {
+      const timer = setInterval(() => setOvertime((prev) => prev + 1), 1000);
+      return () => clearInterval(timer);
+    }
+
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isOvertime]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
-      let finalState = answers; // Asumsi state saat ini dibaca dari `answers`
-  
-      const updated = {
-          most: [...answers.most],
-          least: [...answers.least],
-      };
-  
-      const currentMost = updated.most[currentGroup];
-      const currentLeast = updated.least[currentGroup];
-  
-      if (
-          (type === 'most' && currentMost?.questionIndex === questionIndex) ||
-          (type === 'least' && currentLeast?.questionIndex === questionIndex)
-      ) {
-          if (type === 'most') delete updated.most[currentGroup];
-          else delete updated.least[currentGroup];
-          finalState = updated;
-      } 
-      else if (
-          (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
-          (type === 'least' && currentMost?.questionIndex === questionIndex)
-      ) {
-          finalState = answers;
-      } 
-      else if ((type === 'most' && currentMost) || (type === 'least' && currentLeast)) {
-          finalState = answers;
-      } 
-      else {
-          if (type === 'most') {
-              updated.most[currentGroup] = {
-                  groupId: currentGroup + 1,
-                  questionIndex: questionIndex,
-              };
-          } else {
-              updated.least[currentGroup] = {
-                  groupId: currentGroup + 1,
-                  questionIndex: questionIndex,
-              };
-          }
-          finalState = updated;
+  const handleSelection = (type: "most" | "least", questionIndex: number) => {
+    let finalState = answers;
+
+    const updated = {
+      most: [...answers.most],
+      least: [...answers.least],
+    };
+
+    const currentMost = updated.most[currentGroup];
+    const currentLeast = updated.least[currentGroup];
+
+    if (
+      (type === "most" && currentMost?.questionIndex === questionIndex) ||
+      (type === "least" && currentLeast?.questionIndex === questionIndex)
+    ) {
+      if (type === "most") delete updated.most[currentGroup];
+      else delete updated.least[currentGroup];
+      finalState = updated;
+    } else if (
+      (type === "most" && currentLeast?.questionIndex === questionIndex) ||
+      (type === "least" && currentMost?.questionIndex === questionIndex)
+    ) {
+      finalState = answers;
+    } else if (
+      (type === "most" && currentMost) ||
+      (type === "least" && currentLeast)
+    ) {
+      finalState = answers;
+    } else {
+      if (type === "most") {
+        updated.most[currentGroup] = {
+          groupId: currentGroup + 1,
+          questionIndex: questionIndex,
+        };
+      } else {
+        updated.least[currentGroup] = {
+          groupId: currentGroup + 1,
+          questionIndex: questionIndex,
+        };
       }
-  
-      setAnswers(finalState);
-      localStorage.setItem('tempAnswers', JSON.stringify(finalState));
+      finalState = updated;
+    }
+
+    setAnswers(finalState);
+    localStorage.setItem("tempAnswers", JSON.stringify(finalState));
   };
 
   const handleTestComplete = async () => {
     try {
-      const setLoading = setIsLoading(true)
-      const testSession = sessionStorage.getItem('testSession')
-      localStorage.removeItem('tempAnswers')
-      localStorage.removeItem('isPassed')
-      if(!testSession) {
-        return (console.log('gagal'))
-      }            
-      const testSessionParsed = JSON.parse(testSession)
-      const tests = testSessionParsed.tests[testSessionParsed.currentIndex]
-      const sessionId = testSessionParsed.sessionId
-      console.log('ini test4:', tests)
-      const res = await storeAnswersDisc(sessionId, answers)
+      const setLoading = setIsLoading(true);
+      const testSession = sessionStorage.getItem("testSession");
+      localStorage.removeItem("tempAnswers");
+      localStorage.removeItem("isPassed");
+      if (!testSession) {
+        return;
+      }
+      const testSessionParsed = JSON.parse(testSession);
+      const tests = testSessionParsed.tests[testSessionParsed.currentIndex];
+      const sessionId = testSessionParsed.sessionId;
+      const res = await storeAnswersDisc(sessionId, answers);
 
+      const pesertaId = testSessionParsed.pesertaId;
+      const trigger = await triggerN8n(pesertaId, tests);
 
-          const pesertaId = testSessionParsed.pesertaId;
-          const trigger = await triggerN8n(pesertaId, tests);
+      const nextIndex = testSessionParsed.currentIndex + 1;
+      const newTests = testSessionParsed.tests[nextIndex];
 
-          const nextIndex = testSessionParsed.currentIndex + 1;
-          const newTests = testSessionParsed.tests[nextIndex]; 
+      testSessionParsed.currentIndex = nextIndex;
+      sessionStorage.setItem("testSession", JSON.stringify(testSessionParsed));
 
-          testSessionParsed.currentIndex = nextIndex;
-          sessionStorage.setItem('testSession', JSON.stringify(testSessionParsed));
-
-          if (newTests !== undefined) {
-            const startTime = Date.now();
-            localStorage.setItem("examStartTime", startTime.toString());
-            router.push(`/tests/${newTests.toLowerCase()}`); 
-          } else {
-            const statusTest = await updateStatusTest(sessionId);
-              sessionStorage.removeItem('testSession');
-              localStorage.removeItem('examStartTime')
-              router.push('/result');
-          }
-    } catch(error) {
-      const setLoading = setIsLoading(false)
+      if (newTests !== undefined) {
+        const startTime = Date.now();
+        localStorage.setItem("examStartTime", startTime.toString());
+        router.push(`/tests/${newTests.toLowerCase()}`);
+      } else {
+        const statusTest = await updateStatusTest(sessionId);
+        sessionStorage.removeItem("testSession");
+        localStorage.removeItem("examStartTime");
+        router.push("/result");
+      }
+    } catch (error) {
+      const setLoading = setIsLoading(false);
     }
-
-
   };
 
-  useEffect(()=> {
-    const temp = localStorage.getItem('tempAnswers')
-    if(temp !== null) {
-      const answer = JSON.parse(temp)
-      setAnswers(answer)
+  useEffect(() => {
+    const temp = localStorage.getItem("tempAnswers");
+    if (temp !== null) {
+      const answer = JSON.parse(temp);
+      setAnswers(answer);
     }
-  }, [])
+  }, []);
 
   const handleModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   useAntiCheat({ mode: "silent" });
 
   useEffect(() => {
     document.title = "Test - Psychological Tests";
-  }, [])
+  }, []);
 
-  // console.log("🔍 sebelum hook, checkCamera value: true")
-const { showModal } = useClipboardPermissionGuard(true)
-// console.log("🔍 setelah hook")
+  const { showModal } = useClipboardPermissionGuard(true);
 
   const checkScroll = () => {
-        const el = scrollRef.current;
-        if (!el) return;
-        setCanScrollLeft(el.scrollLeft > 0);
-        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
-    };
-
-    useEffect(() => {
-        const el = scrollRef.current;
-        if (!el) return;
-
-        const observer = new ResizeObserver(() => checkScroll());
-        observer.observe(el);
-
-        return () => observer.disconnect();
-    }, [question]);
-
-    const scroll = (dir: "left" | "right") => {
-        const el = scrollRef.current;
-        if (!el) return;
-        el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
-        setTimeout(checkScroll, 300);
-    };
-
-    const handleBefore = () => {
-        setCurrentGroup(prev => Math.max(0, prev - 1))
-        setAktif((i) => Math.min(i - 1, question.length));
-    }
-
-    const handleNext = () => {
-        setCurrentGroup(prev => prev + 1)
-        setAktif((i) => Math.min(i + 1, question.length));
-    }
-
-    useEffect(() => {
-        // cari elemen tombol nomor yang aktif lalu scroll ke sana
-        scrollRef.current
-        ?.querySelector(`[data-nomor="${aktif}"]`)
-        ?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-    }, [aktif]);
-
-    useEffect(() => {
-        localStorage.setItem("isPassed", JSON.stringify(isPassed));
-    }, [isPassed]);
-
-    // setiap kali aktif berubah, simpan nomor sebelumnya ke sudahDilalui
-    useEffect(() => {
-        if (!isPassed.includes(aktif)) {
-        setIsPassed((prev) => [...prev, aktif]);
-        }
-    }, [aktif]);
-
-    const [testsCount, setTestsCount] = useState<number | null>(null)
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth);
+  };
 
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
-    if (!testSession) {
-      console.log('gagal')
-      return
-    }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
+    const el = scrollRef.current;
+    if (!el) return;
 
-  useEffect(()=> {
-        const isPassed = localStorage.getItem('isPassed')
-        if (!isPassed) 
-            return (console.log('gagal'))
-        const passedArray = JSON.parse(isPassed)
-        const questions = Array.from({length: Math.max(...passedArray)}, (v, i)=> i+1)
-        const hasil = questions.filter(item => !passedArray.includes(item));
-        setIsBlank(hasil)
-    }, [isPassed])
-  
-  checkMoveTab()
+    const observer = new ResizeObserver(() => checkScroll());
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [question]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
+    setTimeout(checkScroll, 300);
+  };
+
+  const handleBefore = () => {
+    setCurrentGroup((prev) => Math.max(0, prev - 1));
+    setAktif((i) => Math.min(i - 1, question.length));
+  };
+
+  const handleNext = () => {
+    setCurrentGroup((prev) => prev + 1);
+    setAktif((i) => Math.min(i + 1, question.length));
+  };
+
+  useEffect(() => {
+    scrollRef.current
+      ?.querySelector(`[data-nomor="${aktif}"]`)
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+  }, [aktif]);
+
+  useEffect(() => {
+    localStorage.setItem("isPassed", JSON.stringify(isPassed));
+  }, [isPassed]);
+
+  useEffect(() => {
+    if (!isPassed.includes(aktif)) {
+      setIsPassed((prev) => [...prev, aktif]);
+    }
+  }, [aktif]);
+
+  const [testsCount, setTestsCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const testSession = sessionStorage.getItem("testSession");
+    if (!testSession) {
+      return;
+    }
+
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
+
+  useEffect(() => {
+    const isPassed = localStorage.getItem("isPassed");
+    if (!isPassed) return;
+    const passedArray = JSON.parse(isPassed);
+    const questions = Array.from(
+      { length: Math.max(...passedArray) },
+      (v, i) => i + 1,
+    );
+    const hasil = questions.filter((item) => !passedArray.includes(item));
+    setIsBlank(hasil);
+  }, [isPassed]);
+
+  checkMoveTab();
 
   return (
     <div className="font-sans min-h-screen bg-gray-50 select-none">
@@ -377,33 +349,54 @@ const { showModal } = useClipboardPermissionGuard(true)
           {/* Header Info */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
             <div className="text-center md:text-left">
-              <h2 className="text-2xl font-bold text-gray-800">Instruksi <span className='text-xl text-slate-700 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span></h2>
+              <h2 className="text-2xl font-bold text-gray-800">
+                Instruksi{" "}
+                <span className="text-xl text-slate-700 font-semibold ml-3">
+                  (TES KE-{testsCount ?? "..."})
+                </span>
+              </h2>
               <p className="text-gray-500 text-sm">
-                Pilih pernyataan yang <span className="text-green-600 font-semibold">PALING SESUAI (P)</span> dan{' '}
-                <span className="text-red-600 font-semibold">KURANG SESUAI (K)</span>dalam menggambarkan diri Anda.
+                Pilih pernyataan yang{" "}
+                <span className="text-green-600 font-semibold">
+                  PALING SESUAI (P)
+                </span>{" "}
+                dan{" "}
+                <span className="text-red-600 font-semibold">
+                  KURANG SESUAI (K)
+                </span>
+                dalam menggambarkan diri Anda.
               </p>
             </div>
             <div className="">
-                        {question.length > 0 ? (
-                            <div className='flex items-center gap-x-4'>
-                                <div className={`text-base font-mono px-4 py-2 rounded-lg shadow-sm border text-gray-800 ${
-                            isOvertime ? 'bg-red-100 text-red-600 border-red-200' : 'bg-gray-100 border-gray-200'
-                        }`}>
-                            {isOvertime 
-                                ? `⚠️ +${formatTime(overtime)}` 
-                                : `⏱ ${formatTime(timeLeft)}`
-                            }
-                        </div>
-                        <div className=" text-base text-gray-800 font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100 border border-gray-200">
-                                    {question.length > 0 ? (<span>Soal: {currentGroup + 1} / {question.length}</span>):(<span>Soal: --/--</span>)}
-                                </div>
-                            </div>
-                        ):(
-                            <div className='text-xl font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100'>
-                                <span>--:--</span>
-                            </div>
-                        )}
-                    </div>
+              {question.length > 0 ? (
+                <div className="flex items-center gap-x-4">
+                  <div
+                    className={`text-base font-mono px-4 py-2 rounded-lg shadow-sm border text-gray-800 ${
+                      isOvertime
+                        ? "bg-red-100 text-red-600 border-red-200"
+                        : "bg-gray-100 border-gray-200"
+                    }`}
+                  >
+                    {isOvertime
+                      ? `⚠️ +${formatTime(overtime)}`
+                      : `⏱ ${formatTime(timeLeft)}`}
+                  </div>
+                  <div className=" text-base text-gray-800 font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100 border border-gray-200">
+                    {question.length > 0 ? (
+                      <span>
+                        Soal: {currentGroup + 1} / {question.length}
+                      </span>
+                    ) : (
+                      <span>Soal: --/--</span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-xl font-mono px-4 py-2 rounded-lg shadow-sm bg-gray-100">
+                  <span>--:--</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <style>{`
@@ -412,243 +405,274 @@ const { showModal } = useClipboardPermissionGuard(true)
 
           {/* Soal */}
           {question.length > 0 ? (
-          <div className='flex flex-col gap-y-4'>
-
-            {/* nomor soal */}
-                    <div className='w-full h-full flex bg-gray-200 border border-gray-300 p-2 gap-x-4 rounded-xl items-center'>
-                    
-                        {/* Tombol Kiri */}
-                        <button
-                        onClick={() => scroll("left")}
-                        disabled={!canScrollLeft}
-                        className={`shrink-0 w-10 h-22 border rounded-lg bor flex items-center justify-center text-lg transition-all
-                            ${canScrollLeft
-                            ? "border-gray-400 text-gray-600 hover:bg-gray-400 cursor-pointer"
-                            : "border-gray-100 text-gray-300 cursor-not-allowed"
+            <div className="flex flex-col gap-y-4">
+              {/* nomor soal */}
+              <div className="w-full h-full flex bg-gray-200 border border-gray-300 p-2 gap-x-4 rounded-xl items-center">
+                {/* Tombol Kiri */}
+                <button
+                  onClick={() => scroll("left")}
+                  disabled={!canScrollLeft}
+                  className={`shrink-0 w-10 h-22 border rounded-lg bor flex items-center justify-center text-lg transition-all
+                            ${
+                              canScrollLeft
+                                ? "border-gray-400 text-gray-600 hover:bg-gray-400 cursor-pointer"
+                                : "border-gray-100 text-gray-300 cursor-not-allowed"
                             }`}
-                        >
-                        ‹
-                        </button>
-                    
-                        {/* List Nomor */}
-                        <div
-                        ref={scrollRef}
-                        onScroll={checkScroll}
-                        className="flex gap-2 overflow-x-scroll flex-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                        >
-                        {Array.from({ length: question.length }, (_, i) => i + 1).map((nomor) => (
-                            <button
-                            key={nomor}
-                            data-nomor ={nomor}
-                            onClick={() => {
-                                setAktif(nomor)
-                                setCurrentGroup(nomor-1)
-                            }}
-                            className={`shrink-0 p-8 border border-gray-300 rounded-lg text-sm font-medium transition-all
-                                ${aktif === nomor 
-                                ? "bg-blue-600 border-blue-600 text-white border-2"
-                                : answers.most.filter(Boolean).some((a) => a.groupId === nomor) && answers.least.filter(Boolean).some((a) => a.groupId === nomor)
-                                ?" bg-green-500 text-white"
-                                : isPassed.includes(nomor) || isBlank.includes(nomor)
-                                ? "bg-red-500 text-white"
-                                : "bg-white text-gray-700 border border-gray-200 hover:border-indigo-300"
-                                }`
-                            }
-                            >
-                            {nomor}
-                            </button>
-                        ))}
-                        </div>
-                            
-                        {/* Tombol Kanan */}
-                        <button
-                        onClick={() => scroll("right")}
-                        disabled={!canScrollRight}
-                        className={`shrink-0 w-10 h-22 border rounded-lg bor flex items-center justify-center text-lg transition-all
-                            ${canScrollRight
-                            ? "border-gray-400 text-gray-600 hover:bg-gray-400 cursor-pointer"
-                            : "border-gray-100 text-gray-300 cursor-not-allowed"
+                >
+                  ‹
+                </button>
+
+                {/* List Nomor */}
+                <div
+                  ref={scrollRef}
+                  onScroll={checkScroll}
+                  className="flex gap-2 overflow-x-scroll flex-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {Array.from({ length: question.length }, (_, i) => i + 1).map(
+                    (nomor) => (
+                      <button
+                        key={nomor}
+                        data-nomor={nomor}
+                        onClick={() => {
+                          setAktif(nomor);
+                          setCurrentGroup(nomor - 1);
+                        }}
+                        className={`shrink-0 p-8 border border-gray-300 rounded-lg text-sm font-medium transition-all
+                                ${
+                                  aktif === nomor
+                                    ? "bg-blue-600 border-blue-600 text-white border-2"
+                                    : answers.most
+                                          .filter(Boolean)
+                                          .some((a) => a.groupId === nomor) &&
+                                        answers.least
+                                          .filter(Boolean)
+                                          .some((a) => a.groupId === nomor)
+                                      ? " bg-green-500 text-white"
+                                      : isPassed.includes(nomor) ||
+                                          isBlank.includes(nomor)
+                                        ? "bg-red-500 text-white"
+                                        : "bg-white text-gray-700 border border-gray-200 hover:border-indigo-300"
+                                }`}
+                      >
+                        {nomor}
+                      </button>
+                    ),
+                  )}
+                </div>
+
+                {/* Tombol Kanan */}
+                <button
+                  onClick={() => scroll("right")}
+                  disabled={!canScrollRight}
+                  className={`shrink-0 w-10 h-22 border rounded-lg bor flex items-center justify-center text-lg transition-all
+                            ${
+                              canScrollRight
+                                ? "border-gray-400 text-gray-600 hover:bg-gray-400 cursor-pointer"
+                                : "border-gray-100 text-gray-300 cursor-not-allowed"
                             }`}
-                        >
-                        ›
-                        </button>
-                    </div>
-
-            
-            <AnimatePresence mode="wait">
-            <motion.div
-              key={currentGroup}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div className="grid grid-cols-1 gap-4">
-                {question[currentGroup]?.option.map((opt, index) => {
-                              const mostState = answers.most[currentGroup]?.questionIndex
-                              const isMost = answers.most[currentGroup]?.questionIndex === opt.optionIndex;
-                              const isLeast = answers.least[currentGroup]?.questionIndex === opt.optionIndex;
-                              const mostTaken = !!answers.most[currentGroup];
-                              const leastTaken = !!answers.least[currentGroup];
-
-                              return (
-                                <div
-                                  key={index}
-                                  className={`flex items-center justify-between p-4 border rounded-lg transition-all text-xs md:text-base ${
-                                    isMost
-                                      ? 'border-green-500 bg-green-50'
-                                      : isLeast
-                                      ? 'border-red-500 bg-red-50'
-                                      : 'border-gray-200 hover:bg-gray-50'
-                                  }`}
-                                >
-                                  <span className=" font-medium text-gray-800">{opt.sentences}</span>
-                                  <div className="flex gap-3">
-                                    <button
-                                      disabled={(!isMost && mostTaken) || isLeast}
-                                      onClick={() => handleSelection('most', opt.optionIndex)}
-                                      className={`px-4 py-2 rounded-md font-semibold ${
-                                        isMost
-                                          ? 'bg-green-600 text-white'
-                                          : (!isMost && mostTaken) || isLeast
-                                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                          : 'bg-gray-100 hover:bg-green-100 text-green-700'
-                                        // isMost
-                                        //   ? 'bg-green-600 text-white'
-                                        //   : 'bg-gray-100 hover:bg-green-100 text-green-700'
-                                      }`}
-                                    >
-                                      PALING SESUAI (P)
-                                    </button>
-
-                                    <button
-                                      disabled={(!isLeast && leastTaken) || isMost}
-                                      onClick={() => handleSelection('least', opt.optionIndex)}
-                                      className={`px-4 py-2 rounded-md font-semibold ${
-                                        isLeast
-                                          ? 'bg-red-600 text-white'
-                                          : (!isLeast && leastTaken) || isMost
-                                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                          : 'bg-gray-100 hover:bg-red-100 text-red-700'
-                                      }`}
-                                    >
-                                      KURANG SESUAI (K)
-                                    </button>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                >
+                  ›
+                </button>
               </div>
-            </motion.div>
-          </AnimatePresence>
-          
-          <div className="flex justify-between items-center mt-8">
-            <button
-              onClick={handleBefore}
-              disabled={currentGroup === 0}
-              className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
-                currentGroup === 0
-                  ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
-                  : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
-                }`}
-            >
-              ← Sebelumnya
-            </button>
 
-            <button
-            // disabled={!(answers.most[currentGroup] && answers.least[currentGroup])}
-              onClick={
-                currentGroup === question.length - 1
-                  ? handleModal
-                  : handleNext
-                }
-              className={`px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow hover:scale-[1.02] active:scale-95 transition
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentGroup}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -40 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="grid grid-cols-1 gap-4">
+                    {question[currentGroup]?.option.map((opt, index) => {
+                      const mostState =
+                        answers.most[currentGroup]?.questionIndex;
+                      const isMost =
+                        answers.most[currentGroup]?.questionIndex ===
+                        opt.optionIndex;
+                      const isLeast =
+                        answers.least[currentGroup]?.questionIndex ===
+                        opt.optionIndex;
+                      const mostTaken = !!answers.most[currentGroup];
+                      const leastTaken = !!answers.least[currentGroup];
+
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-center justify-between p-4 border rounded-lg transition-all text-xs md:text-base ${
+                            isMost
+                              ? "border-green-500 bg-green-50"
+                              : isLeast
+                                ? "border-red-500 bg-red-50"
+                                : "border-gray-200 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span className=" font-medium text-gray-800">
+                            {opt.sentences}
+                          </span>
+                          <div className="flex gap-3">
+                            <button
+                              disabled={(!isMost && mostTaken) || isLeast}
+                              onClick={() =>
+                                handleSelection("most", opt.optionIndex)
+                              }
+                              className={`px-4 py-2 rounded-md font-semibold ${
+                                isMost
+                                  ? "bg-green-600 text-white"
+                                  : (!isMost && mostTaken) || isLeast
+                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                    : "bg-gray-100 hover:bg-green-100 text-green-700"
+                              }`}
+                            >
+                              PALING SESUAI (P)
+                            </button>
+
+                            <button
+                              disabled={(!isLeast && leastTaken) || isMost}
+                              onClick={() =>
+                                handleSelection("least", opt.optionIndex)
+                              }
+                              className={`px-4 py-2 rounded-md font-semibold ${
+                                isLeast
+                                  ? "bg-red-600 text-white"
+                                  : (!isLeast && leastTaken) || isMost
+                                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                    : "bg-gray-100 hover:bg-red-100 text-red-700"
+                              }`}
+                            >
+                              KURANG SESUAI (K)
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="flex justify-between items-center mt-8">
+                <button
+                  onClick={handleBefore}
+                  disabled={currentGroup === 0}
+                  className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                    currentGroup === 0
+                      ? "opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200"
+                      : "bg-white border-slate-300 hover:bg-slate-50 text-slate-700"
+                  }`}
+                >
+                  ← Sebelumnya
+                </button>
+
+                <button
+                  onClick={
+                    currentGroup === question.length - 1
+                      ? handleModal
+                      : handleNext
+                  }
+                  className={`px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow hover:scale-[1.02] active:scale-95 transition
                                             
                                             `}
-            >
-              {currentGroup === question.length - 1 ? 'Selesai' : 'Soal Berikutnya →'}
-            </button>
-          </div>
-          </div>
-          ):(
-            <div className='flex justify-center items-center px-8 py-10'>
-                    <p className='bg-blue-50 border border-blue-200 rounded-xl p-6 text-gray-700 font-semibold'>SEDANG MEMUAT SOAL...</p>
-                </div>
-          )}
-          
-
-        </div>
-        <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
-            >
-              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
-              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedAcces.png"
-                  width={200}
-                  height={200}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
+                >
+                  {currentGroup === question.length - 1
+                    ? "Selesai"
+                    : "Soal Berikutnya →"}
+                </button>
               </div>
             </div>
-          </PermissionModal>
+          ) : (
+            <div className="flex justify-center items-center px-8 py-10">
+              <p className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-gray-700 font-semibold">
+                SEDANG MEMUAT SOAL...
+              </p>
+            </div>
+          )}
+        </div>
+        <PermissionModal isOpen={showModal} onClose={() => {}}>
+          <div className="text-gray-700">
+            <p className="font-bold text-xl mb-3">PERHATIAN</p>
+            <p className="text-sm">
+              Harap berikan izin untuk akses clipboard untuk mengakses halaman
+              tes
+            </p>
+            <div className="flex justify-center my-4">
+              <Image
+                src="/assets/blockedAcces.png"
+                width={200}
+                height={200}
+                className="rounded-lg "
+                alt=""
+              />
+            </div>
+            <div className="text-left ml-8">
+              <ol className=" list-decimal flex flex-col gap-y-1">
+                <li>
+                  Pastikan ketiga bagian yang ditunjukkan dalam keadaan
+                  enable/on
+                </li>
+                <li>Reload Kembali halaman (F5)</li>
+              </ol>
+            </div>
+          </div>
+        </PermissionModal>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-        <p className='text-gray-800'>Anda telah menyelesaikan sesi tes. Waktu pengerjaan telah berakhir dan sesi tidak dapat diulang.</p>
-        <p className='text-gray-600 text-sm mt-3'>(Terima kasih telah mengikuti tes. Silakan menunggu instruksi selanjutnya.)</p>
-        <div className='flex gap-x-3 justify-evenly mt-4'>
-          <button 
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda telah menyelesaikan sesi tes. Waktu pengerjaan telah berakhir dan
+          sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Terima kasih telah mengikuti tes. Silakan menunggu instruksi
+          selanjutnya.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
+          <button
             className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-              isLoading
-              ? 'bg-slate-400'
-              : 'from-blue-600 to-indigo-600' }`}
-            onClick={()=>setIsModalOpen(false)}
+              isLoading ? "bg-slate-400" : "from-blue-600 to-indigo-600"
+            }`}
+            onClick={() => setIsModalOpen(false)}
             disabled={isLoading}
           >
             Kembali
           </button>
-          {isLoading? (
+          {isLoading ? (
             <button
-              className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-              aria-label="Mulai CFIT Subtes 1"                    
+              className="disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              aria-label="Mulai CFIT Subtes 1"
               onClick={handleTestComplete}
               disabled={isLoading}
-              >
-                Mohon Tunggu...
+            >
+              Mohon Tunggu...
             </button>
-          ):(
-          <button 
-            onClick={handleTestComplete}
-            // disabled={answers.most.length !== question.length || answers.least.length !== question.length}
-            disabled={((answers.most as any[]).includes(undefined) || (answers.most as any[]).includes(null)) || ((answers.least as any[]).includes(undefined) || (answers.least as any[]).includes(null)) || (answers.most.length !== question.length || answers.least.length !== question.length)}
-            className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 ${
-              // !(((answers.most as any[]).includes(undefined)) || !(answers.most.length !== question.length || answers.least.length !== question.length))
-              // !(((answers.most as any[]).includes(undefined)) || !(answers.most.length !== question.length || answers.least.length !== question.length)) || ((!((answers.most as any[]).includes(undefined)) || (answers.most.length !== question.length || answers.least.length !== question.length)))
-              // ? 'from-blue-600 to-indigo-600 transition'
-              // : 'cursor-not-allowed bg-gray-300'
-              ((answers.most as any[]).includes(undefined) || (answers.most as any[]).includes(null)) || ((answers.least as any[]).includes(undefined) || (answers.least as any[]).includes(null)) || (answers.most.length !== question.length || answers.least.length !== question.length)
-              ? 'cursor-not-allowed bg-gray-300'
-              : 'from-blue-600 to-indigo-600 transition'
-            }`}
-          >
-            Selesai
-          </button>
+          ) : (
+            <button
+              onClick={handleTestComplete}
+              disabled={
+                (answers.most as any[]).includes(undefined) ||
+                (answers.most as any[]).includes(null) ||
+                (answers.least as any[]).includes(undefined) ||
+                (answers.least as any[]).includes(null) ||
+                answers.most.length !== question.length ||
+                answers.least.length !== question.length
+              }
+              className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 ${
+                (answers.most as any[]).includes(undefined) ||
+                (answers.most as any[]).includes(null) ||
+                (answers.least as any[]).includes(undefined) ||
+                (answers.least as any[]).includes(null) ||
+                answers.most.length !== question.length ||
+                answers.least.length !== question.length
+                  ? "cursor-not-allowed bg-gray-300"
+                  : "from-blue-600 to-indigo-600 transition"
+              }`}
+            >
+              Selesai
+            </button>
           )}
-          
         </div>
       </Modal>
-      
-          <BackGuardModal {...modalProps} />
+
+      <BackGuardModal {...modalProps} />
     </div>
   );
 }

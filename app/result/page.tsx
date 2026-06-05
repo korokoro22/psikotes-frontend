@@ -1,51 +1,24 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Brain } from 'lucide-react'
-import { triggerN8n } from '@/services/answers.service'
-import TestHeader from '../components/TestHeader'
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import TestHeader from "../components/TestHeader";
 
 export default function ResultPage() {
-  const router = useRouter()
-  // const [userData, setUserData] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // useEffect(() => {
-  //   const storedUserData = localStorage.getItem('userData')
-  //   if (storedUserData) {
-  //     setUserData(JSON.parse(storedUserData))
-  //   }
-  // }, [])
-
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const handleAnswer = async () => {
-    // const testSession = sessionStorage.getItem('testSession')
-    // if(!testSession) {
-    //   return (console.log('gagal'))
-    // }
-    // const testSessionParsed = JSON.parse(testSession)
-    // const pesertaId = testSessionParsed.pesertaId
-    // const trigger = await triggerN8n(pesertaId)
-    // sessionStorage.clear()
     try {
-      const setLoading = setIsLoading(true)
-      router.push('/')
-    } catch(error) {
-      const setLoading = setIsLoading(false)
+      const setLoading = setIsLoading(true);
+      router.push("/");
+    } catch (error) {
+      const setLoading = setIsLoading(false);
     }
-  }
-
-  // if (!userData) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100">
-  //       <p className="text-gray-600 text-lg font-medium">Memuat data...</p>
-  //     </div>
-  //   )
-  // }
+  };
 
   useEffect(() => {
     document.title = "Result - Psychological Tests";
-  }, [])
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-slate-100">
@@ -61,28 +34,25 @@ export default function ResultPage() {
             Terima Kasih!
           </h2>
           <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-            Terima kasih telah menyelesaikan tes psikologi sebagai bagian dari proses rekrutmen.  
-            Hasil tes Anda akan dievaluasi oleh tim HR kami untuk mendukung proses seleksi.  
-            Mohon menunggu informasi selanjutnya dari pihak perusahaan.
+            Terima kasih telah menyelesaikan tes psikologi sebagai bagian dari
+            proses rekrutmen. Hasil tes Anda akan dievaluasi oleh tim HR kami
+            untuk mendukung proses seleksi. Mohon menunggu informasi selanjutnya
+            dari pihak perusahaan.
           </p>
 
           <div className="mt-6">
-            
             <button
               disabled={isLoading}
               onClick={() => handleAnswer()}
               className={`bg-gradient-to-r  text-white px-6 py-2.5 rounded-lg hover:shadow-md transition-all duration-200 ${
-                isLoading 
-                ? 'bg-slate-500'
-                : 'from-blue-600 to-indigo-600'
-                }`}
+                isLoading ? "bg-slate-500" : "from-blue-600 to-indigo-600"
+              }`}
             >
-              
-              {isLoading ? 'Memproses...' : 'Kembali ke halaman utama'}
+              {isLoading ? "Memproses..." : "Kembali ke halaman utama"}
             </button>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }

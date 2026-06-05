@@ -13,9 +13,10 @@ export function useClipboardPermissionGuard(checkCamera = false) {
 
     const checkAll = () => {
       const clipboardDenied = results.some((p) => p.state !== "granted");
-      const cameraDenied = checkCamera ? camStateRef.current !== "granted" : false;
+      const cameraDenied = checkCamera
+        ? camStateRef.current !== "granted"
+        : false;
       const micDenied = checkCamera ? micStateRef.current !== "granted" : false;
-      console.log("📋 clipboard:", clipboardDenied, "📷 camera:", cameraDenied, "🎤 mic:", micDenied);
       setShowModal(clipboardDenied || cameraDenied || micDenied);
     };
 
@@ -46,7 +47,6 @@ export function useClipboardPermissionGuard(checkCamera = false) {
           micStateRef.current = micPerm.state;
           checkAll();
         };
-
       } catch {
         camStateRef.current = "denied";
         micStateRef.current = "denied";

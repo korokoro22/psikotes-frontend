@@ -1,25 +1,25 @@
-'use client';
-import { ArrowLeft, Brain, Clock, ListChecks } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Modal from '@/app/components/Modal';
-import { getContohCfit3Service } from '@/services/questions.service';
-import TestHeader from '@/app/components/TestHeader';
-import { useAntiCheat } from '@/lib/useAntiCheat';
-import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
-import PermissionModal from '@/app/components/PermissionModal';
-import Image from 'next/image';
-import BackGuardModal from '@/app/components/BackGuardModal';
-import { useBackGuard } from '@/lib/useBackGuard';
-import { checkMoveTab } from '@/lib/checkMoveTab';
+"use client";
+import { Clock, ListChecks } from "lucide-react";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Modal from "@/app/components/Modal";
+import { getContohCfit3Service } from "@/services/questions.service";
+import TestHeader from "@/app/components/TestHeader";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard";
+import PermissionModal from "@/app/components/PermissionModal";
+import Image from "next/image";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { useBackGuard } from "@/lib/useBackGuard";
+import { checkMoveTab } from "@/lib/checkMoveTab";
 
 interface Question {
   id: number;
   images: string[];
   correctAnswer: string;
-  explanationRight: string,
-  explanationFalse: string
+  explanationRight: string;
+  explanationFalse: string;
 }
 
 interface Option {
@@ -30,172 +30,166 @@ interface Option {
 
 interface Questionz {
   imagePath: string;
-  options : Option[]
+  options: Option[];
 }
 
 type CfitAnswer = {
-  questionId: number
-  answers: string[]
-  subtest: number
-}
+  questionId: number;
+  answers: string[];
+  subtest: number;
+};
 
 export default function CFITSubtest3() {
   const { modalProps } = useBackGuard();
-  const router = useRouter()
-  const [resultText, setResultText] = useState<string>('')
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [question, setQuestion] = useState<Questionz[]>([])
-  // const [answers, setAnswers] = useState<string[]>([])
+  const router = useRouter();
+  const [resultText, setResultText] = useState<string>("");
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [question, setQuestion] = useState<Questionz[]>([]);
   const [answers, setAnswers] = useState<CfitAnswer[]>(
-          Array.from({ length: question.length}, (_, index) => ({
-            questionId: index + 1,
-            answers: [],
-            subtest: 1
-          }))
-        );
-  const [isChecked, setIsChecked] = useState<boolean | null>(false)
-  const [isModalOpen, setIsModalOpen] =useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  
+    Array.from({ length: question.length }, (_, index) => ({
+      questionId: index + 1,
+      answers: [],
+      subtest: 1,
+    })),
+  );
+  const [isChecked, setIsChecked] = useState<boolean | null>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const getRemainingTime = (): number => {
-        if (typeof window === "undefined") return EXAM_DURATION
-        const startTime = localStorage.getItem("examStartTime");
-        if (!startTime) return EXAM_DURATION;
-        const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        return EXAM_DURATION - elapsed; // bisa negatif = overtime
-    };
+    if (typeof window === "undefined") return EXAM_DURATION;
+    const startTime = localStorage.getItem("examStartTime");
+    if (!startTime) return EXAM_DURATION;
+    const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+    return EXAM_DURATION - elapsed;
+  };
 
-    const formatTime = (seconds: number) => {
-      const minutes = Math.floor(seconds / 60);
-      const remaining = seconds % 60;
-      return `${minutes}:${remaining.toString().padStart(2, '0')}`;
-    };
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remaining = seconds % 60;
+    return `${minutes}:${remaining.toString().padStart(2, "0")}`;
+  };
 
-    const EXAM_DURATION = 5 * 60;
+  const EXAM_DURATION = 5 * 60;
 
-    // Server-safe: selalu mulai dari EXAM_DURATION
-    const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
-    const [isReady, setIsReady] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
+  const [isReady, setIsReady] = useState(false);
 
-    // Jalankan hanya di client setelah hydration selesai
-    useEffect(() => {
-      const existing = localStorage.getItem("examStartTime");
-      if (!existing) {
-        localStorage.setItem("examStartTime", Date.now().toString());
-      }
+  useEffect(() => {
+    const existing = localStorage.getItem("examStartTime");
+    if (!existing) {
+      localStorage.setItem("examStartTime", Date.now().toString());
+    }
 
-      const remaining = getRemainingTime();
-      setTimeLeft(Math.max(0, remaining));
-      setIsReady(true);
-    }, []);
+    const remaining = getRemainingTime();
+    setTimeLeft(Math.max(0, remaining));
+    setIsReady(true);
+  }, []);
 
-    // Timer berjalan hanya setelah isReady
-    useEffect(() => {
-      if (!isReady) return;
-      if (timeLeft <= 0) {
-        handleTestComplete();
-        return;
-      }
-      const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearInterval(timer);
-    }, [timeLeft, isReady]);
+  useEffect(() => {
+    if (!isReady) return;
+    if (timeLeft <= 0) {
+      handleTestComplete();
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isReady]);
 
   const questions: Question[] = [
     {
       id: 1,
-      images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
+      images: ["q1-1.png", "q1-2.png", "q1-3.png", "q1-4.png"],
       correctAnswer: "B",
-      explanationRight: 'Benar karena opsi yang dipilih benar',
-      explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
+      explanationRight: "Benar karena opsi yang dipilih benar",
+      explanationFalse: "Salah karena opsi yang dipilih tidak tepat",
     },
     {
       id: 2,
-      images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
+      images: ["q1-1.png", "q1-2.png", "q1-3.png", "q1-4.png"],
       correctAnswer: "C",
-      explanationRight: 'Benar karena opsi yang dipilih benar',
-      explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
+      explanationRight: "Benar karena opsi yang dipilih benar",
+      explanationFalse: "Salah karena opsi yang dipilih tidak tepat",
     },
     {
       id: 3,
-      images: ['q1-1.png', 'q1-2.png', 'q1-3.png', 'q1-4.png'],
+      images: ["q1-1.png", "q1-2.png", "q1-3.png", "q1-4.png"],
       correctAnswer: "F",
-      explanationRight: 'Benar karena opsi yang dipilih benar',
-      explanationFalse: 'Salah karena opsi yang dipilih tidak tepat'
-    }
-  ]
+      explanationRight: "Benar karena opsi yang dipilih benar",
+      explanationFalse: "Salah karena opsi yang dipilih tidak tepat",
+    },
+  ];
 
   const handleAnswer = (answersIndex: string) => {
-    setAnswers(prev => {
-        const updated = [...prev];
-        
-        // Toggle: jika klik jawaban yang sama, hapus. Jika beda, simpan yang baru.
-        const currentAnswers = prev[currentQuestion]?.answers[0];
-        
-        updated[currentQuestion] = {
-          questionId: currentQuestion + 1,
-          answers: currentAnswers === answersIndex ? [] : [answersIndex], // ✅ bandingkan dengan answersIndex
-          subtest: 1
-        };
+    setAnswers((prev) => {
+      const updated = [...prev];
+      const currentAnswers = prev[currentQuestion]?.answers[0];
 
-        return updated;
-      });
-  }
+      updated[currentQuestion] = {
+        questionId: currentQuestion + 1,
+        answers: currentAnswers === answersIndex ? [] : [answersIndex],
+        subtest: 1,
+      };
+
+      return updated;
+    });
+  };
 
   const checkAnswer = (questionIndex: number) => {
-    const answer = answers[questionIndex]
-    
-        if(answer !== undefined) {
-          setIsChecked(true)
-        }
-    
-        if (answer.answers[0] === questions[questionIndex]?.correctAnswer && answers[currentQuestion].answers.length > 0) {
-          setResultText(questions[questionIndex].explanationRight)
-      } else if (answer.answers[0] !== questions[questionIndex]?.correctAnswer && answers[currentQuestion].answers.length > 0) {
-          setResultText(questions[questionIndex].explanationFalse)
-      }
-  }
+    const answer = answers[questionIndex];
+
+    if (answer !== undefined) {
+      setIsChecked(true);
+    }
+
+    if (
+      answer.answers[0] === questions[questionIndex]?.correctAnswer &&
+      answers[currentQuestion].answers.length > 0
+    ) {
+      setResultText(questions[questionIndex].explanationRight);
+    } else if (
+      answer.answers[0] !== questions[questionIndex]?.correctAnswer &&
+      answers[currentQuestion].answers.length > 0
+    ) {
+      setResultText(questions[questionIndex].explanationFalse);
+    }
+  };
 
   const resetState = () => {
-      setResultText('')
-      setIsChecked(false)
-      setAnswers([])
-    }
+    setResultText("");
+    setIsChecked(false);
+    setAnswers([]);
+  };
 
   const handleTestComplete = () => {
     try {
-      const setLoading = setIsLoading(true)
+      const setLoading = setIsLoading(true);
       const startTime = Date.now();
       localStorage.setItem("examStartTime", startTime.toString());
-      router.push('/tests/cfit/subtest3/test')
+      router.push("/tests/cfit/subtest3/test");
     } catch (error) {
-      const setLoading = setIsLoading(false)
-    } 
-  }
+      const setLoading = setIsLoading(false);
+    }
+  };
 
   const handleNext = () => {
-      resetState()
-      setCurrentQuestion(prev => prev + 1)
-  }
-
-  useEffect(() => {
-    console.log('answers berubah:', answers);
-    }, [answers]);
+    resetState();
+    setCurrentQuestion((prev) => prev + 1);
+  };
 
   const handleModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   useEffect(() => {
     const getCfit3Contoh = async () => {
       try {
-        const getQuestion = await getContohCfit3Service()
-        setQuestion(getQuestion.data.data)
-      } catch (error) {
-          console.log('gagal')
-      }
-    }
-    getCfit3Contoh()
-  }, [])
+        const getQuestion = await getContohCfit3Service();
+        setQuestion(getQuestion.data.data);
+      } catch (error) {}
+    };
+    getCfit3Contoh();
+  }, []);
 
   useEffect(() => {
     if (question.length > 0 && answers.length === 0) {
@@ -203,8 +197,8 @@ export default function CFITSubtest3() {
         Array.from({ length: question.length }, (_, index) => ({
           questionId: index + 1,
           answers: [],
-          subtest: 1
-        }))
+          subtest: 1,
+        })),
       );
     }
   }, [question]);
@@ -213,92 +207,113 @@ export default function CFITSubtest3() {
 
   useEffect(() => {
     document.title = "Instructions - Psychological Tests";
-  }, [])
+  }, []);
 
   const { showModal } = useClipboardPermissionGuard();
 
-  const [testsCount, setTestsCount] = useState<number | null>(null)
+  const [testsCount, setTestsCount] = useState<number | null>(null);
 
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
+    const testSession = sessionStorage.getItem("testSession");
     if (!testSession) {
-      console.log('gagal')
-      return
+      return;
     }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
 
-  checkMoveTab()
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
 
-  return(
-    <div className='font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col select-none'>
-      
-      <header className='bg-white shadow-sm py-4 sticky top-0 z-10'>
+  checkMoveTab();
+
+  return (
+    <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 flex flex-col select-none">
+      <header className="bg-white shadow-sm py-4 sticky top-0 z-10">
         <TestHeader />
       </header>
 
-      <main className='flex-grow container mx-auto px-4 py-10'>
+      <main className="flex-grow container mx-auto px-4 py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-8"
         >
-          <section className='mb-10'>
-            <div className='flex items-center mb-8 justify-between'>
+          <section className="mb-10">
+            <div className="flex items-center mb-8 justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
                   <ListChecks className="text-blue-600" size={22} />
-                  Petunjuk Subtes 3 <span className='text-xl text-slate-700 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span>
+                  Petunjuk Subtes 3{" "}
+                  <span className="text-xl text-slate-700 font-semibold ml-3">
+                    (TES KE-{testsCount ?? "..."})
+                  </span>
                 </h2>
               </div>
-              
+
               <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-base tracking-wider border border-slate-200">
                 <span>{isReady ? formatTime(timeLeft) : "--:--"}</span>
               </div>
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
               <p className="text-gray-700 mb-4">
-                Pada subtes ini, Anda dihadapkan pada persoalan matriks bergambar. Baca dengan saksama petunjuk di bawah ini:
+                Pada subtes ini, Anda dihadapkan pada persoalan matriks
+                bergambar. Baca dengan saksama petunjuk di bawah ini:
               </p>
               <ul className="list-disc list-inside space-y-2 text-gray-700">
-                <li>Setiap soal menyajikan matriks 4 kotak dengan 1 bagian yang dihilangkan.</li>
-                <li>Analisis hubungan gambar secara mendatar (kiri-kanan) dan menurun (atas-bawah).</li>
-                <li>Tentukan kotak keempat yang paling tepat dari pilihan A-E.</li>
-                <li>Klik gambar untuk memilih jawaban.</li>
-                <li>Jika ingin mengubah, cukup klik pada gambar pilihan yang lain.</li>
                 <li>
-                  <Clock className="inline-block text-blue-500 mr-1" size={16} />
-                  Waktu pengerjaan: <span className="font-semibold">3 menit</span>
+                  Setiap soal menyajikan matriks 4 kotak dengan 1 bagian yang
+                  dihilangkan.
                 </li>
-                <li>Jumlah soal: <span className="font-semibold">13 butir</span></li>
+                <li>
+                  Analisis hubungan gambar secara mendatar (kiri-kanan) dan
+                  menurun (atas-bawah).
+                </li>
+                <li>
+                  Tentukan kotak keempat yang paling tepat dari pilihan A-E.
+                </li>
+                <li>Klik gambar untuk memilih jawaban.</li>
+                <li>
+                  Jika ingin mengubah, cukup klik pada gambar pilihan yang lain.
+                </li>
+                <li>
+                  <Clock
+                    className="inline-block text-blue-500 mr-1"
+                    size={16}
+                  />
+                  Waktu pengerjaan:{" "}
+                  <span className="font-semibold">3 menit</span>
+                </li>
+                <li>
+                  Jumlah soal: <span className="font-semibold">13 butir</span>
+                </li>
               </ul>
             </div>
           </section>
 
-          <section className='mb-10'>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
+          <section className="mb-10">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              Contoh Soal
+            </h2>
             <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
               <p className="text-sm text-gray-600 mb-4">
                 Jawab soal berikut dengan teliti dan cepat.
               </p>
               <div className="flex justify-center items-center bg-white rounded-lg p-5 sm:p-8 border">
-                <div className='w-full flex flex-col gap-3 text-gray-400 italic'>
+                <div className="w-full flex flex-col gap-3 text-gray-400 italic">
                   <div>
-                    <p>Perhatikan rangkaian gambar berikut dan tentukan gambar yang tepat untuk mengisi kotak terakhir:</p>
+                    <p>
+                      Perhatikan rangkaian gambar berikut dan tentukan gambar
+                      yang tepat untuk mengisi kotak terakhir:
+                    </p>
                   </div>
-                  <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-4 mb-6 text-gray-400 italic m-auto"> 
-                    <div
-                      className="w-50 aspect-square bg-slate-100 rounded-xl mx-auto flex items-center justify-center text-slate-400 border border-slate-200"
-                    >
-                      <img 
-                        src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`} 
+                  <div className="w-full grid grid-cols-1 md:grid-cols-1 gap-4 mb-6 text-gray-400 italic m-auto">
+                    <div className="w-50 aspect-square bg-slate-100 rounded-xl mx-auto flex items-center justify-center text-slate-400 border border-slate-200">
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${question[currentQuestion]?.imagePath}`}
                         alt=""
-                        className='w-full h-full rounded-lg' />
+                        className="w-full h-full rounded-lg"
+                      />
                     </div>
-                    
                   </div>
                   <div className="text-center text-slate-700 mb-6">
                     Pilih gambar yang paling tepat untuk melengkapi pola:
@@ -308,84 +323,82 @@ export default function CFITSubtest3() {
                     {question[currentQuestion]?.options?.map((option) => (
                       <button
                         key={option.label}
-                        disabled= {isChecked === true}
-                        onClick={()=> handleAnswer(option.label)}
+                        disabled={isChecked === true}
+                        onClick={() => handleAnswer(option.label)}
                         className={`aspect-square font-semibold rounded-xl flex items-center 
                             justify-center transition-all border-2 border-slate-200 ${
-                            // 1. Sudah dicek & ini jawaban benar
-                            isChecked && option.label === questions[currentQuestion].correctAnswer
-                              ? 'bg-green-600 text-white border-green-600 scale-105 shadow'
-                            // 2. Sudah dicek & ini jawaban yang dipilih tapi salah
-                            : isChecked && answers[currentQuestion]?.answers[0] === option.label
-                              ? 'bg-red-600 text-white border-red-600 scale-105 shadow'
-                            // 3. Belum dicek & ini jawaban yang dipilih (biru) ✅
-                            : answers[currentQuestion]?.answers[0] === option.label
-                              ? 'bg-blue-600 text-white border-blue-600 scale-105 shadow'
-                            // 4. Default
-                            : 'hover:border-blue-400 hover:scale-[1.02] border-slate-200 bg-slate-50'
-                          }`}
-                        
+                              isChecked &&
+                              option.label ===
+                                questions[currentQuestion].correctAnswer
+                                ? "bg-green-600 text-white border-green-600 scale-105 shadow"
+                                : isChecked &&
+                                    answers[currentQuestion]?.answers[0] ===
+                                      option.label
+                                  ? "bg-red-600 text-white border-red-600 scale-105 shadow"
+                                  : answers[currentQuestion]?.answers[0] ===
+                                      option.label
+                                    ? "bg-blue-600 text-white border-blue-600 scale-105 shadow"
+                                    : "hover:border-blue-400 hover:scale-[1.02] border-slate-200 bg-slate-50"
+                            }`}
                       >
-                        <img 
-                            src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`} 
-                            // src={option.imagePath} 
-                            alt={`Option ${option.label}`}
-                            className="w-full h-full object-contain p-2 rounded-xl"
-                          />
+                        <img
+                          src={`${process.env.NEXT_PUBLIC_CDN_BASE_URL}${option.imagePath}`}
+                          alt={`Option ${option.label}`}
+                          className="w-full h-full object-contain p-2 rounded-xl"
+                        />
                       </button>
                     ))}
                   </div>
-                <div className='flex justify-center sm:justify-start'>
-                      <button 
-                        onClick={() => checkAnswer(currentQuestion)} 
-                        disabled = {isChecked === true || answers[currentQuestion]?.answers.length <= 0} 
-                        className={`px-3 py-2 sm:px-5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 shadow hover:scale-[1.02] active:scale-95 transition${
-                          isChecked === true || answers[currentQuestion]?.answers.length <= 0
-                          ? ' text-gray-400 hover:bg-blue-900 bg-blue-900 active:scale-100 hover:scale-none'
-                          : ' text-white'
-                        }`} >Cek Jawaban</button>
-                    </div>
+                  <div className="flex justify-center sm:justify-start">
+                    <button
+                      onClick={() => checkAnswer(currentQuestion)}
+                      disabled={
+                        isChecked === true ||
+                        answers[currentQuestion]?.answers.length <= 0
+                      }
+                      className={`px-3 py-2 sm:px-5 sm:py-2 rounded-md sm:rounded-lg text-xs sm:text-sm font-medium bg-blue-600 hover:bg-blue-700 shadow hover:scale-[1.02] active:scale-95 transition${
+                        isChecked === true ||
+                        answers[currentQuestion]?.answers.length <= 0
+                          ? " text-gray-400 hover:bg-blue-900 bg-blue-900 active:scale-100 hover:scale-none"
+                          : " text-white"
+                      }`}
+                    >
+                      Cek Jawaban
+                    </button>
+                  </div>
 
-                    {/* <div className={` block ${
-                        isChecked == true && answers[currentQuestion]?.answers.length == 0 
-                        ? ''
-                        : 'hidden'
-                      }`}>
-                        <p className='bg-red-200 w-2/7 text-center border border-red-400 text-red-500 rounded-lg py-1 text-sm'>Harap pilih jawaban terlebih dahulu</p>
-                    </div> */}
-
-                    
                   <div>
                     <p>{resultText}</p>
                   </div>
 
                   <div className="flex justify-between items-center">
-                      <button
-                        onClick={() => 
-                          {
-                            setCurrentQuestion(prev => Math.max(0, prev - 1))
-                            resetState()
-                          }}
-                        disabled={currentQuestion === 0}
-                        className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
-                          currentQuestion === 0
-                            ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
-                            : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
-                        }`}
-                      >
-                        ← Sebelumnya
-                      </button>
+                    <button
+                      onClick={() => {
+                        setCurrentQuestion((prev) => Math.max(0, prev - 1));
+                        resetState();
+                      }}
+                      disabled={currentQuestion === 0}
+                      className={`px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg border font-medium transition ${
+                        currentQuestion === 0
+                          ? "opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200"
+                          : "bg-white border-slate-300 hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      ← Sebelumnya
+                    </button>
 
-                      <button
-                        onClick={
-                          currentQuestion === question.length - 1
-                            ? handleModal
-                            : handleNext
-                        }
-                        className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
-                      >
-                        {currentQuestion === question.length - 1 ? 'Selesai' : 'Berikutnya →'}
-                      </button>
+                    <button
+                      onClick={
+                        currentQuestion === question.length - 1
+                          ? handleModal
+                          : handleNext
+                      }
+                      className="px-4 sm:px-5 py-2 text-xs sm:text-sm rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+                    >
+                      {currentQuestion === question.length - 1
+                        ? "Selesai"
+                        : "Berikutnya →"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -393,74 +406,79 @@ export default function CFITSubtest3() {
           </section>
 
           <div className="text-center space-x-4">
-              <button 
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
-                onClick={handleModal}
-              >
-                Mulai Subtes 3
-              </button>
+            <button
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
+              onClick={handleModal}
+            >
+              Mulai Subtes 3
+            </button>
           </div>
         </motion.div>
       </main>
-      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-        <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-        <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-        <div className='flex gap-x-3 justify-evenly mt-4'>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan
+          dan sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Pastikan koneksi internet stabil dan Anda berada di lingkungan yang
+          kondusif.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
           <button
             className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-                  isLoading
-                  ? 'bg-slate-400'
-                  : 'from-blue-600 to-indigo-600'
-                  }`}
-            onClick={()=> setIsModalOpen(false)}
+              isLoading ? "bg-slate-400" : "from-blue-600 to-indigo-600"
+            }`}
+            onClick={() => setIsModalOpen(false)}
             disabled={isLoading}
           >
             Kembali
           </button>
           {isLoading ? (
             <button
-              className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+              className="disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
               aria-label="Mulai CFIT Subtes 1"
               onClick={handleTestComplete}
               disabled={isLoading}
-              >
+            >
               Mohon Tunggu...
             </button>
-          ):(
-            <button 
-              className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
+          ) : (
+            <button
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
               onClick={handleTestComplete}
             >
               Mulai Tes
             </button>
           )}
-          
         </div>
       </Modal>
-      <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
-            >
-              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
-              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedAcces.png"
-                  width={200}
-                  height={200}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
-              </div>
-            </div>
-          </PermissionModal>
-          <BackGuardModal {...modalProps} />
+      <PermissionModal isOpen={showModal} onClose={() => {}}>
+        <div className="text-gray-700">
+          <p className="font-bold text-xl mb-3">PERHATIAN</p>
+          <p className="text-sm">
+            Harap berikan izin untuk akses clipboard untuk mengakses halaman tes
+          </p>
+          <div className="flex justify-center my-4">
+            <Image
+              src="/assets/blockedAcces.png"
+              width={200}
+              height={200}
+              className="rounded-lg "
+              alt=""
+            />
+          </div>
+          <div className="text-left ml-8">
+            <ol className=" list-decimal flex flex-col gap-y-1">
+              <li>
+                Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on
+              </li>
+              <li>Reload Kembali halaman (F5)</li>
+            </ol>
+          </div>
+        </div>
+      </PermissionModal>
+      <BackGuardModal {...modalProps} />
     </div>
-  )
+  );
 }

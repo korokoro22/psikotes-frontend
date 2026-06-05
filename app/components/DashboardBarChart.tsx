@@ -1,5 +1,4 @@
-'use client'
-
+"use client";
 
 import {
   Chart as ChartJS,
@@ -7,67 +6,69 @@ import {
   LinearScale,
   BarElement,
   Tooltip,
-  Legend
-} from 'chart.js'
-import { Bar } from 'react-chartjs-2'
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Tooltip,
-  Legend
-)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function DashboardBarChart() {
+  const labels = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
 
-    const labels = [
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
-        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ]
-
-    const data = {
+  const data = {
     labels: labels,
     datasets: [
       {
-        label: 'Peserta',
+        label: "Peserta",
         data: [2, 5, 8, 1, 9, 4, 7, 4, 2, 8, 5, 7],
-        backgroundColor: 'rgba(59, 130, 246, 0.7)' // biru
+        backgroundColor: "rgba(59, 130, 246, 0.7)", // biru
       },
-    ]
-  }
+    ],
+  };
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top' as const
+        position: "top" as const,
       },
       tooltip: {
-        enabled: true
-      }
+        enabled: true,
+      },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Kolom'
-        }
+          text: "Kolom",
+        },
       },
       y: {
         title: {
           display: true,
-          text: 'Frekuensi'
+          text: "Frekuensi",
         },
-        beginAtZero: true
-      }
-    }
-  }
-    
+        beginAtZero: true,
+      },
+    },
+  };
 
-    return(
-        <div>
-            <Bar data={data} options={options}/>
-        </div>
-    )
+  return (
+    <div>
+      <Bar data={data} options={options} />
+    </div>
+  );
 }

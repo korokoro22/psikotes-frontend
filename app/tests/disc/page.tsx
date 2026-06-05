@@ -1,79 +1,82 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Brain, Info, Clock, ListChecks } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import Modal from '@/app/components/Modal';
-import TestHeader from '@/app/components/TestHeader';
-import { useAntiCheat } from '@/lib/useAntiCheat';
-import { useClipboardPermissionGuard } from '@/lib/useClipboardPermissionGuard';
-import PermissionModal from '@/app/components/PermissionModal';
-import Image from 'next/image';
-import { useBackGuard } from '@/lib/useBackGuard';
-import BackGuardModal from '@/app/components/BackGuardModal';
-import { checkMoveTab } from '@/lib/checkMoveTab';
+import { useRouter } from "next/navigation";
+import { Info, Clock, ListChecks } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import Modal from "@/app/components/Modal";
+import TestHeader from "@/app/components/TestHeader";
+import { useAntiCheat } from "@/lib/useAntiCheat";
+import { useClipboardPermissionGuard } from "@/lib/useClipboardPermissionGuard";
+import PermissionModal from "@/app/components/PermissionModal";
+import Image from "next/image";
+import { useBackGuard } from "@/lib/useBackGuard";
+import BackGuardModal from "@/app/components/BackGuardModal";
+import { checkMoveTab } from "@/lib/checkMoveTab";
 
 interface WordGroup {
   id: number;
   words: {
     text: string;
-    type: 'D' | 'I' | 'S' | 'C';
+    type: "D" | "I" | "S" | "C";
   }[];
 }
 
 interface DiscQuestion {
-  id: number
-  questionIndex: number
+  id: number;
+  questionIndex: number;
   questions: {
-    sentences: string
-    optionIndex: number
-  }[]
+    sentences: string;
+    optionIndex: number;
+  }[];
 }
 
 interface DiscAnswers {
-  
   most: {
-    questionIndex: number
-    p1: number
-    p2: number
-    p3: number
-    p4: number
-  }[]
+    questionIndex: number;
+    p1: number;
+    p2: number;
+    p3: number;
+    p4: number;
+  }[];
   least: {
-    questionIndex: number
-    k1: number
-    k2: number
-    k3: number
-    k4: number
-  }[]
+    questionIndex: number;
+    k1: number;
+    k2: number;
+    k3: number;
+    k4: number;
+  }[];
 }
 
 function IconSeries() {
   return (
     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="2" y="4" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="9" y="8" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-      <rect x="16" y="12" width="6" height="6" rx="1.2" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-function IconPersonality() {
-  return (
-    <svg
-      className="w-6 h-6 text-blue-600"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden
-    >
-      <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M4 20c0-4 4-6 8-6s8 2 8 6"
+      <rect
+        x="2"
+        y="4"
+        width="6"
+        height="6"
+        rx="1.2"
         stroke="currentColor"
         strokeWidth="1.5"
-        strokeLinecap="round"
+      />
+      <rect
+        x="9"
+        y="8"
+        width="6"
+        height="6"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="16"
+        y="12"
+        width="6"
+        height="6"
+        rx="1.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
       />
     </svg>
   );
@@ -81,139 +84,96 @@ function IconPersonality() {
 
 export default function DISCInstructionPage() {
   const { modalProps } = useBackGuard();
-  
+
   const router = useRouter();
   const [currentGroup, setCurrentGroup] = useState(0);
   const [answers, setAnswers] = useState<{
-    most: { groupId: number; questionIndex:number}[];
-    least: { groupId: number; questionIndex:number}[];
+    most: { groupId: number; questionIndex: number }[];
+    least: { groupId: number; questionIndex: number }[];
   }>({ most: [], least: [] });
 
-  // const [answers, setAnswers] = useState<DiscAnswers>({
-  //   most: [],
-  //   least: []
-  // })
-
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getRemainingTime = (): number => {
-        if (typeof window === "undefined") return EXAM_DURATION
-        const startTime = localStorage.getItem("examStartTime");
-        if (!startTime) return EXAM_DURATION;
-        const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        return EXAM_DURATION - elapsed; // bisa negatif = overtime
-    };
+    if (typeof window === "undefined") return EXAM_DURATION;
+    const startTime = localStorage.getItem("examStartTime");
+    if (!startTime) return EXAM_DURATION;
+    const elapsed = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+    return EXAM_DURATION - elapsed;
+  };
 
-    const formatTime = (seconds: number) => {
-      const minutes = Math.floor(seconds / 60);
-      const remaining = seconds % 60;
-      return `${minutes}:${remaining.toString().padStart(2, '0')}`;
-    };
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remaining = seconds % 60;
+    return `${minutes}:${remaining.toString().padStart(2, "0")}`;
+  };
 
-    const EXAM_DURATION = 5 * 60;
+  const EXAM_DURATION = 5 * 60;
 
-    // Server-safe: selalu mulai dari EXAM_DURATION
-    const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
-    const [isReady, setIsReady] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(EXAM_DURATION);
+  const [isReady, setIsReady] = useState(false);
 
-    // Jalankan hanya di client setelah hydration selesai
-    useEffect(() => {
-      const existing = localStorage.getItem("examStartTime");
-      if (!existing) {
-        localStorage.setItem("examStartTime", Date.now().toString());
-      }
+  useEffect(() => {
+    const existing = localStorage.getItem("examStartTime");
+    if (!existing) {
+      localStorage.setItem("examStartTime", Date.now().toString());
+    }
 
-      const remaining = getRemainingTime();
-      setTimeLeft(Math.max(0, remaining));
-      setIsReady(true);
-    }, []);
+    const remaining = getRemainingTime();
+    setTimeLeft(Math.max(0, remaining));
+    setIsReady(true);
+  }, []);
 
-    // Timer berjalan hanya setelah isReady
-    useEffect(() => {
-      if (!isReady) return;
-      if (timeLeft <= 0) {
-        handleTestComplete();
-        return;
-      }
-      const timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
-      return () => clearInterval(timer);
-    }, [timeLeft, isReady]);
+  useEffect(() => {
+    if (!isReady) return;
+    if (timeLeft <= 0) {
+      handleTestComplete();
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, isReady]);
 
-  const discQuestion:DiscQuestion[] = [
+  const discQuestion: DiscQuestion[] = [
     {
       id: 0,
       questionIndex: 1,
       questions: [
-        { sentences: 'Mudah bergaul', optionIndex: 1 },
-        { sentences: 'Suka menyendiri', optionIndex: 2 },
-        { sentences: 'Kurang nyaman di kerumunan', optionIndex: 3 },
-        { sentences: 'Nyaman di keramaian asalkan dengan teman', optionIndex: 4 }
+        { sentences: "Mudah bergaul", optionIndex: 1 },
+        { sentences: "Suka menyendiri", optionIndex: 2 },
+        { sentences: "Kurang nyaman di kerumunan", optionIndex: 3 },
+        {
+          sentences: "Nyaman di keramaian asalkan dengan teman",
+          optionIndex: 4,
+        },
       ],
     },
     {
       id: 1,
       questionIndex: 2,
       questions: [
-        { sentences: 'Rendah hati, Sederhana', optionIndex: 1 },
-        { sentences: 'Ingin Kemajuan', optionIndex: 2 },
-        { sentences: 'Terbuka memperlihatkan perasaan', optionIndex: 3 },
-        { sentences: 'Puas dengan segalanya', optionIndex: 4 }
+        { sentences: "Rendah hati, Sederhana", optionIndex: 1 },
+        { sentences: "Ingin Kemajuan", optionIndex: 2 },
+        { sentences: "Terbuka memperlihatkan perasaan", optionIndex: 3 },
+        { sentences: "Puas dengan segalanya", optionIndex: 4 },
       ],
-    }
-  ]
-  
-  // const wordGroups: WordGroup[] = [
-  //   {
-  //     id: 1,
-  //     words: [
-  //       { text: 'Tegas', type: 'D' },
-  //       { text: 'Menyenangkan', type: 'I' },
-  //       { text: 'Setia', type: 'S' },
-  //       { text: 'Teliti', type: 'C' },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     words: [
-  //       { text: 'Ambisius', type: 'D' },
-  //       { text: 'Optimis', type: 'I' },
-  //       { text: 'Sabar', type: 'S' },
-  //       { text: 'Perfeksionis', type: 'C' },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     words: [
-  //       { text: 'Tegas', type: 'D' },
-  //       { text: 'Menyenangkan', type: 'I' },
-  //       { text: 'Setia', type: 'S' },
-  //       { text: 'Teliti', type: 'C' },
-  //     ],
-  //   },
-  // ];
-
-  useEffect(() => {
-          console.log('current group:', currentGroup);
-          }, [currentGroup]);
-
-  useEffect(() => {
-          console.log('current group:', answers);
-          }, [answers]);
+    },
+  ];
 
   const handleTestComplete = () => {
     try {
-      const setLoading = setIsLoading(true)
+      const setLoading = setIsLoading(true);
       const startTime = Date.now();
       localStorage.setItem("examStartTime", startTime.toString());
-      router.push('/tests/disc/test');
-    } catch(error) {
-      const setLoading = setIsLoading(false)
+      router.push("/tests/disc/test");
+    } catch (error) {
+      const setLoading = setIsLoading(false);
     }
   };
 
-  const handleSelection = (type: 'most' | 'least', questionIndex: number) => {
-    setAnswers(prev => {
+  const handleSelection = (type: "most" | "least", questionIndex: number) => {
+    setAnswers((prev) => {
       const updated = {
         most: [...prev.most],
         least: [...prev.least],
@@ -222,30 +182,26 @@ export default function DISCInstructionPage() {
       const currentMost = updated.most[currentGroup];
       const currentLeast = updated.least[currentGroup];
 
-      // TOGGLE OFF (klik ulang)
       if (
-        (type === 'most' && currentMost?.questionIndex === questionIndex) ||
-        (type === 'least' && currentLeast?.questionIndex === questionIndex)
+        (type === "most" && currentMost?.questionIndex === questionIndex) ||
+        (type === "least" && currentLeast?.questionIndex === questionIndex)
       ) {
-        if (type === 'most') delete updated.most[currentGroup];
+        if (type === "most") delete updated.most[currentGroup];
         else delete updated.least[currentGroup];
         return updated;
       }
 
-      // TIDAK BOLEH MOST & LEAST DI WORD YANG SAMA
       if (
-        (type === 'most' && currentLeast?.questionIndex === questionIndex) ||
-        (type === 'least' && currentMost?.questionIndex === questionIndex)
+        (type === "most" && currentLeast?.questionIndex === questionIndex) ||
+        (type === "least" && currentMost?.questionIndex === questionIndex)
       ) {
         return prev;
       }
 
-      // HANYA SATU MOST & SATU LEAST
-      if (type === 'most' && currentMost) return prev;
-      if (type === 'least' && currentLeast) return prev;
+      if (type === "most" && currentMost) return prev;
+      if (type === "least" && currentLeast) return prev;
 
-      // SIMPAN PILIHAN
-      if (type === 'most') {
+      if (type === "most") {
         updated.most[currentGroup] = {
           groupId: currentGroup,
           questionIndex: questionIndex,
@@ -262,40 +218,39 @@ export default function DISCInstructionPage() {
   };
 
   const resetState = () => {
-      setAnswers({most: [], least: []})
-    }
+    setAnswers({ most: [], least: [] });
+  };
 
   const handleNext = () => {
-    resetState()
-    setCurrentGroup(prev => prev + 1)
-  }
+    resetState();
+    setCurrentGroup((prev) => prev + 1);
+  };
 
   const handleModal = () => {
-    setIsModalOpen(true)
-  }
+    setIsModalOpen(true);
+  };
 
   useAntiCheat({ mode: "silent" });
 
   useEffect(() => {
     document.title = "Instructions - Psychological Tests";
-  }, [])
+  }, []);
 
-  const { showModal } = useClipboardPermissionGuard()
+  const { showModal } = useClipboardPermissionGuard();
 
-  const [testsCount, setTestsCount] = useState<number | null>(null)
-  
+  const [testsCount, setTestsCount] = useState<number | null>(null);
+
   useEffect(() => {
-    const testSession = sessionStorage.getItem('testSession')
+    const testSession = sessionStorage.getItem("testSession");
     if (!testSession) {
-      console.log('gagal')
-      return
+      return;
     }
-    
-    const testSessionParsed = JSON.parse(testSession)
-    setTestsCount(testSessionParsed.currentIndex + 1)
-  }, [])
 
-  checkMoveTab()
+    const testSessionParsed = JSON.parse(testSession);
+    setTestsCount(testSessionParsed.currentIndex + 1);
+  }, []);
+
+  checkMoveTab();
 
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-red-50 to-indigo-100 select-none">
@@ -306,7 +261,7 @@ export default function DISCInstructionPage() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-10">
-      <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -317,17 +272,20 @@ export default function DISCInstructionPage() {
             <div className="">
               {/* Breadcrumb */}
               <div className="mb-4">
-                <div className='flex items-center mb-8 justify-between'>
+                <div className="flex items-center mb-8 justify-between">
                   <div>
                     <h2 className="text-2xl md:text-3xl font-bold text-slate-800">
-                      Tes Psikotes <span className='text-xl text-slate-700 font-semibold ml-3'>(TES KE-{testsCount ?? '...'})</span>
+                      Tes Psikotes{" "}
+                      <span className="text-xl text-slate-700 font-semibold ml-3">
+                        (TES KE-{testsCount ?? "..."})
+                      </span>
                     </h2>
                   </div>
                   <div className="mt-4 md:mt-0 bg-slate-100 text-slate-800 px-3 py-1 rounded-xl font-mono text-lg tracking-wider border border-slate-200">
                     <span>{isReady ? formatTime(timeLeft) : "--:--"}</span>
                   </div>
                 </div>
-                
+
                 {/* <p className="mt-2 text-sm text-slate-600">
                   Tes untuk mengenali kecenderungan kepribadian berdasarkan empat tipe utama:
                   <strong> Dominance (D)</strong>, <strong> Influence (I)</strong>,{' '}
@@ -352,7 +310,9 @@ export default function DISCInstructionPage() {
                     <Info className="w-5 h-5" />
                   </div>
                   <div className="text-sm">
-                    <div className="text-slate-800 font-medium">Jumlah Pernyataan</div>
+                    <div className="text-slate-800 font-medium">
+                      Jumlah Pernyataan
+                    </div>
                     <div className="text-slate-600">24 pernyataan</div>
                   </div>
                 </div>
@@ -372,7 +332,9 @@ export default function DISCInstructionPage() {
                   </div>
                   <div className="text-sm">
                     <div className="text-slate-800 font-medium">Format</div>
-                    <div className="text-slate-600">Verbal • Teks & Pernyataan </div>
+                    <div className="text-slate-600">
+                      Verbal • Teks & Pernyataan{" "}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -386,19 +348,30 @@ export default function DISCInstructionPage() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
                   <p className="text-gray-700 mb-4">
-                    Pada tes ini, Anda akan diberikan sejumlah kelompok pernyataan yang menggambarkan sifat
-                    atau perilaku tertentu. Setiap kelompok berisi empat pernyataan.
+                    Pada tes ini, Anda akan diberikan sejumlah kelompok
+                    pernyataan yang menggambarkan sifat atau perilaku tertentu.
+                    Setiap kelompok berisi empat pernyataan.
                   </p>
                   <ul className="list-disc list-inside space-y-2 text-gray-700">
-                    <li>Pilih satu pernyataan yang paling menggambarkan diri Anda (Paling Sesuai).</li>
-                    <li>Pilih satu pernyataan yang paling tidak menggambarkan diri Anda (Kurang Sesuai).</li>
+                    <li>
+                      Pilih satu pernyataan yang paling menggambarkan diri Anda
+                      (Paling Sesuai).
+                    </li>
+                    <li>
+                      Pilih satu pernyataan yang paling tidak menggambarkan diri
+                      Anda (Kurang Sesuai).
+                    </li>
                     {/* <li>
                       Setiap pilihan akan membantu menentukan kecenderungan kepribadian Anda
                       berdasarkan empat dimensi utama: D, I, S, dan C.
                     </li> */}
                     <li>
-                      <Clock className="inline-block text-blue-500 mr-1" size={16} />
-                      Waktu pengerjaan: <span className="font-semibold">± 10–15 menit</span>
+                      <Clock
+                        className="inline-block text-blue-500 mr-1"
+                        size={16}
+                      />
+                      Waktu pengerjaan:{" "}
+                      <span className="font-semibold">± 10–15 menit</span>
                     </li>
                   </ul>
                 </div>
@@ -406,13 +379,17 @@ export default function DISCInstructionPage() {
 
               {/* Section: Contoh Soal */}
               <section className="mb-10">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-6">Contoh Soal</h2>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+                  Contoh Soal
+                </h2>
                 <div className="border border-gray-200 rounded-xl p-4 md:p-6 bg-gray-50">
                   <p className="text-sm text-gray-600 mb-4">
-                    Berikut contoh tampilan soal. Pilih satu pernyataan yang paling sesuai dan kurang sesuai dalam menggambarkan diri Anda.
+                    Berikut contoh tampilan soal. Pilih satu pernyataan yang
+                    paling sesuai dan kurang sesuai dalam menggambarkan diri
+                    Anda.
                   </p>
                   <div className="flex justify-center items-center flex-col bg-white rounded-lg p-5 md:p-8 border text-gray-400 italic">
-                    <div className='w-full'>
+                    <div className="w-full">
                       <AnimatePresence mode="wait">
                         <motion.div
                           key={currentGroup}
@@ -422,98 +399,120 @@ export default function DISCInstructionPage() {
                           transition={{ duration: 0.4 }}
                         >
                           <div className="grid grid-cols-1 gap-4">
+                            {discQuestion[currentGroup].questions.map(
+                              (question, index) => {
+                                const isMost =
+                                  answers.most[currentGroup]?.questionIndex ===
+                                  question.optionIndex;
+                                const isLeast =
+                                  answers.least[currentGroup]?.questionIndex ===
+                                  question.optionIndex;
+                                const mostTaken = !!answers.most[currentGroup];
+                                const leastTaken =
+                                  !!answers.least[currentGroup];
 
-                            {discQuestion[currentGroup].questions.map((question, index) => {
+                                return (
+                                  <div
+                                    key={index}
+                                    className={`flex items-center text-xs md:text-base  justify-between p-4 border rounded-lg transition-all ${
+                                      isMost
+                                        ? "border-green-500 bg-green-50"
+                                        : isLeast
+                                          ? "border-red-500 bg-red-50"
+                                          : "border-gray-200 hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <span className="font-medium text-gray-800 mr-1">
+                                      {question.sentences}
+                                    </span>
+                                    <div className="flex gap-3">
+                                      <button
+                                        disabled={
+                                          (!isMost && mostTaken) || isLeast
+                                        }
+                                        onClick={() =>
+                                          handleSelection(
+                                            "most",
+                                            question.optionIndex,
+                                          )
+                                        }
+                                        className={`px-3 md:px-4 py-1 md:py-2 rounded-md font-semibold ${
+                                          isMost
+                                            ? "bg-green-600 text-white"
+                                            : (!isMost && mostTaken) || isLeast
+                                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                              : "bg-gray-100 hover:bg-green-100 text-green-700"
+                                        }`}
+                                      >
+                                        PALING SESUAI (P)
+                                      </button>
 
-                              const isMost = answers.most[currentGroup]?.questionIndex === question.optionIndex;
-                              const isLeast = answers.least[currentGroup]?.questionIndex === question.optionIndex;
-                              const mostTaken = !!answers.most[currentGroup];
-                              const leastTaken = !!answers.least[currentGroup];
-
-                              return (
-                                <div
-                                  key={index}
-                                  className={`flex items-center text-xs md:text-base  justify-between p-4 border rounded-lg transition-all ${
-                                    isMost
-                                      ? 'border-green-500 bg-green-50'
-                                      : isLeast
-                                      ? 'border-red-500 bg-red-50'
-                                      : 'border-gray-200 hover:bg-gray-50'
-                                  }`}
-                                >
-                                  <span className="font-medium text-gray-800 mr-1">{question.sentences}</span>
-                                  <div className="flex gap-3">
-                                    <button
-                                      disabled={(!isMost && mostTaken) || isLeast}
-                                      onClick={() => handleSelection('most', question.optionIndex)}
-                                      className={`px-3 md:px-4 py-1 md:py-2 rounded-md font-semibold ${
-                                        isMost
-                                          ? 'bg-green-600 text-white'
-                                          : (!isMost && mostTaken) || isLeast
-                                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                          : 'bg-gray-100 hover:bg-green-100 text-green-700'
-                                      }`}
-                                    >
-                                      PALING SESUAI (P)
-                                    </button>
-
-                                    <button
-                                      disabled={(!isLeast && leastTaken) || isMost}
-                                      onClick={() => handleSelection('least', question.optionIndex)}
-                                      className={`px-2 md:px-4 py-1 md:py-2 rounded-md  font-semibold ${
-                                        isLeast
-                                          ? 'bg-red-600 text-white'
-                                          : (!isLeast && leastTaken) || isMost
-                                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                          : 'bg-gray-100 hover:bg-red-100 text-red-700'
-                                      }`}
-                                    >
-                                      KURANG SESUAI (K)
-                                    </button>
+                                      <button
+                                        disabled={
+                                          (!isLeast && leastTaken) || isMost
+                                        }
+                                        onClick={() =>
+                                          handleSelection(
+                                            "least",
+                                            question.optionIndex,
+                                          )
+                                        }
+                                        className={`px-2 md:px-4 py-1 md:py-2 rounded-md  font-semibold ${
+                                          isLeast
+                                            ? "bg-red-600 text-white"
+                                            : (!isLeast && leastTaken) || isMost
+                                              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                              : "bg-gray-100 hover:bg-red-100 text-red-700"
+                                        }`}
+                                      >
+                                        KURANG SESUAI (K)
+                                      </button>
+                                    </div>
                                   </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              },
+                            )}
                           </div>
                         </motion.div>
                       </AnimatePresence>
 
                       <div className="flex justify-between items-center mt-7">
-                                <button
-                                    onClick={() => 
-                                    {
-                                        setCurrentGroup(prev => Math.max(0, prev - 1))
-                                        resetState()
-                                    }}
-                                    disabled={currentGroup === 0}
-                                    className={`px-4 sm:px-5 py-2 rounded-lg border text-sm font-medium transition ${
-                                    currentGroup === 0
-                                        ? 'opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200'
-                                        : 'bg-white border-slate-300 hover:bg-slate-50 text-slate-700'
-                                    }`}
-                                >
-                                    ← Sebelumnya
-                                </button>
+                        <button
+                          onClick={() => {
+                            setCurrentGroup((prev) => Math.max(0, prev - 1));
+                            resetState();
+                          }}
+                          disabled={currentGroup === 0}
+                          className={`px-4 sm:px-5 py-2 rounded-lg border text-sm font-medium transition ${
+                            currentGroup === 0
+                              ? "opacity-50 cursor-not-allowed bg-slate-50 text-slate-400 border-slate-200"
+                              : "bg-white border-slate-300 hover:bg-slate-50 text-slate-700"
+                          }`}
+                        >
+                          ← Sebelumnya
+                        </button>
 
-                                <button
-                                    onClick={
-                                    currentGroup === discQuestion.length - 1
-                                        ? handleModal
-                                        : handleNext
-                                    }
-                                    className={`px-4 sm:px-5 py-2  rounded-lg bg-gradient-to-r text-xs sm:text-sm from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-                                      !(answers.most[currentGroup] && answers.least[currentGroup])
-                                        ? ' bg-gray-400'
-                                        : 'from-blue-600 to-indigo-600'
-                                      }`}
-                                >
-                                    {currentGroup !== discQuestion.length - 1 
-                                      ? 'Soal Berikutnya →' 
-                                      : 'Selesai Tes'}
-                                </button>
-                            </div>
+                        <button
+                          onClick={
+                            currentGroup === discQuestion.length - 1
+                              ? handleModal
+                              : handleNext
+                          }
+                          className={`px-4 sm:px-5 py-2  rounded-lg bg-gradient-to-r text-xs sm:text-sm from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+                            !(
+                              answers.most[currentGroup] &&
+                              answers.least[currentGroup]
+                            )
+                              ? " bg-gray-400"
+                              : "from-blue-600 to-indigo-600"
+                          }`}
+                        >
+                          {currentGroup !== discQuestion.length - 1
+                            ? "Soal Berikutnya →"
+                            : "Selesai Tes"}
+                        </button>
+                      </div>
                     </div>
-                    
                   </div>
                 </div>
               </section>
@@ -521,8 +520,8 @@ export default function DISCInstructionPage() {
               {/* Tombol aksi */}
               <div className="mt-8 border-t pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="text-sm text-slate-600">
-                  <strong className="text-slate-800">Sebelum mulai:</strong> pastikan
-                  Anda berada di tempat yang tenang dan siap fokus.
+                  <strong className="text-slate-800">Sebelum mulai:</strong>{" "}
+                  pastikan Anda berada di tempat yang tenang dan siap fokus.
                 </div>
                 <motion.button
                   whileHover={{ scale: 1.03 }}
@@ -538,69 +537,76 @@ export default function DISCInstructionPage() {
 
           {/* Footer kecil */}
           <div className="mt-6 text-center text-xs text-slate-400">
-            Sistem ini menampilkan instruksi — waktu akan mulai otomatis saat tes dimulai.
+            Sistem ini menampilkan instruksi — waktu akan mulai otomatis saat
+            tes dimulai.
           </div>
         </motion.div>
       </main>
 
-      <Modal isOpen={isModalOpen} onClose={()=> setIsModalOpen(false)}>
-                <p className='text-gray-800'>Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan dan sesi tidak dapat diulang.</p>
-                <p className='text-gray-600 text-sm mt-3'>(Pastikan koneksi internet stabil dan Anda berada di lingkungan yang kondusif.)</p>
-                <div className='flex gap-x-3 justify-evenly mt-4'>
-                    <button 
-                        className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
-                        isLoading
-                        ? 'bg-slate-400'
-                        : 'from-blue-600 to-indigo-600' }`}
-                        onClick={()=> setIsModalOpen(false)}
-                        disabled={isLoading}
-                    >
-                        Kembali
-                    </button>
-                    {isLoading ? (
-                      <button
-                        className='disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-                        aria-label="Mulai CFIT Subtes 1"
-                        onClick={handleTestComplete}
-                        disabled={isLoading}
-                        >
-                          Mohon Tunggu...
-                      </button>
-                    ):(
-                      <button 
-                        className='px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition'
-                        onClick={handleTestComplete}
-                    >
-                        Mulai Tes
-                    </button>
-                    )}
-                    
-                </div>
-            </Modal>
-        <PermissionModal isOpen={showModal} onClose={()=> {}}>
-            <div
-              className='text-gray-700'
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p className="text-gray-800">
+          Anda akan memasuki sesi tes. Setelah tes dimulai, waktu akan berjalan
+          dan sesi tidak dapat diulang.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          (Pastikan koneksi internet stabil dan Anda berada di lingkungan yang
+          kondusif.)
+        </p>
+        <div className="flex gap-x-3 justify-evenly mt-4">
+          <button
+            className={`px-5 py-2 rounded-lg bg-gradient-to-r  text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition ${
+              isLoading ? "bg-slate-400" : "from-blue-600 to-indigo-600"
+            }`}
+            onClick={() => setIsModalOpen(false)}
+            disabled={isLoading}
+          >
+            Kembali
+          </button>
+          {isLoading ? (
+            <button
+              className="disabled:pointer-events-none px-5 py-2 rounded-lg bg-gradient-to-r bg-slate-400 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              aria-label="Mulai CFIT Subtes 1"
+              onClick={handleTestComplete}
+              disabled={isLoading}
             >
-              <p className='font-bold text-xl mb-3'>PERHATIAN</p>
-              <p className='text-sm'>Harap berikan izin untuk akses clipboard untuk mengakses halaman tes</p>
-              <div className='flex justify-center my-4'>
-                <Image 
-                  src="/assets/blockedAcces.png"
-                  width={200}
-                  height={200}
-                  className='rounded-lg '
-                  alt=''
-                />
-              </div>
-              <div className='text-left ml-8'>
-                <ol className=' list-decimal flex flex-col gap-y-1'>
-                  <li>Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on</li>
-                  <li>Reload Kembali halaman (F5)</li>
-                </ol>
-              </div>
-            </div>
-          </PermissionModal>
-          <BackGuardModal {...modalProps} />
+              Mohon Tunggu...
+            </button>
+          ) : (
+            <button
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:scale-[1.02] active:scale-95 transition"
+              onClick={handleTestComplete}
+            >
+              Mulai Tes
+            </button>
+          )}
+        </div>
+      </Modal>
+      <PermissionModal isOpen={showModal} onClose={() => {}}>
+        <div className="text-gray-700">
+          <p className="font-bold text-xl mb-3">PERHATIAN</p>
+          <p className="text-sm">
+            Harap berikan izin untuk akses clipboard untuk mengakses halaman tes
+          </p>
+          <div className="flex justify-center my-4">
+            <Image
+              src="/assets/blockedAcces.png"
+              width={200}
+              height={200}
+              className="rounded-lg "
+              alt=""
+            />
+          </div>
+          <div className="text-left ml-8">
+            <ol className=" list-decimal flex flex-col gap-y-1">
+              <li>
+                Pastikan ketiga bagian yang ditunjukkan dalam keadaan enable/on
+              </li>
+              <li>Reload Kembali halaman (F5)</li>
+            </ol>
+          </div>
+        </div>
+      </PermissionModal>
+      <BackGuardModal {...modalProps} />
     </div>
   );
 }
