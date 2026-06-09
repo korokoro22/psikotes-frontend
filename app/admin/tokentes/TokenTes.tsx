@@ -443,7 +443,7 @@ export default function tokenTes() {
             </tbody>
           </table>
         </div>
-      ) : data.length > 0 && isLoading === true ? (
+      ) : data?.length > 0 && isLoading === true ? (
         <div className="overflow-hidden rounded-3xl border py-5 border-gray-200 bg-white shadow-sm">
           <p className="text-center">sedang loading</p>
         </div>
