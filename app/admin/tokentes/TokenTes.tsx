@@ -46,6 +46,8 @@ export default function tokenTes() {
   const [status, setStatus] = useState<OpsiStatus[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<OpsiStatus | null>(null);
   const prevSelectedStatus = useRef(selectedStatus);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
   useEffect(() => {
     const getAllStatus = async () => {
@@ -163,12 +165,20 @@ export default function tokenTes() {
   const dateNow = new Date().toISOString().split("T")[0];
 
   const handleRefreshToken = async () => {
-    const token = await refreshTokenService();
+    console.log("handleRefreshToken called");
+    try {
+      setIsLoading(true);
+      const token = await refreshTokenService();
+      setIsLoading(false);
+    } catch (error: any) {
+      setIsLoading(false);
+      setErrorMessage(error.response?.data?.message);
+    }
   };
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    console.log("ini loading", isLoading);
+  }, [isLoading]);
 
   useEffect(() => {
     document.title = "Token Tes - Psychological Tests";
@@ -189,7 +199,7 @@ export default function tokenTes() {
         </div>
         <div className="flex gap-x-4 ">
           <button
-            type="button"
+            // type="button"
             onClick={() => handleRefreshToken}
             className="px-5 py-3 bg-green-500 rounded-2xl text-white text-sm font-semibold hover:bg-green-600"
           >
@@ -294,6 +304,14 @@ export default function tokenTes() {
           </div>
         </div>
       </div>
+
+      {data?.length > 0 && isLoading === false ? (
+        <div>tabel tampil</div>
+      ) : data.length > 0 && isLoading === true ? (
+        <div>sedang loading</div>
+      ) : (
+        <div>Data kosong</div>
+      )}
 
       {data?.length > 0 ? (
         <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
