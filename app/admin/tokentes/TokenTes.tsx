@@ -4,8 +4,14 @@ import { div, ul } from "framer-motion/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { getAllToken, statusToken } from "@/services/token.service";
+import {
+  getAllStatusService,
+  getAllToken,
+  statusToken,
+  refreshTokenService,
+} from "@/services/token.service";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Listbox } from "@headlessui/react";
 
 export default function tokenTes() {
   interface Data {
@@ -19,6 +25,11 @@ export default function tokenTes() {
     expiredDate: string;
   }
 
+  type OpsiStatus = {
+    label: string;
+    count: number;
+  };
+
   const searchParams = useSearchParams();
   const [isCopied, setIsCopied] = useState(false);
   const [data, setData] = useState<Data[]>([]);
@@ -31,6 +42,21 @@ export default function tokenTes() {
   const currentPage = parseInt(searchParams.get("page") || "1");
   const [totalData, setTotalData] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [status, setStatus] = useState<OpsiStatus[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<OpsiStatus | null>(null);
+  const prevSelectedStatus = useRef(selectedStatus);
+
+  useEffect(() => {
+    const getAllStatus = async () => {
+      try {
+        const allStatus = await getAllStatusService(startDate, endDate);
+        setStatus(allStatus.data.data);
+        // console.log("ini allstatus:", allStatus.data.data);
+      } catch (error: any) {}
+    };
+    getAllStatus();
+  }, [startDate, endDate]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -70,15 +96,18 @@ export default function tokenTes() {
     const getTOken = async () => {
       try {
         if (
+          selectedStatus != prevSelectedStatus.current ||
           startDate != prevStartDate.current ||
           endDate != prevEndDate.current
         ) {
+          prevSelectedStatus.current = selectedStatus;
           prevStartDate.current = startDate;
           prevEndDate.current = endDate;
           goToPage(1);
           const token = await getAllToken(
             1,
             limit,
+            selectedStatus?.label,
             startDate || undefined,
             endDate || undefined,
           );
@@ -90,6 +119,7 @@ export default function tokenTes() {
           const token = await getAllToken(
             currentPage,
             limit,
+            selectedStatus?.label,
             startDate || undefined,
             endDate || undefined,
           );
@@ -101,11 +131,11 @@ export default function tokenTes() {
           }
         }
       } catch (err: any) {
-        router.push("/login");
+        // router.push("/login");
       }
     };
     getTOken();
-  }, [startDate, endDate, currentPage]);
+  }, [currentPage, selectedStatus, startDate, endDate, currentPage]);
 
   const convertDate = (date: string | Date) => {
     const newDate = new Date(date);
@@ -130,6 +160,12 @@ export default function tokenTes() {
     return `${datePart} ${timePart}`;
   };
 
+  const dateNow = new Date().toISOString().split("T")[0];
+
+  const handleRefreshToken = async () => {
+    const token = await refreshTokenService();
+  };
+
   useEffect(() => {
     console.log(data);
   }, [data]);
@@ -151,17 +187,54 @@ export default function tokenTes() {
             Kelola token tes psikotes peserta
           </p>
         </div>
-
-        <Link
-          href="/admin/tokentes/form"
-          className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700"
-        >
-          Buat Token
-        </Link>
+        <div className="flex gap-x-4 ">
+          <button
+            type="button"
+            onClick={() => handleRefreshToken}
+            className="px-5 py-3 bg-green-500 rounded-2xl text-white text-sm font-semibold hover:bg-green-600"
+          >
+            Refresh Token
+          </button>
+          <Link
+            href="/admin/tokentes/form"
+            className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-blue-700"
+          >
+            Buat Token
+          </Link>
+        </div>
       </div>
 
       <div className="py-2 w-full flex flex-col gap-y-3 mb-6">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="w-44">
+            <Listbox value={selectedStatus} onChange={setSelectedStatus}>
+              <div className=" relative text-sm ">
+                {/* Button */}
+                <Listbox.Button className="w-full rounded-lg text-center border border-gray-300 bg-white px-2 py-1 shadow-sm focus:outline-none">
+                  {selectedStatus
+                    ? `${selectedStatus.label} (${selectedStatus.count})`
+                    : "Status Token  ⏷"}
+                </Listbox.Button>
+
+                {/* Dropdown */}
+                <Listbox.Options className="absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg focus:outline-none">
+                  {status.map((item) => (
+                    <Listbox.Option
+                      key={item.label}
+                      value={item}
+                      className={({ active }) =>
+                        `cursor-pointer px-4 py-2 ${
+                          active ? "bg-gray-100" : ""
+                        }`
+                      }
+                    >
+                      {item.label} ({item.count})
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
           {/* Start Date */}
           <div className="flex gap-1 items-center">
             <label className="text-sm font-medium text-gray-600">
@@ -281,10 +354,24 @@ export default function tokenTes() {
                   <td className="px-6 py-5">
                     <div
                       className={`w-fit rounded-full px-4 py-1 text-xs font-semibold text-white ${
-                        item.isActive ? "bg-green-500" : "bg-red-500"
+                        item.isActive &&
+                        dateNow <
+                          new Date(item.expiredDate).toISOString().split("T")[0]
+                          ? "bg-green-500"
+                          : "bg-red-500"
                       }`}
                     >
-                      {item.isActive ? "Aktif" : "Tidak Aktif"}
+                      {item.isActive &&
+                      dateNow <
+                        new Date(item.expiredDate).toISOString().split("T")[0]
+                        ? "Aktif"
+                        : item.isActive == false &&
+                            dateNow <
+                              new Date(item.expiredDate)
+                                .toISOString()
+                                .split("T")[0]
+                          ? "Nonaktif"
+                          : "Expired"}
                     </div>
                   </td>
 

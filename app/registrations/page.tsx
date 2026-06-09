@@ -132,9 +132,7 @@ export default function TestForm() {
         {/* Form */}
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {errorMessage === "" ? (
-              ""
-            ) : (
+            {errorMessage === "" ? null : (
               <div className="bg-red-200 py-2 text-sm text-red-800 font-medium rounded-md flex">
                 <p className="ml-2">{errorMessage}.</p>
               </div>

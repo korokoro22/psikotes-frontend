@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { getAllHasilPosition, getAllPeserta } from "@/services/peserta.service";
+import { getAllPosition, getAllPeserta } from "@/services/peserta.service";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Listbox } from "@headlessui/react";
@@ -48,15 +48,13 @@ export default function Peserta() {
   useEffect(() => {
     const getPosisi = async () => {
       try {
-        const posisi = await getAllHasilPosition(
+        const posisi = await getAllPosition(
           search || undefined,
           startDate,
           endDate,
         );
         setPosition(posisi.data.data);
-      } catch (error: any) {
-        router.push("/login");
-      }
+      } catch (error: any) {}
     };
     getPosisi();
   }, [search, startDate, endDate]);

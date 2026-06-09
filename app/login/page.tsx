@@ -12,6 +12,7 @@ export default function AdminLoginForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -30,7 +31,8 @@ export default function AdminLoginForm() {
       setIsLoading(false);
       router.push("/admin/dashboard");
     } catch (err: any) {
-      alert(err.response?.data?.message || "Login gagal");
+      // alert(err.response?.data?.message || "Login gagal");
+      setErrorMessage(err.response?.data?.message);
     } finally {
       setIsSubmitting(false);
       setIsLoading(false);
@@ -55,6 +57,11 @@ export default function AdminLoginForm() {
 
         {/* Form */}
         <div className="p-8">
+          {errorMessage ? (
+            <div className="bg-red-200 border py-2 text-sm text-red-800 font-medium rounded-md flex mb-2">
+              <p className="ml-2">{errorMessage}</p>
+            </div>
+          ) : null}
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Username */}
             <div>

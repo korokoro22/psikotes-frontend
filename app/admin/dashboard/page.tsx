@@ -70,8 +70,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Chart Section */}
-      <div className="mt-10 space-y-8">
-        {/* Chart 1 */}
+      {/* <div className="mt-10 space-y-8">
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-5">
             <h2 className="text-lg font-semibold text-gray-800">
@@ -84,7 +83,6 @@ export default function AdminDashboard() {
           <DashboardChart />
         </div>
 
-        {/* Chart 2 */}
         <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-5">
             <h2 className="text-lg font-semibold text-gray-800">
@@ -96,7 +94,7 @@ export default function AdminDashboard() {
           </div>
           <DashboardBarChart />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
