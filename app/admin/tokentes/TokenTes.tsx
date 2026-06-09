@@ -166,8 +166,8 @@ export default function tokenTes() {
 
   const handleRefreshToken = async () => {
     console.log("handleRefreshToken called");
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const token = await refreshTokenService();
       setIsLoading(false);
     } catch (error: any) {
@@ -199,8 +199,8 @@ export default function tokenTes() {
         </div>
         <div className="flex gap-x-4 ">
           <button
-            // type="button"
-            onClick={() => handleRefreshToken}
+            type="button"
+            onClick={() => handleRefreshToken()}
             className="px-5 py-3 bg-green-500 rounded-2xl text-white text-sm font-semibold hover:bg-green-600"
           >
             Refresh Token
@@ -306,14 +306,6 @@ export default function tokenTes() {
       </div>
 
       {data?.length > 0 && isLoading === false ? (
-        <div>tabel tampil</div>
-      ) : data.length > 0 && isLoading === true ? (
-        <div>sedang loading</div>
-      ) : (
-        <div>Data kosong</div>
-      )}
-
-      {data?.length > 0 ? (
         <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
           <table className="w-full border-collapse">
             {/* Table Header */}
@@ -451,8 +443,14 @@ export default function tokenTes() {
             </tbody>
           </table>
         </div>
+      ) : data.length > 0 && isLoading === true ? (
+        <div className="overflow-hidden rounded-3xl border py-5 border-gray-200 bg-white shadow-sm">
+          <p className="text-center">sedang loading</p>
+        </div>
       ) : (
-        <div>Data tidak ditemukan</div>
+        <div className="overflow-hidden rounded-3xl border py-5 border-gray-200 bg-white shadow-sm">
+          <p className="text-center">Data tidak ditemukan</p>
+        </div>
       )}
 
       {/* Pagination */}
