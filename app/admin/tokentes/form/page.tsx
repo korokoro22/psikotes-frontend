@@ -88,9 +88,7 @@ export default function AdminForm() {
     const getForm = async () => {
       try {
         const token = await getFormToken();
-      } catch (err: any) {
-        router.push("/login");
-      }
+      } catch (err: any) {}
     };
     getForm();
   }, []);

@@ -50,9 +50,7 @@ export default function hasilTes() {
           endDate,
         );
         setPosition(posisi.data.data);
-      } catch (error: any) {
-        router.push("/login");
-      }
+      } catch (error: any) {}
     };
 
     getPosisi();

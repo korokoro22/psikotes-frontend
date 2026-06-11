@@ -19,9 +19,7 @@ export default function AdminPesertaDetail({
         const { id } = await params;
         const peserta = await getDetailPeserta(Number(id));
         setData(peserta.data.data);
-      } catch (err: any) {
-        router.push("/login");
-      }
+      } catch (err: any) {}
     };
 
     detailPeserta();

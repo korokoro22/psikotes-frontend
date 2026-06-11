@@ -121,7 +121,7 @@ export default function PapiTestPage() {
     getPapikostickQuestions();
   }, []);
 
-  const EXAM_DURATION = 60 * 60;
+  const EXAM_DURATION = 30 * 60;
 
   const getRemainingTime = (): number => {
     if (typeof window === "undefined") return EXAM_DURATION;

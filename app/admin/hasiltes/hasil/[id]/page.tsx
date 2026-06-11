@@ -47,9 +47,7 @@ export default function AdminHasilTesHasil({
         const { id } = await params;
         const peserta = await getDetailHasilPeserta(Number(id));
         setData(peserta.data.data);
-      } catch (err: any) {
-        router.push("/login");
-      }
+      } catch (err: any) {}
     };
     detailPeserta();
   }, []);

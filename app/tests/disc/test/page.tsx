@@ -96,7 +96,7 @@ export default function DISCTestPage() {
     getDiscQuestions();
   }, []);
 
-  const EXAM_DURATION = 60 * 60;
+  const EXAM_DURATION = 10 * 60;
 
   const getRemainingTime = (): number => {
     if (typeof window === "undefined") return EXAM_DURATION;

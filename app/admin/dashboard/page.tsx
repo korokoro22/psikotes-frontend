@@ -20,9 +20,7 @@ export default function AdminDashboard() {
     const dashboard = async () => {
       try {
         const res = await getCountAllPeserta();
-      } catch (err: any) {
-        router.push("/login");
-      }
+      } catch (err: any) {}
     };
     dashboard();
   }, []);

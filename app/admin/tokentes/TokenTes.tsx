@@ -132,9 +132,7 @@ export default function tokenTes() {
             setTotalPages(token.data.pagination.totalPages);
           }
         }
-      } catch (err: any) {
-        // router.push("/login");
-      }
+      } catch (err: any) {}
     };
     getTOken();
   }, [currentPage, selectedStatus, startDate, endDate, currentPage]);
@@ -428,10 +426,33 @@ export default function tokenTes() {
                       {/* Active/Inactive Button */}
                       <button
                         onClick={() => handleDelete(item.id)}
-                        className={`rounded-xl px-4 py-2 text-sm font-medium text-white transition-all duration-200 ${
-                          item.isActive
-                            ? "bg-red-500 hover:bg-red-600"
-                            : "bg-green-500 hover:bg-green-600"
+                        disabled={
+                          !item.isActive &&
+                          dateNow >
+                            new Date(item.expiredDate)
+                              .toISOString()
+                              .split("T")[0]
+                        }
+                        className={`rounded-xl px-4 py-2 text-sm font-medium  transition-all duration-200 ${
+                          item.isActive &&
+                          dateNow <
+                            new Date(item.expiredDate)
+                              .toISOString()
+                              .split("T")[0]
+                            ? "bg-red-500 hover:bg-red-600 text-white"
+                            : !item.isActive &&
+                                dateNow <
+                                  new Date(item.expiredDate)
+                                    .toISOString()
+                                    .split("T")[0]
+                              ? "bg-green-500 hover:bg-green-600 text-white"
+                              : !item.isActive &&
+                                  dateNow >
+                                    new Date(item.expiredDate)
+                                      .toISOString()
+                                      .split("T")[0]
+                                ? "bg-gray-400 text-gray-500"
+                                : ""
                         }`}
                       >
                         {item.isActive ? "Nonaktifkan" : "Aktifkan"}
