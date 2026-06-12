@@ -369,7 +369,7 @@ export default function CFITsubtest2Test() {
                                         : answers.some(
                                               (a) =>
                                                 a.questionId === nomor &&
-                                                a.answers.length > 0,
+                                                a.answers.length > 1,
                                             )
                                           ? " bg-green-500 text-white"
                                           : isPassed.includes(nomor) ||
